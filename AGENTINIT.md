@@ -86,7 +86,7 @@ Agent는 이 문서를 기반으로 프로젝트를 분석하고,
 * l&cs API를 통해 데이터를 수집합니다.
 * API 스펙은 다음 URL을 참고합니다.
 
-  * http://api.lncs.nhn.com/spec
+  * https://docs.nhncloud.com/en/Data%20&%20Analytics/Log%20&%20Crash%20Search/en/api-guide/
 * 수집된 데이터는 로컬 데이터로 저장합니다.
 * 로컬 저장된 데이터의 특성과 필드를 분석합니다.
 * 분석 결과를 기반으로 그래프를 작성합니다.

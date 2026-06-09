@@ -92,7 +92,7 @@ Stability Metrics Collection & Analysis Application
 * Collects data via the l&cs API.
 * The API spec is at the following URL:
 
-  * [[http://api.lncs.nhn.com/spec](https://docs.nhncloud.com/en/Data%20&%20Analytics/Log%20&%20Crash%20Search/en/api-guide/)](https://docs.nhncloud.com/ko/Data%20&%20Analytics/Log%20&%20Crash%20Search/ko/api-guide/)
+  * https://docs.nhncloud.com/en/Data%20&%20Analytics/Log%20&%20Crash%20Search/en/api-guide/
 * Collected data is stored locally.
 * Analyzes the characteristics and fields of the locally stored data.
 * Produces graphs based on the analysis results.
