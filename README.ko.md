@@ -28,7 +28,7 @@ Codex · Claude Code · Cursor Agent
 ## 빠른 시작
 
 1. 이 저장소를 `git clone` 합니다.
-2. **`AGENTSPECKIT/` 폴더 하나**를 여러분의 프로젝트 루트로 복사합니다. (이 가이드 `README.md`는 복사하지 않습니다.)
+2. 여러분 **언어의 `AGENTSPECKIT/` 폴더** — `ko/AGENTSPECKIT/`(한국어) 또는 `en/AGENTSPECKIT/`(영어) — 를 프로젝트 루트로 복사합니다. (이 가이드 `README.md`는 복사하지 않습니다.)
 3. **신규 프로젝트**면 `AGENTSPECKIT/SOURCES/REQUIREMENTS.md`에 요구사항을 작성합니다. **이미 코드가 있는 프로젝트**면 이 단계를 건너뜁니다.
 4. 프로젝트 폴더에서 Agent(Claude Code · Codex · Cursor 등)를 열고, **[2절의 초기화 프롬프트](#2-최초-1회-프로젝트-초기화-프롬프트)**(기존 프로젝트는 **[2.1절의 채택 프롬프트](#21-이미-개발-중인-프로젝트에-적용할-때-채택-프롬프트)**)를 붙여넣습니다.
 5. 초기화가 끝나면 **[5절의 개발 프롬프트](#5-실제-개발-시작-프롬프트)**로 실제 개발을 시작합니다.
@@ -78,18 +78,25 @@ Codex · Claude Code · Cursor Agent
 
 ```text
 /  (Agent-Spec-Kit 저장소 = 템플릿)
-├── README.md               # 이 가이드(프레임워크 사용법). 프로젝트로 복사하지 않음
-└── AGENTSPECKIT/           # ★ 이 폴더 전체를 프로젝트 루트로 복사
-    ├── KICKOFF.md          # 신규(greenfield) 초기화용 프롬프트
-    ├── ADOPT.md            # 기존(brownfield) 프로젝트 채택용 프롬프트
-    ├── DEVELOPINIT.md      # 개발 진행용 프롬프트
-    ├── AUDIT.md            # 주기적 문서 감사(표류 점검)용 프롬프트
-    └── SOURCES/
-        ├── INDEX.md        # 제출 자료 인덱스 (REQUIREMENTS.md 사전 등재)
-        └── REQUIREMENTS.md # 사용자가 작성하는 초기 요구사항 (구 AGENTINIT.md)
+├── README.md               # 이 가이드의 영문판. 프로젝트로 복사하지 않음
+├── README.ko.md            # 이 가이드(프레임워크 사용법). 프로젝트로 복사하지 않음
+├── en/
+│   └── AGENTSPECKIT/       # 영어 키트 — 구조 동일, 영어 내용
+│       └── … (ko/AGENTSPECKIT/ 와 동일 구성)
+└── ko/
+    └── AGENTSPECKIT/       # ★ 한국어 키트. 이 폴더를 프로젝트 루트로 복사.
+        ├── KICKOFF.md          # 신규(greenfield) 초기화용 프롬프트
+        ├── ADOPT.md            # 기존(brownfield) 프로젝트 채택용 프롬프트
+        ├── DEVELOPINIT.md      # 개발 진행용 프롬프트
+        ├── AUDIT.md            # 주기적 문서 감사(표류 점검)용 프롬프트
+        └── SOURCES/
+            ├── INDEX.md        # 제출 자료 인덱스 (REQUIREMENTS.md 사전 등재)
+            └── REQUIREMENTS.md # 사용자가 작성하는 초기 요구사항 (구 AGENTINIT.md)
 ```
 
-프로젝트를 시작할 때는 이 저장소를 clone한 뒤, **`AGENTSPECKIT/` 폴더 하나를 여러분의 프로젝트 루트로 복사**하세요. 이 `README.md`(가이드)는 복사하지 않습니다.
+각 언어 폴더는 자기완결적입니다: 내부 파일이 모두 정식 이름(`KICKOFF.md`, `ADOPT.md`, …)으로 되어 있어, 여러분 언어의 `AGENTSPECKIT/` 폴더를 프로젝트 루트로 복사하면 어떤 언어를 골랐든 모든 프롬프트와 경로 참조가 그대로 동작합니다. 복사하는 언어 폴더는 항상 **하나**뿐입니다.
+
+프로젝트를 시작할 때는 이 저장소를 clone한 뒤, **여러분 언어의 `AGENTSPECKIT/` 폴더 — `ko/AGENTSPECKIT/` 또는 `en/AGENTSPECKIT/` — 를 프로젝트 루트로 복사**하세요. 이 가이드(`README.md`/`README.ko.md`)는 복사하지 않습니다.
 
 - **신규 프로젝트(greenfield):** 복사 후 `AGENTSPECKIT/SOURCES/REQUIREMENTS.md`에 프로젝트 요구사항을 작성
 - **이미 개발 중인 프로젝트(brownfield):** 동일하게 폴더 복사 (REQUIREMENTS.md 작성은 앞으로의 목표를 적고 싶을 때 선택)
@@ -215,7 +222,7 @@ AGENTSPECKIT/ADOPT.md를 읽고, 그 지시에 따라 이미 개발 중인 이 �
 | 규칙 파일 (구버전 규칙으로 생성됨) | 루트 `AGENTS.md`, `CLAUDE.md` | **병합 갱신** — 누락 블록만 추가 |
 | 신규 구조 (구버전에 없음) | TODO.md, NOTES.md, personas/, discussion/ 등 | **신규 생성/보강** |
 
-**1단계 (사람):** 템플릿 저장소를 pull 받아 프롬프트 4종(KICKOFF/ADOPT/DEVELOPINIT/AUDIT)을
+**1단계 (사람):** 템플릿 저장소를 pull 받아, **처음 사용한 것과 같은 언어 폴더**(`en/AGENTSPECKIT/` 또는 `ko/AGENTSPECKIT/`)의 프롬프트 4종(KICKOFF/ADOPT/DEVELOPINIT/AUDIT)을
 프로젝트의 `AGENTSPECKIT/`에 덮어쓰기 복사합니다.
 (구버전이 루트 평면 구조라면 먼저 루트 3파일을 제외한 산출물을 `git mv`로 `AGENTSPECKIT/` 아래로 옮기는 커밋을 만듭니다.)
 
@@ -683,7 +690,7 @@ flowchart TD
     Start(["Agent-Spec-Kit 저장소 clone"]) --> Type{"프로젝트 유형"}
 
     %% ── 신규 프로젝트 경로 ──
-    Type -->|"신규 (greenfield)"| G1["AGENTSPECKIT/ 폴더를 프로젝트 루트로 복사"]
+    Type -->|"신규 (greenfield)"| G1["언어별 AGENTSPECKIT/ 폴더(en/ 또는 ko/)를 프로젝트 루트로 복사"]
     G1 --> G2["AGENTSPECKIT/SOURCES/REQUIREMENTS.md 작성 — 횡단 기준선 포함<br/>참고자료가 있으면 AGENTSPECKIT/SOURCES/에 함께"]
     G2 --> G3["KICKOFF.md 초기화 프롬프트 실행 (2절)"]
     G3 --> G4{"요구사항이<br/>모호한가?"}
@@ -693,7 +700,7 @@ flowchart TD
     G6 --> G7["REQUIREMENTS.md '반영 완료'로 동결<br/>(이후 요구 변경은 새 변경요청 문서로)"]
 
     %% ── 기존 프로젝트 경로 ──
-    Type -->|"기존 (brownfield)"| B1["AGENTSPECKIT/ 폴더를 프로젝트 루트로 복사<br/>(REQUIREMENTS.md 작성은 선택)"]
+    Type -->|"기존 (brownfield)"| B1["언어별 AGENTSPECKIT/ 폴더(en/ 또는 ko/)를 프로젝트 루트로 복사<br/>(REQUIREMENTS.md 작성은 선택)"]
     B1 --> B2["ADOPT.md 채택 프롬프트 실행 (2.1절)"]
     B2 --> B3["기존 코드 분석<br/>ARCHITECTURE 역추출 · as-built 기능명세 ·<br/>테스트 baseline · 코드↔의도 괴리 목록"]
     B3 --> B4["기존 산출물은 덮어쓰지 않고 병합<br/>PLAN · PROGRESS · HISTORY · ASSUMPTIONS 생성"]
@@ -740,6 +747,10 @@ flowchart TD
 
 > 유지 규칙: 템플릿에 의미 있는 변경을 commit할 때 같은 commit에서 이 절을 갱신합니다.
 > 항목이 길어지면 오래된 연도를 `<details>` 접기로 압축합니다.
+
+### [2026-06-13]
+
+- **키트를 언어별 폴더 `en/AGENTSPECKIT/`·`ko/AGENTSPECKIT/`로 분리** — 각 폴더는 정식 이름 파일(`KICKOFF.md`, `ADOPT.md`, …)로 자기완결적이라, 자기 언어 폴더 하나만 복사하면 프로젝트에 타 언어 파일이 섞이지 않습니다. 동시에 한국어 프롬프트가 형제 파일을 정식 `.md` 이름으로 참조하는데 실제로는 `.ko.md`로 묶여 있던 잠재적 불일치도 해소했습니다. 작업용 프롬프트의 파일별 언어 스위처는 제거했습니다(이 가이드 README에만 유지). **이미 적용한 프로젝트는 마이그레이션 불필요** — 프로젝트의 `AGENTSPECKIT/` 내부 구조는 그대로이며, 이번 변경은 템플릿 저장소의 재배치일 뿐입니다.
 
 ### [2026-06-12]
 

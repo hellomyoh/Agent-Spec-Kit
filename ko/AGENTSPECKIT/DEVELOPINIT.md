@@ -1,5 +1,3 @@
-> 🌐 [English](DEVELOPINIT.md) · **한국어**
-
 # DEVELOPINIT.md
 
 현재 프로젝트 문서를 기준으로 실제 개발을 진행하세요.

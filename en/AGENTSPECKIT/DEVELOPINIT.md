@@ -1,5 +1,3 @@
-> 🌐 **English** · [한국어](DEVELOPINIT.ko.md)
-
 # DEVELOPINIT.md
 
 Carry out actual development based on the current project documentation.

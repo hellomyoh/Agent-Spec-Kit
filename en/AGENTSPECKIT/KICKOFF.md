@@ -1,5 +1,3 @@
-> 🌐 **English** · [한국어](KICKOFF.ko.md)
-
 # KICKOFF.md
 
 Referring to the `SOURCES/REQUIREMENTS.md` (Initial requirements) file, proceed with the project's initial setup.

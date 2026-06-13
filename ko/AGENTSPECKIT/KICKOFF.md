@@ -1,5 +1,3 @@
-> 🌐 [English](KICKOFF.md) · **한국어**
-
 # KICKOFF.md
 
 `SOURCES/REQUIREMENTS.md`(초기 요구사항) 파일을 참고하여 프로젝트 초기 설정을 진행하세요.

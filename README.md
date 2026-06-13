@@ -28,7 +28,7 @@ This document is a **framework user manual** that explains how to use the `AGENT
 ## Quick Start
 
 1. `git clone` this repository.
-2. Copy **the single `AGENTSPECKIT/` folder** to your project root. (Do not copy this guide `README.md`.)
+2. Copy the `AGENTSPECKIT/` folder **for your language** — `en/AGENTSPECKIT/` (English) or `ko/AGENTSPECKIT/` (Korean) — to your project root. (Do not copy this guide `README.md`.)
 3. For a **new project**, write your requirements in `AGENTSPECKIT/SOURCES/REQUIREMENTS.md`. For a project that **already has code**, skip this step.
 4. In your project folder, open the Agent (Claude Code · Codex · Cursor, etc.) and paste **[the initialization prompt in Section 2](#2-one-time-only-project-initialization-prompt)** (for existing projects, **[the adoption prompt in Section 2.1](#21-applying-to-a-project-already-under-development-adoption-prompt)**).
 5. Once initialization is complete, start actual development with **[the development prompt in Section 5](#5-prompt-to-start-actual-development)**.
@@ -79,17 +79,24 @@ This repository (Agent-Spec-Kit) is composed of the following files.
 ```text
 /  (Agent-Spec-Kit repository = template)
 ├── README.md               # This guide (how to use the framework). Not copied into projects
-└── AGENTSPECKIT/           # ★ Copy this entire folder to your project root
-    ├── KICKOFF.md          # Prompt for new (greenfield) initialization
-    ├── ADOPT.md            # Prompt for adopting into an existing (brownfield) project
-    ├── DEVELOPINIT.md      # Prompt for development progress
-    ├── AUDIT.md            # Prompt for periodic document audit (drift check)
-    └── SOURCES/
-        ├── INDEX.md        # Submitted-material index (REQUIREMENTS.md pre-registered)
-        └── REQUIREMENTS.md # Initial requirements written by the user (formerly AGENTINIT.md)
+├── README.ko.md            # Korean translation of this guide. Not copied into projects
+├── en/
+│   └── AGENTSPECKIT/       # ★ English kit. Copy this folder to your project root.
+│       ├── KICKOFF.md          # Prompt for new (greenfield) initialization
+│       ├── ADOPT.md            # Prompt for adopting into an existing (brownfield) project
+│       ├── DEVELOPINIT.md      # Prompt for development progress
+│       ├── AUDIT.md            # Prompt for periodic document audit (drift check)
+│       └── SOURCES/
+│           ├── INDEX.md        # Submitted-material index (REQUIREMENTS.md pre-registered)
+│           └── REQUIREMENTS.md # Initial requirements written by the user (formerly AGENTINIT.md)
+└── ko/
+    └── AGENTSPECKIT/       # Korean kit — identical structure, Korean content. Copy this instead.
+        └── … (same files as en/AGENTSPECKIT/)
 ```
 
-When starting a project, clone this repository, then **copy the single `AGENTSPECKIT/` folder to your project root**. This `README.md` (the guide) is not copied.
+Each language folder is self-contained: every file inside is named canonically (`KICKOFF.md`, `ADOPT.md`, …), so once you copy the `AGENTSPECKIT/` folder for your language into your project root, all the prompts and their path references resolve regardless of which language you chose. You only ever copy **one** language folder.
+
+When starting a project, clone this repository, then **copy the `AGENTSPECKIT/` folder for your language — `en/AGENTSPECKIT/` or `ko/AGENTSPECKIT/` — to your project root**. This guide (`README.md` / `README.ko.md`) is not copied.
 
 - **New project (greenfield):** after copying, write the project requirements in `AGENTSPECKIT/SOURCES/REQUIREMENTS.md`
 - **Project already under development (brownfield):** copy the folder the same way (writing REQUIREMENTS.md is optional, for when you want to record future goals)
@@ -216,7 +223,7 @@ Processing principles:
 | New structure (absent in old version) | TODO.md, NOTES.md, personas/, discussion/, etc. | **Newly create/augment** |
 
 **Step 1 (human):** Pull the template repository and overwrite-copy the four prompts (KICKOFF/ADOPT/DEVELOPINIT/AUDIT)
-into the project's `AGENTSPECKIT/`.
+**from the same language folder you originally used** (`en/AGENTSPECKIT/` or `ko/AGENTSPECKIT/`) into the project's `AGENTSPECKIT/`.
 (If the old version had a flat root structure, first make a commit that `git mv`s the artifacts — excluding the three root files — under `AGENTSPECKIT/`.)
 
 **Step 2 (Agent):** Run the prompt below.
@@ -683,7 +690,7 @@ flowchart TD
     Start(["Clone the Agent-Spec-Kit repository"]) --> Type{"Project type"}
 
     %% ── New project path ──
-    Type -->|"New (greenfield)"| G1["Copy the AGENTSPECKIT/ folder to the project root"]
+    Type -->|"New (greenfield)"| G1["Copy your language's AGENTSPECKIT/ folder (en/ or ko/) to the project root"]
     G1 --> G2["Write AGENTSPECKIT/SOURCES/REQUIREMENTS.md — including the cross-cutting baseline<br/>If there is reference material, place it together in AGENTSPECKIT/SOURCES/"]
     G2 --> G3["Run the KICKOFF.md initialization prompt (Section 2)"]
     G3 --> G4{"Are the requirements<br/>ambiguous?"}
@@ -693,7 +700,7 @@ flowchart TD
     G6 --> G7["Freeze REQUIREMENTS.md to 'Applied'<br/>(later requirement changes via new change-request documents)"]
 
     %% ── Existing project path ──
-    Type -->|"Existing (brownfield)"| B1["Copy the AGENTSPECKIT/ folder to the project root<br/>(writing REQUIREMENTS.md is optional)"]
+    Type -->|"Existing (brownfield)"| B1["Copy your language's AGENTSPECKIT/ folder (en/ or ko/) to the project root<br/>(writing REQUIREMENTS.md is optional)"]
     B1 --> B2["Run the ADOPT.md adoption prompt (Section 2.1)"]
     B2 --> B3["Analyze the existing code<br/>reverse-extract ARCHITECTURE · as-built feature specs ·<br/>test baseline · list of code↔intent divergences"]
     B3 --> B4["Merge without overwriting existing artifacts<br/>Generate PLAN · PROGRESS · HISTORY · ASSUMPTIONS"]
@@ -740,6 +747,10 @@ Items marked `⚠ structural change` require migration work (file moves·merges,
 
 > Maintenance rule: when committing a meaningful change to the template, this section is updated in the same commit.
 > When entries grow long, older years are compressed into a `<details>` fold.
+
+### [2026-06-13]
+
+- **Split the kit into per-language folders `en/AGENTSPECKIT/` and `ko/AGENTSPECKIT/`** — each folder is self-contained, with every file named canonically (`KICKOFF.md`, `ADOPT.md`, …), so you copy only your language's folder and get no foreign-language clutter in your project. This also fixes a latent issue where the Korean prompts referenced sibling files by their canonical `.md` names while the files were actually packaged as `.ko.md`. Removed the per-file language switcher from the working prompts (it now lives only in this guide README). **No migration is needed for already-applied projects** — the structure inside a project's `AGENTSPECKIT/` is unchanged; this only reorganizes the template repository.
 
 ### [2026-06-12]
 

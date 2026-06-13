@@ -1,5 +1,3 @@
-> 🌐 **English** · [한국어](AUDIT.ko.md)
-
 # AUDIT.md
 
 A **document audit prompt** for periodically checking the drift between your project documentation and code.

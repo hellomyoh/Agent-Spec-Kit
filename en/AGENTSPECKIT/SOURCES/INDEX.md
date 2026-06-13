@@ -1,5 +1,3 @@
-> 🌐 **English** · [한국어](INDEX.ko.md)
-
 # Sources Index
 
 This is the index of user-submitted materials. Management rules follow `KICKOFF.md` 15.2, and the application procedure follows `DEVELOPINIT.md` 4.2.

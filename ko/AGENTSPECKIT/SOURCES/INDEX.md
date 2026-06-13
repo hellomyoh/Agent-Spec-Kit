@@ -1,5 +1,3 @@
-> 🌐 [English](INDEX.md) · **한국어**
-
 # Sources Index
 
 사용자 제출 자료의 인덱스입니다. 관리 규칙은 `KICKOFF.md` 15.2, 반영 절차는 `DEVELOPINIT.md` 4.2를 따릅니다.

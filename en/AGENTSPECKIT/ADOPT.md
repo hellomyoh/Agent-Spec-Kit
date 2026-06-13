@@ -1,5 +1,3 @@
-> 🌐 **English** · [한국어](ADOPT.ko.md)
-
 # ADOPT.md
 
 This is the prompt for **applying (adopting)** this framework to a project that is already under development (brownfield).

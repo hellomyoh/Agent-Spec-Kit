@@ -1,5 +1,3 @@
-> 🌐 **English** · [한국어](REQUIREMENTS.ko.md)
-
 # REQUIREMENTS.md — Project Initial Requirements
 
 This document is the **user input document** for Agent-based project initialization. (formerly `AGENTINIT.md`)

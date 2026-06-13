@@ -1,5 +1,3 @@
-> 🌐 [English](REQUIREMENTS.md) · **한국어**
-
 # REQUIREMENTS.md — 프로젝트 초기 요구사항
 
 이 문서는 Agent 기반 프로젝트 초기화를 위한 **사용자 입력 문서**입니다. (구 `AGENTINIT.md`)
