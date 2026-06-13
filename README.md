@@ -4,10 +4,10 @@
 
 🌐 **English** · [한국어](README.ko.md)
 
-**An Agent-based project-initialization and development prompt framework — where memory persists across sessions and a harness-pattern decision-making group reaches consensus on specifications.**
+**Your AI coding agent forgets everything when the session ends.**
 
-The Agent compiles requirements into specifications and plans, accumulating decisions and knowledge in a markdown file system that the next session picks up.
-A persona decision-making group (a prompt implementation of the harness pattern) deliberates and reaches consensus on feature specifications, and the deliberation process is preserved as a verifiable record (`discussion/`).
+Agent-Spec-Kit gives it a memory that persists — and a panel of expert personas that debate and agree on every spec *before* a line of code is written.
+Requirements compile into specs and a plan; decisions, facts, and deliberations accumulate in a plain **markdown + git** file system that the next session picks up exactly where the last one stopped. No lock-in — the same kit runs in **Claude Code, Codex, and Cursor**.
 
 [Quick Start](#quick-start) •
 [Why this structure?](#why-this-structure--the-limits-of-llms-and-the-benefits-of-this-framework) •
