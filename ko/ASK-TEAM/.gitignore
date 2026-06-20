@@ -1,0 +1,18 @@
+# ASK-Team — 생성 인덱스는 git에 추적하지 않는다.
+# 모든 INDEX.md는 `python askctl.py index`로 재생성되는 집계 뷰이며
+# 진실의 출처가 아니다(SoT = 각 항목 파일의 frontmatter).
+# git 미추적 → 동시 수정 충돌 0, stale 0.
+#
+# 이 파일은 AGENTSPECKIT/ 폴더 안에 위치하므로 패턴은 그 폴더 기준 상대경로다.
+
+workitems/INDEX.md
+conflicts/INDEX.md
+team/INDEX.md
+sessions/INDEX.md
+history/INDEX.md
+assumptions/INDEX.md
+notes/INDEX.md
+SOURCES/INDEX.md
+
+# 세션 스크래치(선택): 활성 세션은 추적하되, 로컬 임시 파일은 무시하려면 아래 주석 해제
+# sessions/*.local.md
