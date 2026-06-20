@@ -23,6 +23,28 @@ Codex · Claude Code · Cursor Agent
 
 ---
 
+## Two editions: Solo and Team
+
+Agent-Spec-Kit comes in two frameworks. **This document (README) is the Solo guide.** When several people develop at the same time, use **ASK-Team** instead.
+
+| | **Solo (ASK)** — this guide | **Team (ASK-Team)** |
+|---|---|---|
+| For | 1 developer / sequential, autonomous | multiple developers & AI agents, **concurrent** |
+| Progress | single `PROGRESS.md` cursor | `workitems/` + `sessions/<handle>--<WI>` |
+| History / assumptions / notes | single files | `history/` · `assumptions/` · `notes/` directories |
+| Indexes | hand-updated | generated (`askctl index`, git-untracked) |
+| Conflicts | n/a | `touches` + `askctl detect` + `conflicts/` |
+| Identity | not needed | `team/` + git identity + `askctl whoami` |
+| Kit folder | `en/AGENTSPECKIT/` · `ko/AGENTSPECKIT/` | `en/ASK-TEAM/` · `ko/ASK-TEAM/` |
+
+- **Solo guide:** keep reading this document. ([한국어](README.ko.md))
+- **Team guide:** [en/ASK-TEAM/README.md](en/ASK-TEAM/README.md) · [ko/ASK-TEAM/README.md](ko/ASK-TEAM/README.md)
+- For a single developer, Solo is lighter — use Team only when N people actually develop concurrently.
+
+> This repository's [OUTLINE.md](OUTLINE.md) is a **research-paper draft** about the framework (for authors); it is not needed to use the kit.
+
+---
+
 This document is a **framework user manual** that explains how to use the `AGENTSPECKIT/` folder (four prompts — `KICKOFF.md` · `ADOPT.md` · `DEVELOPINIT.md` · `AUDIT.md` + the input channel `SOURCES/`) with Codex · Claude Code · Cursor Agent, and the like.
 
 ## Quick Start

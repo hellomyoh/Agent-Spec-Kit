@@ -23,6 +23,28 @@ Codex · Claude Code · Cursor Agent
 
 ---
 
+## 두 가지 버전: Solo와 Team
+
+Agent-Spec-Kit은 두 가지 프레임워크로 제공됩니다. **이 문서(README)는 Solo 버전 사용 설명서**이며, 여러 명이 동시에 개발하는 팀은 **ASK-Team**을 사용하세요.
+
+| | **Solo (ASK)** — 이 문서 | **Team (ASK-Team)** |
+|---|---|---|
+| 대상 | 1인 / 순차·자율 개발 | 다수 개발자·AI 에이전트 **동시** 개발 |
+| 진행 상태 | 단일 `PROGRESS.md` 커서 | `workitems/` + `sessions/<handle>--<WI>` |
+| 이력 / 가정 / 노트 | 단일 파일 | `history/` · `assumptions/` · `notes/` 디렉토리 |
+| 인덱스 | 손으로 갱신 | 생성물 (`askctl index`, git 미추적) |
+| 충돌 | 해당 없음 | `touches` + `askctl detect` + `conflicts/` |
+| 식별 | 불필요 | `team/` + git identity + `askctl whoami` |
+| 키트 폴더 | `ko/AGENTSPECKIT/` · `en/AGENTSPECKIT/` | `ko/ASK-TEAM/` · `en/ASK-TEAM/` |
+
+- **Solo 가이드:** 이 문서를 계속 읽으세요. ([English](README.md))
+- **Team 가이드:** [ko/ASK-TEAM/README.md](ko/ASK-TEAM/README.md) · [en/ASK-TEAM/README.md](en/ASK-TEAM/README.md)
+- 1인 개발이면 Solo가 더 가볍습니다 — 실제로 N명이 동시에 개발할 때만 Team을 쓰세요.
+
+> 저장소의 [OUTLINE.md](OUTLINE.md)는 이 프레임워크에 관한 **연구 논문 초안**(저자용)이며, 키트 사용에는 필요 없습니다.
+
+---
+
 이 문서는 `AGENTSPECKIT/` 폴더(프롬프트 4종 `KICKOFF.md`·`ADOPT.md`·`DEVELOPINIT.md`·`AUDIT.md` + 입력 채널 `SOURCES/`)를 Codex · Claude Code · Cursor Agent 등에서 사용하는 방법을 설명하는 **프레임워크 사용 설명서**입니다.
 
 ## 빠른 시작
