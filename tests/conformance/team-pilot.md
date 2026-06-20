@@ -40,6 +40,7 @@ git rev-parse HEAD > /tmp/ask-team-base
 ```
 
 > bob이 작업하는 커밋은 `git -c user.email=bob@example.com -c user.name=bob commit ...` 로 작성자만 bob으로 둡니다(별도 머신 불필요).
+> 기본 브랜치 이름은 git 버전에 따라 `master`/`main`일 수 있습니다. 기본 브랜치가 필요한 명령은 `BASE=$(git symbolic-ref --short HEAD)`로 잡아 쓰세요(`main` 하드코딩 금지).
 
 ---
 
@@ -115,10 +116,11 @@ bob이 비겹침 workitem 하나(예: WI-redirect-cache)를 `feat/...` 브랜치
 ```bash
 cd /tmp/ask-team
 BR=$(git branch --all | grep -m1 -E 'feat/.*redirect' | tr -d ' *')
-# C7 owner == author: 해당 feature 브랜치 커밋 작성자가 bob (= team/bob.md 등록 email)
-git log "$BR" --format='%ae' | sort -u
-grep -q "$(git log "$BR" --format='%ae' | sort -u | head -1)" AGENTSPECKIT/team/bob.md \
-  && echo "C7 ok" || echo "C7 확인필요(owner↔author)"
+# C7 owner == author: 구현(feat) 커밋 작성자가 owner(bob)이고 team/에 등록돼 있는가.
+#   주의: merge/베이스 커밋이 섞이지 않도록 --no-merges + feat 커밋만 추린다
+#   (이미 master로 merge됐으면 `master..$BR`는 비므로 그 방식은 쓰지 말 것)
+git log "$BR" --no-merges --format='%ae | %s' | grep -E '\| feat'
+#   → 위에 찍힌 구현 커밋의 author email이 team/<owner>.md 의 emails와 일치하면 PASS (리뷰어 확인)
 # C8 INTEGRATE가 history 이벤트 파일 생성
 ls AGENTSPECKIT/history/**/HIST-*.md >/dev/null 2>&1 && echo "C8 ok" || echo "C8 FAIL"
 # C9 통합 후에도 고정 INDEX 미커밋

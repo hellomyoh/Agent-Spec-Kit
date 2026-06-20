@@ -33,8 +33,11 @@ done
 # C2 기능명세 + 인덱스
 test -f AGENTSPECKIT/features/README.md && ls AGENTSPECKIT/features/feature-*.md >/dev/null 2>&1 && echo "C2 ok" || echo "C2 FAIL"
 # C3 산출물이 AGENTSPECKIT/ + 루트3파일 밖으로 새지 않음
+#   주의: 접두 매칭이라 `^AGENTSPECKIT/` 와 루트3파일을 각각 제외한다
+#   (anchor를 한 alternation에 묶으면 'AGENTSPECKIT/' 정확일치만 돼 모든 산출물이 leak로 오판됨)
 git diff --name-only "$(cat /tmp/ask-solo-base)" HEAD \
-  | grep -vE '^(AGENTSPECKIT/|README\.md|AGENTS\.md|CLAUDE\.md)$' \
+  | grep -vE '^AGENTSPECKIT/' \
+  | grep -vE '^(README|AGENTS|CLAUDE)\.md$' \
   | grep . && echo "C3 FAIL (위 파일이 범위 밖)" || echo "C3 ok"
 # C4 REQUIREMENTS 동결 (반영 완료 / Applied)
 grep -iE 'REQUIREMENTS.*(반영 완료|Applied)' AGENTSPECKIT/SOURCES/INDEX.md && echo "C4 ok" || echo "C4 FAIL"
@@ -89,6 +92,7 @@ test "$(git branch --show-current)" != "main" -a "$(git branch --show-current)" 
 | C11 | 작업 브랜치(main 직접 아님) | ☐ |
 
 > C9는 "명령 문자열이 기록됐는가"를 봅니다. 리뷰어가 그 명령이 실제 테스트 실행인지 1줄 확인합니다(실행 없이 "통과" 주장 = FAIL).
+> **false-green 주의:** `python -m unittest`가 테스트를 못 찾으면 `Ran 0 tests ... OK`로 *통과처럼* 보입니다. 기록된 결과에 **실행 테스트 수 > 0**인지 확인하세요(0이면 미발견 — `tests/__init__.py` 등 디스커버리 문제).
 
 ---
 
