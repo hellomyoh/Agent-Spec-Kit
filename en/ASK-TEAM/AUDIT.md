@@ -17,7 +17,7 @@ In addition to the general drift checks of the solo kit [AUDIT.md](../AGENTSPECK
 # 2. Audit principles
 
 1. Don't modify functional code.
-2. **Fix mechanical mismatches immediately** (broken links, obvious status typos). But don't touch the generated INDEX; regenerate with `askctl index`.
+2. **Fix mechanical mismatches immediately** (broken links, obvious status typos). Since there are no fixed INDEX files, there is no index-regeneration step.
 3. **Only record semantic drift** (code↔spec via DEVELOP authority diagnosis, touches overlap via conflicts/).
 4. Record audit results in `history/YYYY/MM/HIST-*.md` as an `audit` event (maintainer).
 
@@ -29,8 +29,8 @@ In addition to the general drift checks of the solo kit [AUDIT.md](../AGENTSPECK
 plan↔actual, assumption lifetime, spec↔code sample, index integrity, links/orphans, history hygiene, README, SOURCES, always-loaded bloat, review logs (sources real), backlog, artifact language consistency.
 **Team difference:** "assumptions/history/notes" check the `assumptions/`·`history/`·`notes/` directories, not a single file.
 
-## 3.2 Index freshness (generated)
-* Run `askctl index` and check whether the generated result matches the current item files (mismatch = a signal that someone hand-edited the INDEX or committed it stale — check `.gitignore` to ensure INDEX isn't being tracked by git).
+## 3.2 Confirm absence of fixed INDEX
+* Has someone created and committed a fixed index file like `INDEX.md` — this kit doesn't keep fixed INDEX (if found, report as a deletion candidate). The listing·status is always read directly from item file frontmatter.
 
 ## 3.3 workitem hygiene
 * workitems long stuck in `claimed`/`in_progress` (e.g. 14 days+) — ask the owner to re-confirm status.
@@ -39,7 +39,7 @@ plan↔actual, assumption lifetime, spec↔code sample, index integrity, links/o
 * Orphan workitems (not linked to any PLAN Phase·source).
 
 ## 3.4 Undetected touches overlap (core)
-* Cross-run `askctl detect` over all in-flight (`claimed`/`in_progress`) workitems.
+* Read the `touches` of all in-flight (`claimed`/`in_progress`) workitems and cross-check pairwise (performed directly by the agent).
   * **contracts overlap with no `conflicts/CF` and no serialization** → report immediately (maintainer serialization needed).
   * **modules overlap with `conflicts/CF` unregistered** → register CF as a follow-up.
 
@@ -59,7 +59,8 @@ plan↔actual, assumption lifetime, spec↔code sample, index integrity, links/o
 
 | Finding | Handling |
 |---|---|
-| broken link / status typo / index mismatch | fix immediately (`askctl index`) |
+| broken link / status typo | fix immediately |
+| fixed INDEX file committed | report as a deletion candidate (no fixed INDEX) |
 | undetected contracts overlap | report immediately → maintainer serialization (INTEGRATE §3) |
 | undetected modules overlap | register `conflicts/CF` as a follow-up |
 | neglected workitem / unregistered owner | re-confirm with owner·maintainer, state in the report |
@@ -76,7 +77,7 @@ Register follow-ups in `workitems/` (proposed) or PLAN, and record the whole aud
 ```md
 # Team document audit result
 ## Audit scope / sampling criteria
-## Immediate fixes (mechanical) / index regeneration result
+## Immediate fixes (mechanical)
 ## Undetected touches overlap (contracts STOP / modules WARN)
 ## workitem hygiene (neglected / unregistered owner / orphan / broken links)
 ## Identity·permission integrity (unregistered author / owner≠author / single-writer violation)
@@ -90,7 +91,7 @@ Register follow-ups in `workitems/` (proposed) or PLAN, and record the whole aud
 
 # 6. Completion conditions
 
-* §3 checks complete (state sampling criteria), `askctl index`·`askctl detect` actually run
-* Mechanical mismatches fixed immediately + index regenerated
+* §3 checks complete (state sampling criteria), pairwise cross-detection of in-flight workitem `touches` performed
+* Mechanical mismatches fixed immediately
 * Undetected overlaps·single-writer violations·unregistered authors compiled in the report and follow-ups
 * `audit` event recorded in `history/`

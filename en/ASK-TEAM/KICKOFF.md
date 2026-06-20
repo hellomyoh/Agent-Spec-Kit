@@ -5,8 +5,9 @@ The goal of this stage is not actual development, but to build the **coordinatio
 
 > [CONVENTIONS.md](CONVENTIONS.md) takes precedence on conventions, [SCHEMAS.md](SCHEMAS.md) on schemas.
 > For the **detailed format** of feature-spec/persona/QA documents, follow §6·§8 of the solo kit [KICKOFF.md](../AGENTSPECKIT/KICKOFF.md) as-is — here we specify **only the team-structure differences**.
+> This kit uses markdown + git only (no additional runtime). The "identity check"·"reading the listing" are performed directly by the agent using `git` and file reads.
 
-> **No re-initialization:** if REQUIREMENTS' status in `SOURCES/INDEX.md` is already `applied`, do not run KICKOFF again.
+> **No re-initialization:** if REQUIREMENTS' status (`SRC-*.meta.md`) is already `applied`, do not run KICKOFF again.
 > **This prompt is run by the maintainer** (initialization = fixing global contracts·structure).
 
 ---
@@ -17,8 +18,7 @@ Except for the root 3 files (project `README.md`·`AGENTS.md`·`CLAUDE.md`), cre
 
 ```text
 AGENTSPECKIT/
-  KICKOFF.md ADOPT.md DEVELOP.md INTEGRATE.md AUDIT.md   # copied prompts
-  askctl.py  .gitignore
+  KICKOFF.md ADOPT.md DEVELOP.md INTEGRATE.md AUDIT.md   # copied prompts (markdown only)
   ARCHITECTURE.md  PLAN.md  PROGRESS.md(compat stub)
   team/        <maintainer-handle>.md                    # ★ at least 1 (the initializer) registered
   workitems/   WI-*.md                                   # initial work breakdown (status: proposed)
@@ -32,7 +32,7 @@ AGENTSPECKIT/
   templates/
 ```
 
-* Don't create any `INDEX.md` by hand — `python askctl.py index` generates them (§7).
+* **Don't create fixed INDEX files.** Each directory's listing·status has the item file's frontmatter as its SoT, and the agent reads it directly (§7).
 * Don't create the solo kit's single files (`HISTORY.md`/`ASSUMPTIONS.md`/`NOTES.md`/`TODO.md`). Each is replaced by `history/`·`assumptions/`·`notes/`·workitem `proposed` respectively.
 
 ---
@@ -46,9 +46,9 @@ Follow §2 of the solo kit [KICKOFF.md](../AGENTSPECKIT/KICKOFF.md) (question cr
 
 # 3. Initialization work order
 
-Update progress at the end of each step. If initialization is interrupted, the next session takes over (state is read from the index that `workitems/` and the `PROGRESS.md` stub point to).
+Update progress at the end of each step. If initialization is interrupted, the next session takes over by reading `workitems/` and the `PROGRESS.md` stub.
 
-1. **Register maintainer** — register the initializer as `team/<handle>.md` (`role: maintainer`). Confirm git identity matching with `python askctl.py whoami`.
+1. **Register maintainer** — register the initializer as `team/<handle>.md` (`role: maintainer`). Confirm that `git config user.email` is in that file's `emails` (identity matching).
 2. Analyze `SOURCES/REQUIREMENTS.md` — set the `SRC-*.meta.md` status to `under_review`. If there are other submitted materials, register them too.
 3. Confirm whether mandatory requirements are met / ask if ambiguous (§2).
 4. Organize project purpose·scope.
@@ -58,7 +58,7 @@ Update progress at the end of each step. If initialization is interrupted, the n
 8. **Work breakdown → `workitems/WI-*.md`** (status: `proposed`). Fill each WI's `touches` (contracts/modules)·`feature`·`source_refs`. The initial backlog is the workitem list.
 9. Write QA documents (`qa/`) (format per solo §8).
 10. Write user docs (`docs/`).
-11. Important design decisions → `adr/ADR-<YYYYMMDD>-<slug>.md` + INDEX (generated).
+11. Important design decisions → `adr/ADR-<YYYYMMDD>-<slug>.md`.
 12. Finalize `ARCHITECTURE.md`.
 13. Draft the project `README.md` (root).
 14. **Write `AGENTS.md`** (root) — including the team conventions (§4 below).
@@ -66,10 +66,8 @@ Update progress at the end of each step. If initialization is interrupted, the n
 16. Write the `PROGRESS.md` compat stub (§5).
 17. Initial autonomous judgments → `assumptions/ASM-*.md`.
 18. Set the REQUIREMENTS status in `SOURCES/SRC-*.meta.md` to `applied` (**freeze point**), link applied artifacts.
-19. Write `CLAUDE.md` (root — solo §11 malfunction-prevention + team items: "global contracts are maintainer-only, don't touch INDEX").
-20. **Check `.gitignore`** — exclude every `INDEX.md`.
-21. Run `python askctl.py index` → generate the index.
-22. Report initialization completion (§8).
+19. Write `CLAUDE.md` (root — solo §11 malfunction-prevention + team items: "global contracts are maintainer-only, progress state is in the workitems frontmatter").
+20. Report initialization completion (§8).
 
 ---
 
@@ -78,13 +76,14 @@ Update progress at the end of each step. If initialization is interrupted, the n
 In addition to the solo kit §9·§10 content, **you must** include:
 
 ```text
-- Roles: maintainer (global contracts·INTEGRATE·arbitration) / contributor (workitem claim·work). Confirm role with `askctl whoami` at session start.
-- Identity: anchored to git identity. owner is the handle in team/<handle>.md. Session-Id / Co-Authored-By trailers on commits.
-- Progress: not PROGRESS.md but workitems/WI-*.md (+generated INDEX). The session cursor is sessions/<handle>--<WI-id>.md.
-- Conflicts: `askctl detect <WI-id>` right after claim·right before integrate. contracts overlap=STOP, modules overlap=register conflicts/CF.
-- Global contracts (ARCHITECTURE/PLAN): maintainer single-writer. Changes via ADR + detect notice + merge-first (serialization).
-- INDEX.md: generated, untracked by git. Don't touch. Run `askctl index` first at session start.
-- Atomic commit: only code + that workitem's work-scoped files. Exclude ARCHITECTURE/PLAN/history/INDEX.
+- No runtime: this kit uses markdown + git only. It requires no additional tool·binary.
+- Roles: maintainer (global contracts·INTEGRATE·arbitration) / contributor (workitem claim·work). Confirm identity at session start.
+- Identity: anchored to git identity. The agent matches `git config user.email` against the emails in team/<handle>.md. owner is the handle. Session-Id / Co-Authored-By trailers on commits.
+- Progress: not PROGRESS.md but the workitems/WI-*.md frontmatter (no fixed INDEX — read directly). The session cursor is sessions/<handle>--<WI-id>.md.
+- Conflicts: right after claim·right before integrate, read the shared branch's workitems/*.md (claimed/in_progress) and cross-check touches. contracts overlap=STOP, modules overlap=register conflicts/CF.
+- Global contracts (ARCHITECTURE/PLAN): maintainer single-writer. Changes via ADR + detection notice + merge-first (serialization).
+- Read the listing directly from frontmatter. Don't create fixed INDEX files. If a human-readable table is needed, generate one then to show but don't commit it as a file.
+- Atomic commit: only code + that workitem's work-layer files. Exclude ARCHITECTURE/PLAN/history.
 - New event = new file: don't append to history/assumptions/conflicts, create a file.
 - Integration is done by the maintainer via INTEGRATE.md. Contributors go up to PR.
 ```
@@ -96,13 +95,14 @@ In addition to the solo kit §9·§10 content, **you must** include:
 ```md
 # Progress (multi-worker mode)
 
-The truth of progress is not this file but the indexes below. Don't record work directly in this file.
+The truth of progress is not this file but the frontmatter in each item file. Don't record work directly in this file.
+We don't keep fixed INDEX files — the agent reads the *.md frontmatter of the directories below directly.
 
-- workitems/INDEX.md  — work status (generated by `askctl index`)
-- sessions/INDEX.md   — per-session resume cursor
-- history/INDEX.md     — completion history
+- workitems/*.md   — work status (SoT)
+- sessions/*.md    — per-session resume cursor
+- history/**       — completion history
 
-Session start: `python AGENTSPECKIT/askctl.py whoami && python AGENTSPECKIT/askctl.py index`
+Session start: the agent confirms identity via `git config user.email` and reads the item files it needs for the current task directly.
 ```
 
 ---
@@ -113,20 +113,19 @@ Follow solo kit §4·§5·§6 as-is (`personas/` instances, `discussion/` logs, 
 
 ---
 
-# 7. Index generation
+# 7. Reading the listing·status (no fixed INDEX)
 
-`python askctl.py index` generates the INDEX.md of `workitems`·`conflicts`·`team`·`sessions`·`history`·`assumptions`·`notes`·`SOURCES` from frontmatter. Don't create or edit them by hand (they get overwritten). They are not committed to git (`.gitignore`).
+We don't keep a separate INDEX file for progress·the work list. The agent **reads the `*.md` frontmatter directly** from directories like `workitems/`·`assumptions/`·`history/`·`SOURCES/`·`team/` to understand them (selective loading — only what's needed). If you need a human-readable aggregate table, ask the agent at that point and receive it as markdown (don't force-generate·commit it as a file — eliminates staleness·concurrent-edit conflicts at the source).
 
 ---
 
 # 8. Completion conditions / report
 
-* At least 1 maintainer registered in `team/`, `askctl whoami` succeeds
+* At least 1 maintainer registered in `team/`, `git config user.email` matches that file
 * `ARCHITECTURE.md`·`PLAN.md`·project `README.md`·`AGENTS.md`·`CLAUDE.md` created
 * `features/*.md` (+ `discussion/` logs for non-trivial features)·`qa/`·`docs/`·`adr/` created
 * **Initial `workitems/WI-*.md` (status: proposed) created, each `touches` filled**
 * REQUIREMENTS in `SOURCES/` frozen as `applied`, `SRC-*.meta.md` written
-* INDEX excluded via `.gitignore`, `askctl index` run once successfully
 
 Report format:
 

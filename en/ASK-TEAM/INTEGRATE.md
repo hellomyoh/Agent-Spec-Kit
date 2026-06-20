@@ -1,37 +1,31 @@
 # INTEGRATE.md — Maintainer integration prompt
 
 The **maintainer-only** procedure for merging multiple contributors' feature branches into the shared branch.
-It covers semantic-conflict re-detection, global-contract serialization, history recording, index regeneration, and full regression.
+It covers semantic-conflict re-detection, global-contract serialization, history recording, and full regression.
 [CONVENTIONS.md](CONVENTIONS.md) takes precedence on conventions.
 
-> Only `role: maintainer` runs this prompt. Confirm your role first with `python AGENTSPECKIT/askctl.py whoami`.
+> This kit uses markdown + git only. The "identity check"·"detection" are performed directly by the agent using `git` and file reads.
+> Only `role: maintainer` runs this prompt.
 
 ---
 
 ## 0. Session start (mandatory)
 
-```bash
-python AGENTSPECKIT/askctl.py whoami    # confirm role: maintainer
-python AGENTSPECKIT/askctl.py index     # regenerate the index
-```
-
-If `role` is not maintainer, stop and delegate to a maintainer.
+1. **Identity check** — match `git config user.email` against `team/*.md`. If `role` is not `maintainer`, stop and delegate to a maintainer.
+2. **Survey the state** — gather the workitems with `status: review` and their PRs/branches.
 
 ---
 
 ## 1. Collect integration targets
 
-* Gather the workitems with `status: review` and their PRs/branches from `workitems/INDEX.md`.
+* Gather the workitems with `status: review` and their PRs/branches from `workitems/*.md`.
 * Check each workitem's `touches` (contracts/modules) and `depends_on`.
 
 ---
 
-## 2. Re-detect conflicts (before merge — mandatory)
+## 2. Re-detect conflicts (before merge — mandatory, performed by the agent)
 
-```bash
-# Cross re-detect across all integration candidates
-python AGENTSPECKIT/askctl.py detect <WI-id>   # per candidate
-```
+Exhaustively cross-check the `touches` of the integration candidates + all other in-flight (`claimed`/`in_progress`) workitems.
 
 * **contracts overlap (STOP):** two or more touch the same global contract → handle via §3 serialization. Do not merge them concurrently.
 * **modules overlap (WARN):** check whether `conflicts/CF-*.md` has a resolution decision. If not, register it and proceed after agreeing on order with the owners.
@@ -55,7 +49,7 @@ If there's a workitem with `touches.contracts`, handle **it first**.
 Merge the PRs in serialization order (contract change → dependent workitems → independent workitems).
 
 * Resolve git conflicts via the normal procedure.
-* Generated `INDEX.md` is untracked by git, so it's not a merge-conflict target.
+* Since there are no fixed INDEX files, INDEX merge conflicts don't occur.
 * After merge, change each `WI-*.md` status to `done`.
 
 ---
@@ -74,24 +68,15 @@ For a source whose requirement is fully applied via merge, change `status` in `S
 
 ---
 
-## 7. Regenerate index & full regression
-
-```bash
-python AGENTSPECKIT/askctl.py index     # regenerate workitems/history/assumptions/notes/sources/team INDEX
-```
+## 7. Full regression & PROGRESS
 
 * **Actually run the full regression tests** — individual contributors only saw their own part, so verify the whole at integration time. Record the results in history.
 * Sample-check that `ARCHITECTURE.md` contracts are upheld in recent code (if violated, `conflicts/` or a follow-up workitem).
+* Keep `PROGRESS.md` (compatibility stub) pointing at the item files — state that the truth of progress is the `workitems/*.md` frontmatter (no fixed INDEX).
 
 ---
 
-## 8. Update PROGRESS digest (optional)
-
-Keep `PROGRESS.md` (compatibility entry point) pointing at the index. Update the active workitem/session summary, but state that the truth of progress is `workitems/INDEX.md`.
-
----
-
-## 9. Completion report format
+## 8. Completion report format
 
 ```md
 # Integration result (INTEGRATE)
@@ -107,6 +92,6 @@ Keep `PROGRESS.md` (compatibility entry point) pointing at the index. Update the
 
 ---
 
-## 10. Relationship to periodic audit
+## 9. Relationship to periodic audit
 
 INTEGRATE handles *merge-time consistency*; AUDIT handles *recovery of gradual drift*. Before a Phase completion/release, run AUDIT separately to check orphan workitems, undetected `touches` overlaps, neglected `SRC-*.meta` (unapplied), broken links, and stale sessions.

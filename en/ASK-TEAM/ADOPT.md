@@ -13,7 +13,7 @@ The artifact structure is identical to [KICKOFF.md](KICKOFF.md), so once adoptio
 
 1. If there are existing artifacts in `AGENTSPECKIT/`, it's **already adopted** → don't re-adopt, just report.
 2. Inventory whether root `README`/`AGENTS.md`/`CLAUDE.md`/`.gitignore` exist. Don't overwrite existing files; merge or confirm before proceeding.
-3. **Register maintainer** — register the runner as `team/<handle>.md` (`role: maintainer`). Confirm with `python askctl.py whoami`.
+3. **Register maintainer** — register the runner as `team/<handle>.md` (`role: maintainer`). Confirm that `git config user.email` is in that file's `emails` (identity matching).
 
 ---
 
@@ -27,19 +27,17 @@ The artifact structure is identical to [KICKOFF.md](KICKOFF.md), so once adoptio
 6. **Remaining/unimplemented work → decompose into `workitems/WI-*.md` (proposed)**, fill `touches`. Already-implemented things go as feature as-built; future things go as workitems.
 7. If `SOURCES/REQUIREMENTS.md` exists, use it as future goals/unimplemented requirements. If it conflicts with as-built, ask. On adoption completion, register in `SRC-*.meta.md` and freeze as `applied`.
 8. Reflect the current state in `PLAN.md` (stable roadmap) as done/in-progress/remaining. Write the `PROGRESS.md` compat stub ([KICKOFF.md](KICKOFF.md) §5).
-9. Write/merge `AGENTS.md` (team conventions — KICKOFF §4)·`CLAUDE.md`. Exclude INDEX via `.gitignore`.
-10. Run `python askctl.py index`.
-11. Report adoption completion (below).
+9. Write/merge `AGENTS.md` (team conventions — KICKOFF §4)·`CLAUDE.md`. (No fixed INDEX files·additional runtime.)
+10. Report adoption completion (below).
 
 ---
 
 # 3. Completion conditions / report
 
-* maintainer registered in `team/`, `askctl whoami` succeeds
+* maintainer registered in `team/`, `git config user.email` matching succeeds
 * `ARCHITECTURE.md` (reverse-extracted)·as-built `features/*.md` (code-based)·test baseline (`history/`) created
 * Unimplemented/unread work registered in `workitems/` (proposed, including `touches`)
 * code↔intent gap list compiled
-* `.gitignore`·`askctl index` applied
 
 Report format:
 
@@ -55,4 +53,4 @@ Report format:
 ## Next steps (DEVELOP.md guidance)
 ```
 
-> Adoption is also multi-stage, so it can be interrupted. On interruption, take over from the index that `workitems/` and `history/`, and the `PROGRESS` stub point to.
+> Adoption is also multi-stage, so it can be interrupted. On interruption, take over by reading the item file frontmatter in `workitems/`·`history/` (no fixed INDEX).

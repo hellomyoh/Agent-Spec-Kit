@@ -1,11 +1,10 @@
 # SCHEMAS.md — frontmatter 스키마
 
-모든 조율층/이벤트 항목 파일은 YAML frontmatter(`---`로 감싼 블록)로 시작합니다. `askctl.py`가 이 frontmatter를 스캔해 INDEX를 생성하고 충돌을 검출합니다.
+모든 조율층/이벤트 항목 파일은 YAML frontmatter(`---`로 감싼 블록)로 시작합니다. 에이전트는 이 frontmatter를 **직접 읽어** 목록·상태를 파악하고 충돌을 검출합니다(고정 INDEX 파일을 두지 않음 — CONVENTIONS §3).
 
-> **도구 파서 제약 (중요):** `askctl.py`는 의존성 없는 경량 파서를 씁니다. 다음만 지원합니다 —
+> **작성 권장 (중요):** 사람과 에이전트 모두 안정적으로 읽을 수 있도록 단순한 형태로 적으세요 —
 > ① `key: value`(스칼라), ② `key: [a, b]`(**인라인 리스트**), ③ 한 단계 중첩 맵(`touches:` 아래 들여쓴 `contracts: [..]`).
-> 리스트는 **반드시 인라인(`[...]`)** 으로 적으세요. 블록 리스트(`- item` 여러 줄)도 파싱되지만, 인라인을 권장합니다.
-> 값에 `:`나 `#`가 들어가면 따옴표로 감싸세요.
+> 리스트는 **인라인(`[...]`)** 을 권장합니다. 값에 `:`나 `#`가 들어가면 따옴표로 감싸세요.
 
 ---
 
@@ -15,7 +14,7 @@
 ---
 id: WI-20260620-admin-role
 title: Add admin role model
-owner: munyeong                 # team/<handle>.md 의 handle (askctl이 검증)
+owner: munyeong                 # team/<handle>.md 의 handle (에이전트가 검증)
 status: claimed                 # proposed | ready | claimed | in_progress | review | done | blocked
 branch: feat/WI-20260620-admin-role
 feature: features/feature-admin.md

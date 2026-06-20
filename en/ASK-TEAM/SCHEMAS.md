@@ -1,11 +1,10 @@
 # SCHEMAS.md — frontmatter schemas
 
-Every coordination-layer / event item file starts with YAML frontmatter (a block fenced by `---`). `askctl.py` scans this frontmatter to generate INDEX files and detect conflicts.
+Every coordination-layer / event item file starts with YAML frontmatter (a block fenced by `---`). The agent **reads this frontmatter directly** to understand the listing·status and to detect conflicts (we don't keep fixed INDEX files — CONVENTIONS §3).
 
-> **Tool parser constraint (important):** `askctl.py` uses a dependency-free lightweight parser. It supports only —
+> **Authoring guidance (important):** write frontmatter in a simple form so both humans and agents can read it reliably —
 > ① `key: value` (scalar), ② `key: [a, b]` (**inline list**), ③ one level of nested map (`contracts: [..]` indented under `touches:`).
-> Write lists **as inline (`[...]`)**. Block lists (multiple `- item` lines) parse too, but inline is recommended.
-> If a value contains `:` or `#`, wrap it in quotes.
+> Lists are recommended **as inline (`[...]`)**. If a value contains `:` or `#`, wrap it in quotes.
 
 ---
 
@@ -15,7 +14,7 @@ Every coordination-layer / event item file starts with YAML frontmatter (a block
 ---
 id: WI-20260620-admin-role
 title: Add admin role model
-owner: munyeong                 # handle from team/<handle>.md (validated by askctl)
+owner: munyeong                 # handle from team/<handle>.md (validated by the agent)
 status: claimed                 # proposed | ready | claimed | in_progress | review | done | blocked
 branch: feat/WI-20260620-admin-role
 feature: features/feature-admin.md

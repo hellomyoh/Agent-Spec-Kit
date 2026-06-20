@@ -17,7 +17,7 @@ solo 킷 [AUDIT.md](../AGENTSPECKIT/AUDIT.md)의 일반 표류 점검(계획↔�
 # 2. 감사 원칙
 
 1. 기능 코드를 수정하지 않습니다.
-2. **기계적 불일치는 즉시 수정**(끊어진 링크, 명백한 상태 오기). 단 생성 INDEX는 손대지 않고 `askctl index`로 재생성.
+2. **기계적 불일치는 즉시 수정**(끊어진 링크, 명백한 상태 오기). 고정 INDEX 파일이 없으므로 인덱스 재생성 단계는 없습니다.
 3. **의미적 표류는 기록만**(코드↔명세는 DEVELOP 권위 진단, touches 겹침은 conflicts/로).
 4. 감사 결과는 `history/YYYY/MM/HIST-*.md`에 `audit` 이벤트로 기록(maintainer).
 
@@ -29,8 +29,8 @@ solo 킷 [AUDIT.md](../AGENTSPECKIT/AUDIT.md)의 일반 표류 점검(계획↔�
 계획↔실제, 가정 수명, 명세↔코드 표본, 인덱스 무결성, 링크/고아, 이력 위생, README, SOURCES, 항상로드 비대화, 검토 로그(출처 실재), 백로그, 산출물 언어 일관성.
 **팀 차이:** "가정/이력/노트"는 단일 파일이 아니라 `assumptions/`·`history/`·`notes/` 디렉토리를 점검합니다.
 
-## 3.2 인덱스 신선도 (생성물)
-* `askctl index`를 실행해 생성 결과가 현재 항목 파일과 일치하는가(불일치 = 누군가 INDEX를 손으로 고쳤거나 오래된 채 커밋했을 신호 — git에 INDEX가 추적되고 있지 않은지 `.gitignore` 확인).
+## 3.2 고정 INDEX 부재 확인
+* 누군가 `INDEX.md` 같은 고정 인덱스 파일을 만들어 커밋하지 않았는가 — 이 킷은 고정 INDEX를 두지 않습니다(발견 시 삭제 후보로 보고). 목록·상태는 항상 항목 파일 frontmatter에서 직접 읽습니다.
 
 ## 3.3 workitem 위생
 * `claimed`/`in_progress` 상태로 장기 방치된(예: 14일+) workitem — owner에게 상태 재확인.
@@ -39,7 +39,7 @@ solo 킷 [AUDIT.md](../AGENTSPECKIT/AUDIT.md)의 일반 표류 점검(계획↔�
 * 고아 workitem(어떤 PLAN Phase·source와도 연결 안 됨).
 
 ## 3.4 미검출 touches 겹침 (핵심)
-* in-flight(`claimed`/`in_progress`) workitem 전체에 대해 `askctl detect`를 교차 실행.
+* in-flight(`claimed`/`in_progress`) workitem 전체의 `touches`를 읽어 쌍별로 교차합니다(에이전트가 직접 수행).
   * **contracts 겹침인데 `conflicts/CF`도 없고 직렬화도 안 된 쌍** → 즉시 보고(maintainer 직렬화 필요).
   * **modules 겹침인데 `conflicts/CF` 미등재** → CF 등재를 후속 작업으로.
 
@@ -59,7 +59,8 @@ solo 킷 [AUDIT.md](../AGENTSPECKIT/AUDIT.md)의 일반 표류 점검(계획↔�
 
 | 발견 | 처리 |
 |---|---|
-| 끊어진 링크 / 상태 오기 / 인덱스 불일치 | 즉시 수정(`askctl index`) |
+| 끊어진 링크 / 상태 오기 | 즉시 수정 |
+| 고정 INDEX 파일이 커밋됨 | 삭제 후보로 보고(고정 INDEX 금지) |
 | 미검출 contracts 겹침 | 즉시 보고 → maintainer 직렬화(INTEGRATE §3) |
 | 미검출 modules 겹침 | `conflicts/CF` 등재를 후속 작업으로 |
 | 방치 workitem / 미등록 owner | owner·maintainer에게 재확인, 보고서에 명시 |
@@ -76,7 +77,7 @@ solo 킷 [AUDIT.md](../AGENTSPECKIT/AUDIT.md)의 일반 표류 점검(계획↔�
 ```md
 # 팀 문서 감사 결과
 ## 감사 범위 / 샘플링 기준
-## 즉시 수정(기계적) / 인덱스 재생성 결과
+## 즉시 수정(기계적)
 ## 미검출 touches 겹침 (contracts STOP / modules WARN)
 ## workitem 위생 (방치 / 미등록 owner / 고아 / 끊어진 링크)
 ## 식별·권한 무결성 (미등록 author / owner≠author / single-writer 위반)
@@ -90,7 +91,7 @@ solo 킷 [AUDIT.md](../AGENTSPECKIT/AUDIT.md)의 일반 표류 점검(계획↔�
 
 # 6. 완료 조건
 
-* 3절 점검 완료(샘플링은 기준 명시), `askctl index`·`askctl detect` 실제 실행
-* 기계적 불일치 즉시 수정 + 인덱스 재생성
+* 3절 점검 완료(샘플링은 기준 명시), in-flight workitem `touches` 쌍별 교차 검출 수행
+* 기계적 불일치 즉시 수정
 * 미검출 겹침·single-writer 위반·미등록 author가 보고서와 후속 작업에 정리됨
 * `history/`에 `audit` 이벤트 기록

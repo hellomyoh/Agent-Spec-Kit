@@ -32,9 +32,10 @@ Agent-Spec-Kit comes in two frameworks. **This document (README) is the Solo gui
 | For | 1 developer / sequential, autonomous | multiple developers & AI agents, **concurrent** |
 | Progress | single `PROGRESS.md` cursor | `workitems/` + `sessions/<handle>--<WI>` |
 | History / assumptions / notes | single files | `history/` · `assumptions/` · `notes/` directories |
-| Indexes | hand-updated | generated (`askctl index`, git-untracked) |
-| Conflicts | n/a | `touches` + `askctl detect` + `conflicts/` |
-| Identity | not needed | `team/` + git identity + `askctl whoami` |
+| Indexes | hand-updated | none — frontmatter read directly (no index files) |
+| Conflicts | n/a | `touches` + `conflicts/` (agent cross-checks) |
+| Identity | not needed | `team/` + git identity (`git config user.email`) |
+| Runtime | none | none (markdown + git only) |
 | Kit folder | `en/AGENTSPECKIT/` · `ko/AGENTSPECKIT/` | `en/ASK-TEAM/` · `ko/ASK-TEAM/` |
 
 - **Solo guide:** keep reading this document. ([한국어](README.ko.md))

@@ -32,9 +32,10 @@ Agent-Spec-Kit은 두 가지 프레임워크로 제공됩니다. **이 문서(RE
 | 대상 | 1인 / 순차·자율 개발 | 다수 개발자·AI 에이전트 **동시** 개발 |
 | 진행 상태 | 단일 `PROGRESS.md` 커서 | `workitems/` + `sessions/<handle>--<WI>` |
 | 이력 / 가정 / 노트 | 단일 파일 | `history/` · `assumptions/` · `notes/` 디렉토리 |
-| 인덱스 | 손으로 갱신 | 생성물 (`askctl index`, git 미추적) |
-| 충돌 | 해당 없음 | `touches` + `askctl detect` + `conflicts/` |
-| 식별 | 불필요 | `team/` + git identity + `askctl whoami` |
+| 인덱스 | 손으로 갱신 | 없음 — frontmatter 직접 읽기 (인덱스 파일 없음) |
+| 충돌 | 해당 없음 | `touches` + `conflicts/` (에이전트가 교차) |
+| 식별 | 불필요 | `team/` + git identity (`git config user.email`) |
+| 런타임 | 없음 | 없음 (markdown + git만) |
 | 키트 폴더 | `ko/AGENTSPECKIT/` · `en/AGENTSPECKIT/` | `ko/ASK-TEAM/` · `en/ASK-TEAM/` |
 
 - **Solo 가이드:** 이 문서를 계속 읽으세요. ([English](README.md))

@@ -13,7 +13,7 @@
 
 1. `AGENTSPECKIT/`에 기존 산출물이 있으면 **이미 채택됨** → 재채택하지 말고 보고만.
 2. 루트 `README`/`AGENTS.md`/`CLAUDE.md`/`.gitignore` 존재 여부 인벤토리. 기존 파일은 덮어쓰지 말고 merge하거나 확인 후 진행.
-3. **maintainer 등록** — 실행자를 `team/<handle>.md`(`role: maintainer`)로. `python askctl.py whoami` 확인.
+3. **maintainer 등록** — 실행자를 `team/<handle>.md`(`role: maintainer`)로. `git config user.email`이 그 파일의 `emails`에 들어가는지 확인(신원 매칭).
 
 ---
 
@@ -27,19 +27,17 @@
 6. **남은/미구현 작업 → `workitems/WI-*.md`(proposed)** 로 분해, `touches` 채움. 이미 구현된 것은 feature as-built로, 앞으로 할 것은 workitem으로.
 7. `SOURCES/REQUIREMENTS.md`가 있으면 미래 목표/미구현 요구로 사용. as-built와 충돌하면 질문. 채택 완료 시 `SRC-*.meta.md`에 등록하고 `applied`로 동결.
 8. `PLAN.md`(안정 로드맵)에 현재 상태를 done/in-progress/remaining으로 반영. `PROGRESS.md` 호환 스텁 작성([KICKOFF.md](KICKOFF.md) 5절).
-9. `AGENTS.md`(팀 규약 — KICKOFF 4절)·`CLAUDE.md` 작성/merge. `.gitignore`로 INDEX 제외.
-10. `python askctl.py index` 실행.
-11. 채택 완료 보고(아래).
+9. `AGENTS.md`(팀 규약 — KICKOFF 4절)·`CLAUDE.md` 작성/merge. (고정 INDEX 파일·추가 런타임 없음.)
+10. 채택 완료 보고(아래).
 
 ---
 
 # 3. 완료 조건 / 보고
 
-* `team/`에 maintainer 등록, `askctl whoami` 성공
+* `team/`에 maintainer 등록, `git config user.email` 매칭 성공
 * `ARCHITECTURE.md`(역추출)·as-built `features/*.md`(코드 근거)·테스트 baseline(`history/`) 생성
 * 미구현/미독파 작업이 `workitems/`(proposed, `touches` 포함)에 등재
 * 코드↔의도 괴리 목록 정리
-* `.gitignore`·`askctl index` 적용
 
 보고 형식:
 
@@ -55,4 +53,4 @@
 ## 다음 단계 (DEVELOP.md 안내)
 ```
 
-> 채택도 다단계라 중단될 수 있습니다. 중단 시 `workitems/`와 `history/`, `PROGRESS` 스텁이 가리키는 인덱스로 이어받습니다.
+> 채택도 다단계라 중단될 수 있습니다. 중단 시 `workitems/`·`history/`의 항목 파일 frontmatter를 읽어 이어받습니다(고정 INDEX 없음).

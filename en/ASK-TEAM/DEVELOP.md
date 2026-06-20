@@ -3,19 +3,15 @@
 The procedure for **a single contributor (human/AI agent) performing one workitem** in ASK-Team team development.
 [CONVENTIONS.md](CONVENTIONS.md) takes precedence on conventions. Global-contract changes and integration are handled by the maintainer's [INTEGRATE.md](INTEGRATE.md).
 
+> This kit uses markdown + git only. The "identity check"·"detection"·"reading the listing" below are all **performed directly by the agent using file reads and `git` commands** (no separate tool or command to enter).
 > Path basis: all artifacts live under `AGENTSPECKIT/` (root 3-file exception).
 
 ---
 
-## 0. Session start — identity and index (mandatory, do not skip)
+## 0. Session start (performed automatically by the agent)
 
-```bash
-python AGENTSPECKIT/askctl.py whoami    # confirm my handle/role (register in team/ first if unregistered)
-python AGENTSPECKIT/askctl.py index     # regenerate every INDEX.md, then read
-```
-
-* If `whoami` fails (unregistered git identity), **do not start work.** Register `team/<handle>.md` first (copy `templates/team-TEMPLATE.md`).
-* If you don't run `index` first, you won't see others' in-flight work and conflict detection will fail.
+1. **Identity check** — read `git config user.email` and match it against the `emails` in `team/*.md` to confirm my `handle`·`role`. On a match failure (unregistered), register `team/<handle>.md` first (`templates/team-TEMPLATE.md`), then proceed.
+2. **Survey the state** — read the frontmatter of the shared branch's `workitems/*.md` to see in-flight work (especially `claimed`/`in_progress`) and its `touches` (no fixed INDEX file — the item file is the SoT).
 
 ---
 
@@ -24,7 +20,7 @@ python AGENTSPECKIT/askctl.py index     # regenerate every INDEX.md, then read
 1. `AGENTS.md` (project root)
 2. `AGENTSPECKIT/ARCHITECTURE.md` (cross-cutting contracts — always loaded)
 3. `AGENTSPECKIT/PLAN.md` (roadmap)
-4. `AGENTSPECKIT/workitems/INDEX.md` (in-flight work + their `touches`)
+4. The **frontmatter of in-flight items** among `AGENTSPECKIT/workitems/*.md` (the current state + others' `touches`)
 
 Read the `features/*.md`·ADR·qa·notes needed for my work optionally. For common rules (data model/naming/API/auth) always follow `ARCHITECTURE.md` as the baseline.
 
@@ -33,7 +29,7 @@ Read the `features/*.md`·ADR·qa·notes needed for my work optionally. For comm
 ## 2. Select or create a workitem (claim)
 
 ### 2.1 Claim an existing workitem
-Pick an item with `status: proposed|ready` from `workitems/INDEX.md`.
+Pick an item with `status: proposed|ready` from `workitems/*.md`.
 
 1. Change that `WI-*.md`'s `owner` to my handle and `status` to `claimed`.
 2. Record `branch` as `feat/<WI-id>`.
@@ -48,17 +44,15 @@ Copy `templates/WI-TEMPLATE.md` to `workitems/WI-<YYYYMMDD>-<slug>.md`.
 
 ---
 
-## 3. Conflict detection (right after claim — mandatory)
+## 3. Conflict detection (right after claim — mandatory, performed by the agent)
 
-```bash
-python AGENTSPECKIT/askctl.py detect <WI-id>
-```
+Read the shared branch's `workitems/*.md` with `status ∈ {claimed, in_progress}` and cross-check against my `touches`.
 
 | Result | Meaning | What to do |
 |---|---|---|
-| **STOP** (exit code 2) | `contracts` overlap with another in-flight workitem | Do not proceed. Ask the maintainer to serialize (§7). If it's a contract change, go via ADR |
-| **WARN** (exit code 1) | `modules` overlap (potential semantic conflict) | Register `conflicts/CF-*.md` (`templates/CF-TEMPLATE.md`), agree on order with the other owner |
-| **OK** (exit code 0) | independent | Create the `feat/<WI-id>` branch and start development |
+| **STOP** | `contracts` overlap with another in-flight workitem | Do not proceed. Ask the maintainer to serialize (§7). If it's a contract change, go via ADR |
+| **WARN** | `modules` overlap (potential semantic conflict) | Register `conflicts/CF-*.md` (`templates/CF-TEMPLATE.md`), agree on order with the other owner |
+| **OK** | independent | Create the `feat/<WI-id>` branch and start development |
 
 ---
 
@@ -72,19 +66,19 @@ Work order:
 2. Check the spec in `features/*.md` and the contracts in `ARCHITECTURE.md` (if absent, start from the spec; review non-trivial features via `personas/`+`discussion/` — the solo ASK [DEVELOPINIT §6](../AGENTSPECKIT/DEVELOPINIT.md) way).
 3. Implement + write automated tests → **actually run them** (capture commands·results). Don't claim passing without running.
 4. On code ↔ spec mismatch, do an **authority diagnosis** before handling (solo ASK [DEVELOPINIT §3.4](../AGENTSPECKIT/DEVELOPINIT.md)). Don't arbitrarily edit the spec to erase the mismatch.
-5. Record autonomous judgments as a **new file** `assumptions/ASM-*.md` (don't append to a shared `ASSUMPTIONS.md`). If it conflicts with an existing assumption, record it in `conflicts/`.
+5. Record autonomous judgments as a **new file** `assumptions/ASM-*.md` (don't append to a shared single file). If it conflicts with an existing assumption, record it in `conflicts/`.
 6. Record non-trivial facts you learned in `notes/<topic>.md` (guesses go to assumptions).
 
-**If you decide a global contract needs to change, do not edit `ARCHITECTURE.md` directly.** Treat it as a STOP cause and follow the §6 procedure.
+**If you decide a global contract needs to change, do not edit `ARCHITECTURE.md` directly.** Treat it as a STOP cause and follow the §7 procedure.
 
 ---
 
 ## 5. Atomic commit (workitem scope)
 
-For each meaningful unit, bundle **code + that workitem's work-scoped files** into one commit.
+For each meaningful unit, bundle **code + that workitem's work-layer files** into one commit.
 
 * Include: code, `features/*.md`, `qa/*.md`, `assumptions/ASM-*.md`, `notes/*`, own `WI-*.md`, `sessions/<handle>--<WI-id>.md`.
-* **Exclude**: generated `INDEX.md` (untracked by git), `ARCHITECTURE.md`/`PLAN.md` (maintainer), `history/**` (INTEGRATE).
+* **Exclude**: `ARCHITECTURE.md`/`PLAN.md` (maintainer), `history/**` (INTEGRATE).
 * commit message: Conventional Commits + trailers
   ```text
   feat: <summary>
@@ -106,7 +100,7 @@ For each meaningful unit, bundle **code + that workitem's work-scoped files** in
 
 ## 7. When STOP/serialization is needed (global-contract impact)
 
-If `detect` returns STOP or a global contract change is needed:
+If detection returns STOP or a global contract change is needed:
 
 1. Write a **dedicated workitem** declaring the contract-change intent via `touches.contracts` + an `adr/ADR-*.md` (Proposed).
 2. Ask the maintainer to serialize (INTEGRATE §3).
@@ -120,7 +114,7 @@ If `detect` returns STOP or a global contract change is needed:
 # Development result (WI-<id>)
 ## Work done / changed files
 ## Test results (commands run / pass·fail)
-## touches (contracts / modules) and detect result
+## touches (contracts / modules) and detection result
 ## Registered conflicts / assumptions / notes
 ## Git (branch / commit / PR)
 ## Next first command (= the update to sessions/<handle>--<WI-id>.md)
