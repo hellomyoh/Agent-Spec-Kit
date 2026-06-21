@@ -1,0 +1,85 @@
+{
+ "item": "B3 revert-to-origin (rank, isolated)",
+ "rows": [
+  {
+   "arm": "L0",
+   "seed": 1,
+   "r1_restore": 0.5,
+   "fully_restored": false,
+   "implemented": "base(alpha)",
+   "r2_residue": false,
+   "core": "4/4",
+   "tokens": 15956,
+   "tool_uses": 2
+  },
+  {
+   "arm": "L0",
+   "seed": 2,
+   "r1_restore": 0.5,
+   "fully_restored": false,
+   "implemented": "base(alpha)",
+   "r2_residue": false,
+   "core": "4/4",
+   "tokens": 15758,
+   "tool_uses": 2
+  },
+  {
+   "arm": "L1",
+   "seed": 1,
+   "r1_restore": 1.0,
+   "fully_restored": true,
+   "implemented": "R1(length)",
+   "r2_residue": false,
+   "core": "4/4",
+   "tokens": 16779,
+   "tool_uses": 3
+  },
+  {
+   "arm": "L1",
+   "seed": 2,
+   "r1_restore": 1.0,
+   "fully_restored": true,
+   "implemented": "R1(length)",
+   "r2_residue": false,
+   "core": "4/4",
+   "tokens": 16521,
+   "tool_uses": 3
+  },
+  {
+   "arm": "LASK",
+   "seed": 1,
+   "r1_restore": 1.0,
+   "fully_restored": true,
+   "implemented": "R1(length)",
+   "r2_residue": false,
+   "core": "4/4",
+   "tokens": 17921,
+   "tool_uses": 5
+  },
+  {
+   "arm": "LASK",
+   "seed": 2,
+   "r1_restore": 1.0,
+   "fully_restored": true,
+   "implemented": "R1(length)",
+   "r2_residue": false,
+   "core": "4/4",
+   "tokens": 17568,
+   "tool_uses": 5
+  }
+ ],
+ "summary": {
+  "L0": {
+   "mean_restore": 0.5,
+   "fully_restored": "0/2"
+  },
+  "L1": {
+   "mean_restore": 1.0,
+   "fully_restored": "2/2"
+  },
+  "LASK": {
+   "mean_restore": 1.0,
+   "fully_restored": "2/2"
+  }
+ }
+}
