@@ -1,0 +1,12 @@
+--- notes from session S2 ---
+--- S1 ---
+Added priority(int,default 0) to tasks. create_task optional priority; update_task edits title/scope/owner/priority (int coerce); only draft editable by non-privileged, admins can update any status. Dashboard response includes total + by_status to match contract DASHBOARD_SHAPE. create_task returns {task_id, task}.
+--- S2 ---
+Implemented full state machine enforcement: submit_task (draft->submitted, any actor), approve_task (submitted->approved, privileged), reject_task (submitted->rejected, privileged). update_task already blocked status changes (allowed_fields only title/scope/owner/priority). _transition_task helper enforces from_status check (returns CONFLICT 409 on illegal jumps). task_detail view now returns available_actions list (e.g. ['submit_task'] for draft, ['approve_task','reject_task'] for submitted+privileged). All transitions audit-logged, dashboard cache invalidated on each.
+
+
+--- notes from session S3 ---
+--- S2 ---
+State machine: submit_task(draft->submitted, any actor), approve_task(submitted->approved, privileged), reject_task(submitted->rejected, privileged). update_task blocks status changes (allowed_fields title/scope/owner/priority). _transition_task enforces from_status (CONFLICT 409 on illegal). task_detail returns available_actions. Transitions audit-logged, dashboard cache invalidated.
+--- S3 ---
+Permissions: _can_approve(actor, task) allows org_admin (any task in org) or project_owner (actor.user_id == project.owner_id). approve_task and reject_task now call _can_approve with existence-hiding: NOT_FOUND 404 returned for both missing tasks AND unauthorized actors (member sees same 404 as missing). _is_privileged still used for schedule_task (org_admin/approver). task_detail render: available_actions shows approve_task/reject_task only when _can_approve logic passes (checks project ownership via list_projects for project_owner role).

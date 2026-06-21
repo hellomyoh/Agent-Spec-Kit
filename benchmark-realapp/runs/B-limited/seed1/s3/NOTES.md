@@ -1,0 +1,4 @@
+--- S2 ---
+State machine: submit_task(draft->submitted, any actor), approve_task(submitted->approved, privileged), reject_task(submitted->rejected, privileged). update_task blocks status changes (allowed_fields title/scope/owner/priority). _transition_task enforces from_status (CONFLICT 409 on illegal). task_detail returns available_actions. Transitions audit-logged, dashboard cache invalidated.
+--- S3 ---
+Permissions: _can_approve(actor, task) allows org_admin (any task in org) or project_owner (actor.user_id == project.owner_id). approve_task and reject_task now call _can_approve with existence-hiding: NOT_FOUND 404 returned for both missing tasks AND unauthorized actors (member sees same 404 as missing). _is_privileged still used for schedule_task (org_admin/approver). task_detail render: available_actions shows approve_task/reject_task only when _can_approve logic passes (checks project ownership via list_projects for project_owner role).

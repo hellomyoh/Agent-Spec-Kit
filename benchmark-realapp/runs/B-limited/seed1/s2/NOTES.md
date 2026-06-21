@@ -1,0 +1,4 @@
+--- S1 ---
+Added priority(int,default 0) to tasks. create_task optional priority; update_task edits title/scope/owner/priority (int coerce); only draft editable by non-privileged, admins can update any status. Dashboard response includes total + by_status to match contract DASHBOARD_SHAPE. create_task returns {task_id, task}.
+--- S2 ---
+Implemented full state machine enforcement: submit_task (draft->submitted, any actor), approve_task (submitted->approved, privileged), reject_task (submitted->rejected, privileged). update_task already blocked status changes (allowed_fields only title/scope/owner/priority). _transition_task helper enforces from_status check (returns CONFLICT 409 on illegal jumps). task_detail view now returns available_actions list (e.g. ['submit_task'] for draft, ['approve_task','reject_task'] for submitted+privileged). All transitions audit-logged, dashboard cache invalidated on each.
