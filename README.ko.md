@@ -23,6 +23,29 @@ Codex · Claude Code · Cursor Agent
 
 ---
 
+## 두 가지 버전: Solo와 Team
+
+Agent-Spec-Kit은 두 가지 프레임워크로 제공됩니다. **이 문서(README)는 Solo 버전 사용 설명서**이며, 여러 명이 동시에 개발하는 팀은 **ASK-Team**을 사용하세요.
+
+| | **Solo (ASK)** — 이 문서 | **Team (ASK-Team)** |
+|---|---|---|
+| 대상 | 1인 / 순차·자율 개발 | 다수 개발자·AI 에이전트 **동시** 개발 |
+| 진행 상태 | 단일 `PROGRESS.md` 커서 | `workitems/` + `sessions/<handle>--<WI>` |
+| 이력 / 가정 / 노트 | 단일 파일 | `history/` · `assumptions/` · `notes/` 디렉토리 |
+| 인덱스 | 손으로 갱신 | 없음 — frontmatter 직접 읽기 (인덱스 파일 없음) |
+| 충돌 | 해당 없음 | `touches` + `conflicts/` (에이전트가 교차) |
+| 식별 | 불필요 | `team/` + git identity (`git config user.email`) |
+| 런타임 | 없음 | 없음 (markdown + git만) |
+| 키트 폴더 | `ko/AGENTSPECKIT/` · `en/AGENTSPECKIT/` | `ko/ASK-TEAM/` · `en/ASK-TEAM/` |
+
+- **Solo 가이드:** 이 문서를 계속 읽으세요. ([English](README.md))
+- **Team 가이드:** [ko/ASK-TEAM/README.md](ko/ASK-TEAM/README.md) · [en/ASK-TEAM/README.md](en/ASK-TEAM/README.md)
+- 1인 개발이면 Solo가 더 가볍습니다 — 실제로 N명이 동시에 개발할 때만 Team을 쓰세요.
+
+> 저장소의 [OUTLINE.md](OUTLINE.md)는 이 프레임워크에 관한 **연구 논문 초안**(저자용)이며, 키트 사용에는 필요 없습니다.
+
+---
+
 이 문서는 `AGENTSPECKIT/` 폴더(프롬프트 4종 `KICKOFF.md`·`ADOPT.md`·`DEVELOPINIT.md`·`AUDIT.md` + 입력 채널 `SOURCES/`)를 Codex · Claude Code · Cursor Agent 등에서 사용하는 방법을 설명하는 **프레임워크 사용 설명서**입니다.
 
 ## 빠른 시작
@@ -525,7 +548,7 @@ OOO 기능 추가를 검토하고 설계하세요. 구현은 시작하지 마세
 2. AGENTSPECKIT/personas/INDEX.md에서 이 기능과 관련된 페르소나 인스턴스를 골라 주입하고,
    필요한 관점이 없으면 KICKOFF.md 5.2 기준으로 새 인스턴스를 만드세요.
 3. 토의 과정을 AGENTSPECKIT/discussion/review-<기능슬러그>-YYYYMMDD.md에 기록하세요.
-   페르소나별 위험·근거를 남기고, Research Agent는 출처(URL/SOURCES 경로)를 반드시 명시하세요.
+   페르소나별 위험·근거를 남기고, Research Agent는 출처를 **전체 URL(그대로)** 또는 SOURCES/ 경로로 반드시 명시하세요.
 4. 합의안으로 feature 문서 초안(KICKOFF.md 6.1 템플릿)을 작성하세요.
    MVP 범위·데이터 모델·인증·횡단 계약에 영향이 있으면 반영 전에 확인을 요청하세요.
 5. 검토 요약(참여 페르소나 / 핵심 쟁점 / 결론 3~4줄 + 로그 링크)과 설계안을 보고하세요.
@@ -657,7 +680,7 @@ discussion/review-*.md 토의 과정 기록 — 페르소나별 위험·근거/�
       ↓ (결론만 반영)
 features/*.md          검토 요약 3~4줄(참여/핵심 쟁점/결론) + 로그 링크. 중요 결정은 adr/로 분리.
       ↓ (표본 검증)
-AUDIT.md 3.10          출처가 실재하는가, 페르소나가 실재하는가, 연극성 로그는 아닌가.
+AUDIT.md 3.10          출처가 전체 URL로 보존됐고 실재하는가, 페르소나가 실재하는가, 연극성 로그는 아닌가.
 ```
 
 **페르소나 (personas/)** — KICKOFF.md 5절:
@@ -671,11 +694,11 @@ AUDIT.md 3.10          출처가 실재하는가, 페르소나가 실재하는�
 
 - 비자명한 기능을 검토하면 토의 전 과정을 `discussion/review-<기능슬러그>-YYYYMMDD.md`에
   구조화 형식(참여 페르소나/페르소나별 검토/쟁점과 충돌/결론과 반영처)으로 기록합니다.
-- **근거·출처 의무**: 특히 Research Agent는 출처(URL/SOURCES 경로/문서명)를 반드시 명시하고,
+- **근거·출처 의무**: 특히 Research Agent는 출처를 반드시 보존합니다 — 웹 출처는 **전체 URL을 로그에 그대로**(축약·문서명만 금지), 제출 자료는 `SOURCES/` 경로로 적고,
   못 대면 "조사 수행 못함"으로 기록합니다. 출처 없는 조사 결과는 단정할 수 없습니다.
 - 로그는 **불변·추가 전용**이며(재검토 시 새 파일), 평소 세션에서는 로드하지 않아 **고정 토큰 비용이 없습니다.**
 - 로그는 검토의 "증거"가 아니라 **수행을 강제하고 표본 검증을 가능하게 하는 장치**입니다.
-  AUDIT가 표본을 열어 출처 실재 여부와 페르소나 실재 여부를 대조합니다.
+  AUDIT가 표본을 열어 출처가 전체 URL로 보존·실재하는지와 페르소나 실재 여부를 대조합니다.
 
 자명한 기능(단순 CRUD·정적 화면)은 페르소나 토의·로그를 생략하고 "단순 기능 — 추가 검토 불필요"로 표기합니다.
 

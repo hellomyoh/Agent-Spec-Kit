@@ -23,6 +23,29 @@ Codex · Claude Code · Cursor Agent
 
 ---
 
+## Two editions: Solo and Team
+
+Agent-Spec-Kit comes in two frameworks. **This document (README) is the Solo guide.** When several people develop at the same time, use **ASK-Team** instead.
+
+| | **Solo (ASK)** — this guide | **Team (ASK-Team)** |
+|---|---|---|
+| For | 1 developer / sequential, autonomous | multiple developers & AI agents, **concurrent** |
+| Progress | single `PROGRESS.md` cursor | `workitems/` + `sessions/<handle>--<WI>` |
+| History / assumptions / notes | single files | `history/` · `assumptions/` · `notes/` directories |
+| Indexes | hand-updated | none — frontmatter read directly (no index files) |
+| Conflicts | n/a | `touches` + `conflicts/` (agent cross-checks) |
+| Identity | not needed | `team/` + git identity (`git config user.email`) |
+| Runtime | none | none (markdown + git only) |
+| Kit folder | `en/AGENTSPECKIT/` · `ko/AGENTSPECKIT/` | `en/ASK-TEAM/` · `ko/ASK-TEAM/` |
+
+- **Solo guide:** keep reading this document. ([한국어](README.ko.md))
+- **Team guide:** [en/ASK-TEAM/README.md](en/ASK-TEAM/README.md) · [ko/ASK-TEAM/README.md](ko/ASK-TEAM/README.md)
+- For a single developer, Solo is lighter — use Team only when N people actually develop concurrently.
+
+> This repository's [OUTLINE.md](OUTLINE.md) is a **research-paper draft** about the framework (for authors); it is not needed to use the kit.
+
+---
+
 This document is a **framework user manual** that explains how to use the `AGENTSPECKIT/` folder (four prompts — `KICKOFF.md` · `ADOPT.md` · `DEVELOPINIT.md` · `AUDIT.md` + the input channel `SOURCES/`) with Codex · Claude Code · Cursor Agent, and the like.
 
 ## Quick Start
@@ -525,7 +548,7 @@ Review and design the addition of the OOO feature. Do not start implementation.
 2. From AGENTSPECKIT/personas/INDEX.md, pick and inject the persona instances related to this feature, and
    if a needed perspective is missing, create a new instance per the KICKOFF.md 5.2 standard.
 3. Record the deliberation process in AGENTSPECKIT/discussion/review-<feature-slug>-YYYYMMDD.md.
-   Leave each persona's risks/evidence, and the Research Agent must always state its sources (URL/SOURCES path).
+   Leave each persona's risks/evidence, and the Research Agent must always record its sources as full URLs (verbatim) or SOURCES/ paths.
 4. As the agreed proposal, write a draft feature document (KICKOFF.md 6.1 template).
    If there is impact on MVP scope/data model/authentication/cross-cutting contract, request confirmation before applying.
 5. Report the review summary (participating personas / key issues / conclusion in 3–4 lines + log link) and the design proposal.
@@ -657,7 +680,7 @@ discussion/review-*.md deliberation-process record — per-persona risks·eviden
       ↓ (only the conclusions are reflected)
 features/*.md          a 3–4-line review summary (participants/key issues/conclusion) + log link. Important decisions split off into adr/.
       ↓ (spot-check verification)
-AUDIT.md 3.10          do the sources really exist, do the personas really exist, is the log not theatrical.
+AUDIT.md 3.10          are sources full URLs that really exist, do the personas really exist, is the log not theatrical.
 ```
 
 **Personas (personas/)** — KICKOFF.md Section 5:
@@ -671,11 +694,11 @@ AUDIT.md 3.10          do the sources really exist, do the personas really exist
 
 - When reviewing a non-trivial feature, the entire deliberation process is recorded in `discussion/review-<feature-slug>-YYYYMMDD.md`
   in a structured format (participating personas/per-persona review/issues and conflicts/conclusions and where reflected).
-- **Evidence·source obligation**: the Research Agent in particular must always state its sources (URL/SOURCES path/document name), and
+- **Evidence·source obligation**: the Research Agent in particular must always record its sources — web sources as the **full, resolvable URL preserved verbatim in the log** (not abbreviated/name-only), submitted material as a `SOURCES/` path — and
   if it cannot, it records "could not perform research." Research results without sources cannot be asserted.
 - The log is **immutable·append-only** (a new file on re-review), and it is not loaded in normal sessions, so it has **no fixed token cost**.
 - The log is not the "evidence" of the review but **a device that enforces the performance and enables spot-check verification.**
-  AUDIT opens a sample and cross-checks whether the sources really exist and whether the personas really exist.
+  AUDIT opens a sample and cross-checks whether the sources are full URLs that really exist and whether the personas really exist.
 
 Trivial features (simple CRUD · static screens) omit the persona deliberation·log and are marked "simple feature — no additional review needed."
 

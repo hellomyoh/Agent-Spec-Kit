@@ -250,7 +250,7 @@ Link the instance files used (e.g., [Security Agent](../personas/security.md)).
 ## Review by persona
 
 For each persona: perspective / risks found / **rationale·sources (mandatory)** / proposal.
-In particular, the Research Agent must always specify sources (URL, SOURCES/ document path, document name).
+In particular, the Research Agent must always specify sources — for web sources the **full, resolvable URL preserved verbatim in the log** (not abbreviated or name-only), and for submitted material the `SOURCES/` relative path — so that AUDIT can verify they exist.
 If a source cannot be cited, record it as "could not perform research." Do not assert research findings without sources.
 
 ## Issues and conflicts
@@ -310,7 +310,7 @@ Each item references its supporting document via a relative-path link (the relev
 
 ## Output obligations
 
-(e.g., Research Agent — specify sources (URL / SOURCES path / document name). If unable to, record as "could not perform research")
+(e.g., Research Agent — specify sources as a **full URL** (verbatim) or `SOURCES/` relative path (not abbreviated or name-only). If unable to, record as "could not perform research")
 ```
 
 `personas/INDEX.md` format:
