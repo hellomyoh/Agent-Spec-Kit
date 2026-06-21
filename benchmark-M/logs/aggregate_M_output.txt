@@ -1,0 +1,25 @@
+############ M-pilot (exprkit, 3 groups x 2 seeds x 5 sessions) ############
+
+=== end-state (S4): cross-cutting completeness & regression ===
+  B: ops_full=9.0/9  p2p_reg(S4)=0.00  import_err=0/2  floor_div_ok=[True, True]
+  P: ops_full=9.0/9  p2p_reg(S4)=0.00  import_err=0/2  floor_div_ok=[True, True]
+  ASK: ops_full=9.0/9  p2p_reg(S4)=0.00  import_err=0/2  floor_div_ok=[True, True]
+
+=== regression & omissions across sessions 1-4 (per group, summed over chains) ===
+  B: mean_regression=0.000  total_cross_cut_omissions=0  import_errors=0
+  P: mean_regression=0.000  total_cross_cut_omissions=0  import_errors=0
+  ASK: mean_regression=0.000  total_cross_cut_omissions=0  import_errors=0
+
+=== F2P (new ops) by session ===
+grp  S0 S1 S2 S3 S4
+B    1.00 1.00 1.00 1.00 1.00
+P    1.00 1.00 1.00 1.00 1.00
+ASK  1.00 1.00 1.00 1.00 1.00
+
+=== cost & churn (per chain, mean over seeds) ===
+  B: tokens/chain=106552 (1.00x B)  churn/chain=74
+  P: tokens/chain=108832 (1.02x B)  churn/chain=62
+  ASK: tokens/chain=170269 (1.60x B)  churn/chain=65
+
+=== notable failures (any chain/session) ===
+  none — all sessions: import OK, no cross-cutting omissions, no regression

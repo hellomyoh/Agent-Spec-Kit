@@ -1,0 +1,87 @@
+# exprkit — Progress Report
+
+## Session 1 Status: COMPLETE
+
+### Completed Tasks
+
+- [x] Added `*` (multiplication) operator
+  - [x] Registered in operator registry
+  - [x] Evaluator support (generic visitor)
+  - [x] RPN converter support (generic visitor)
+- [x] Added `/` (integer floor division) operator
+  - [x] Registered in operator registry
+  - [x] Implemented `_floor_divide()` method with ZeroDivisionError handling
+  - [x] Evaluator support (generic visitor)
+  - [x] RPN converter support (generic visitor)
+- [x] Updated SPEC.md
+  - [x] Added `*` and `/` to operator table
+  - [x] Added examples for both operators and nested expressions
+  - [x] Documented division by zero error
+- [x] Updated ARCHITECTURE.md
+  - [x] Updated operator × visitor matrix for `*` and `/`
+- [x] Updated HISTORY.md
+  - [x] Recorded new operators and design decisions
+  - [x] Floor division design decision documented
+- [x] Updated PROGRESS.md
+
+### Tested Examples
+
+All specification examples pass:
+- ✓ `evaluate("(* 6 7)") == 42`
+- ✓ `evaluate("(/ 7 2)") == 3`
+- ✓ `evaluate("(/ -7 2)") == -4` (floor division)
+- ✓ `to_rpn("(* 6 7)") == ["6", "7", "*"]`
+- ✓ `to_rpn("(/ (* 6 4) (+ 1 2))") == ["6", "4", "*", "1", "2", "+", "/"]`
+- ✓ Prior operators (`+`, `-`) still working
+- ✓ Error handling for division by zero
+
+## Session 0 Status: COMPLETE
+
+### Completed Tasks
+
+- [x] Created package structure (`exprkit/`)
+- [x] Implemented parser module
+  - [x] Tokenization
+  - [x] AST construction
+  - [x] Syntax validation
+- [x] Implemented operators module
+  - [x] Operator registry
+  - [x] Binary `+` definition
+  - [x] Binary `-` definition
+- [x] Implemented evaluator module
+  - [x] AST visitor for evaluation
+  - [x] Operator dispatch
+  - [x] Error handling
+- [x] Implemented RPN converter module
+  - [x] AST visitor for postfix conversion
+  - [x] Token collection
+  - [x] Error handling
+- [x] Created public API in `exprkit/__init__.py`
+  - [x] `evaluate(s: str) -> int`
+  - [x] `to_rpn(s: str) -> list[str]`
+- [x] Created documentation
+  - [x] SPEC.md
+  - [x] ARCHITECTURE.md
+  - [x] HISTORY.md
+  - [x] PROGRESS.md
+
+### Tested Examples
+
+All specification examples pass:
+- ✓ `evaluate("(+ 3 4)") == 7`
+- ✓ `evaluate("(- (+ 1 2) 5)") == -2`
+- ✓ `to_rpn("(+ 3 4)") == ["3", "4", "+"]`
+- ✓ `to_rpn("(- 10 3)") == ["10", "3", "-"]`
+- ✓ Nested expressions
+- ✓ Negative integers
+- ✓ Error handling for malformed input
+
+### Remaining Work
+
+None for Session 0. The specification is complete.
+
+Future sessions may extend with:
+- Additional operators (`*`, `/`, `%`, unary operators, etc.)
+- Advanced features (variable substitution, functions, etc.)
+- Optimization passes
+- Extended error reporting

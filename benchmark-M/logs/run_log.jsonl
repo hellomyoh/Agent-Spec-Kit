@@ -1,0 +1,30 @@
+{"session": 0, "group": "B", "seed": 1, "tokens": 17809, "tool_uses": 6, "f2p": 1.0, "p2p_reg": 0.0, "omissions": [], "import_error": null}
+{"session": 0, "group": "B", "seed": 2, "tokens": 17874, "tool_uses": 6, "f2p": 1.0, "p2p_reg": 0.0, "omissions": [], "import_error": null}
+{"session": 0, "group": "P", "seed": 1, "tokens": 18440, "tool_uses": 7, "f2p": 1.0, "p2p_reg": 0.0, "omissions": [], "import_error": null}
+{"session": 0, "group": "P", "seed": 2, "tokens": 17879, "tool_uses": 7, "f2p": 1.0, "p2p_reg": 0.0, "omissions": [], "import_error": null}
+{"session": 0, "group": "ASK", "seed": 1, "tokens": 39687, "tool_uses": 43, "f2p": 1.0, "p2p_reg": 0.0, "omissions": [], "import_error": null}
+{"session": 0, "group": "ASK", "seed": 2, "tokens": 21196, "tool_uses": 10, "f2p": 1.0, "p2p_reg": 0.0, "omissions": [], "import_error": null}
+{"session": 1, "group": "B", "seed": 1, "tokens": 24938, "tool_uses": 21}
+{"session": 1, "group": "B", "seed": 2, "tokens": 23551, "tool_uses": 21}
+{"session": 1, "group": "P", "seed": 1, "tokens": 22039, "tool_uses": 15}
+{"session": 1, "group": "P", "seed": 2, "tokens": 19819, "tool_uses": 11}
+{"session": 1, "group": "ASK", "seed": 1, "tokens": 34928, "tool_uses": 25}
+{"session": 1, "group": "ASK", "seed": 2, "tokens": 30826, "tool_uses": 31}
+{"session": 2, "group": "B", "seed": 1, "tokens": 19493, "tool_uses": 9}
+{"session": 2, "group": "B", "seed": 2, "tokens": 23947, "tool_uses": 20}
+{"session": 2, "group": "P", "seed": 1, "tokens": 21787, "tool_uses": 12}
+{"session": 2, "group": "P", "seed": 2, "tokens": 20714, "tool_uses": 11}
+{"session": 2, "group": "ASK", "seed": 1, "tokens": 35736, "tool_uses": 30}
+{"session": 2, "group": "ASK", "seed": 2, "tokens": 40771, "tool_uses": 50}
+{"session": 3, "group": "B", "seed": 1, "tokens": 19577, "tool_uses": 8}
+{"session": 3, "group": "B", "seed": 2, "tokens": 21124, "tool_uses": 12}
+{"session": 3, "group": "P", "seed": 1, "tokens": 23109, "tool_uses": 12}
+{"session": 3, "group": "P", "seed": 2, "tokens": 21551, "tool_uses": 12}
+{"session": 3, "group": "ASK", "seed": 1, "tokens": 39258, "tool_uses": 34}
+{"session": 3, "group": "ASK", "seed": 2, "tokens": 27186, "tool_uses": 18}
+{"session": 4, "group": "B", "seed": 1, "tokens": 19923, "tool_uses": 8}
+{"session": 4, "group": "B", "seed": 2, "tokens": 24868, "tool_uses": 21}
+{"session": 4, "group": "P", "seed": 1, "tokens": 25011, "tool_uses": 12}
+{"session": 4, "group": "P", "seed": 2, "tokens": 27316, "tool_uses": 20}
+{"session": 4, "group": "ASK", "seed": 1, "tokens": 37500, "tool_uses": 24}
+{"session": 4, "group": "ASK", "seed": 2, "tokens": 33450, "tool_uses": 26}
