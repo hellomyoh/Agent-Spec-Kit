@@ -1,0 +1,47 @@
+.0); only BEHAVIOUR evolves per ticket.
+
+### Implemented so far
+- `__init__`: `self._records: list[dict]` (insertion order = append order).
+- `add(record)`: stores a **deep copy** (callers may mutate their source after).
+- `all()`: returns deep copies of all records, insertion order.
+- `query(where=None, sort_by=None, limit=None, offset=0)` FULL pipeline now:
+  filter(where) -> sort(sort_by) -> offset -> limit.
+  - **`where` (S2):** keeps records matching ALL key==value pairs (AND). A key
+    ABSENT from a record FAILS the match (no error). Test is
+    `all(k in r and r[k]==v ...)`. Empty/None `where` = no filtering.
+    Value-equality (`==`), not identity.
+  - **`sort_by` (S4):** ascending by that field's value, `sorted(results,
+    key=lambda r: r[sort_by])`. STABLE -> equal keys keep insertion order.
+    Applied AFTER filter, BEFORE offset/limit. `sort_by is None` -> no sort
+    (baseline insertion order). Distinguish None from a falsy field name.
+  - **Pagination (S1/S3/S5):** `offset` skips N leading records of the
+    filtered+sorted set; `limit` caps count. **DEFAULT_PAGE_SIZE = 40** when
+    `limit is None` (history: 7 in S1 -> 25 in S3 -> 40 in S5). `limit=0`
+    returns []. Distinguish `limit is None` (->40) from `limit=0`. Default
+    applies to the post-filter+sort result set.
+
+### Key invariants (keep these!)
+- **Always return copies** (`copy.deepcopy`) on add and read so internal state
+  can't be mutated via inputs or outputs. Records can be nested dicts.
+- **Insertion order** is the baseline ordering; `sort_by` ties must keep it
+  (stable sort).
+- Keep the FIXED signature; never change it across sessions.
+- Pipeline order is load-bearing: filter -> sort -> offset -> limit. Sort sits
+  between filter and slicing so the default page size pages the sorted set.
+
+## Open assumptions (revisit if a ticket clarifies)
+- `sort_by` assumes the field exists and its values are mutually comparable; no
+  missing-key / mixed-type handling specified yet. Add only if a ticket asks.
+- Ascending only so far; no descending/reverse option in the contract.
+
+## Process notes
+- Sandbox = this work dir only. Write COMPLETE module to `miniquery.py` each
+  session. No change-history comments in code; comments describe CURRENT
+  behaviour only. History lives HERE in NOTES.md.
+- Only implement the CURRENT ticket; don't pre-build future features.
+- Verified imports with `python -c "import miniquery"`. S0-S4 checks
+  previously passed (stable ascending sort, sort-before-pagination, insertion
+  order when sort_by omitted). S5 = default page size 25 -> 40, one-line const.
+
+
+(Maintain a free-form NOTES.md; carried notes are capped to ~2600 chars.)

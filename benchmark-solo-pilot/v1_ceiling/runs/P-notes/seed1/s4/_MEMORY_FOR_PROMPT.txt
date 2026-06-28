@@ -1,0 +1,54 @@
+offset/limit -> select.
+
+
+=== S3 NOTES ===
+# NOTES (miniquery)
+
+## State / contract
+- Single file `miniquery.py`, `class Store`. Signatures PINNED in
+  provided/contract.py — never change them; only add behaviour per ticket.
+- query() full signature: where, sort_by, limit, offset, select.
+
+## Implemented so far
+- S0: add(record) deep-copies in; all() returns deep copies; query() no-arg -> all.
+- S1: query(where={k:v,...}) -> records matching ALL key==value pairs.
+- S2: query(sort_by=field) -> ASCENDING, STABLE sort (ties keep insertion order).
+- S3: query(limit, offset) -> pagination, applied AFTER sort. offset skips
+  leading results (default 0); limit caps count (default None = NO cap).
+
+## Key decisions / invariants
+- `copy.deepcopy` on BOTH add and read so callers can never mutate internal
+  state (records may hold nested dicts/lists). Keep for EVERY future feature
+  (select-projection must also return fresh dicts).
+- Records in private list `self._records`; insertion order = source of truth.
+
+## WHERE policy (S1 — DECIDED, applies to ALL future where handling)
+- Unknown field = HARD ERROR: if a where key is in NO stored record, raise
+  `KeyError(key)`. Validate keys BEFORE filtering, against FULL store.
+- A record that merely LACKS a present key fails equality (excluded), not error.
+- Empty/None where = no filter (`if where:` guard). Matching is ALL pairs (AND), `==`.
+
+## SORT policy (S2 — DECIDED)
+- `if sort_by is not None:` guard (so "" still sorts). Ascending only; builtin
+  `sorted` gives stability. Key = `r[sort_by]`.
+- OPEN: missing sort_by key -> KeyError; uncomparable values -> TypeError. No
+  ticket forced a choice; don't pre-build. Mirror where-policy when specified.
+
+## PAGINATION policy (S3 — DECIDED)
+- Combined order LOCKED: where -> sort_by -> offset/limit -> select.
+- Implemented as one slice: `stop = None if limit is None else offset+limit;
+  records[offset:stop]`. So limit=0 => empty (only None means no cap); offset
+  past end => []; limit beyond remaining => clamps naturally.
+- offset default 0, limit default None. Slice happens BEFORE final deepcopy.
+- OPEN (undecided, no ticket yet): negative limit/offset. Current code uses raw
+  Python slice semantics (negatives index from end) — NOT validated. If a ticket
+  specifies, validate up front like where-policy. Don't pre-build.
+
+## TODO future tickets (NOT yet implemented — do not pre-build)
+- select: project to listed keys only (must still deep-copy / fresh dicts).
+  Will be the LAST step, after offset/limit.
+
+(Maintain a free-form NOTES.md; carried notes are capped to ~2600 chars.)
+
+
+(Maintain a free-form NOTES.md; carried notes are capped to ~2600 chars.)

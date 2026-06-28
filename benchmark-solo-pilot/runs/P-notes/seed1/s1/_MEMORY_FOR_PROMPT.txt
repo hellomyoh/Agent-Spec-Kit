@@ -1,0 +1,37 @@
+=== S0 NOTES ===
+# miniquery — NOTES to future self
+
+## State after S0 (Scaffold)
+Implemented `Store` in `miniquery.py`. Contract v2.0 (`provided/contract.py`) pins the
+API surface — signatures are FIXED across sessions; only BEHAVIOUR evolves per ticket.
+
+### Implemented so far
+- `__init__`: `self._records: list[dict]` (insertion order = append order).
+- `add(record)`: stores a **deep copy** (callers may mutate their source afterward).
+- `all()`: returns deep copies of all records, insertion order.
+- `query(where=None, sort_by=None, limit=None, offset=0)`:
+  - Full signature is DECLARED (API is pinned) but only the **no-arg path** is
+    implemented per S0: returns deep copies of all records, insertion order.
+  - `where` / `sort_by` / `limit` / `offset` are accepted but currently IGNORED.
+
+### Key invariants (keep these!)
+- **Always return copies** (use `copy.deepcopy`) on both add and read so internal
+  state can't be mutated through inputs or outputs. Records can be nested dicts.
+- **Insertion order** is the baseline ordering; `sort_by` ties must keep it (stable).
+
+## Contract reminders for FUTURE tickets (NOT yet implemented — do when ticket asks)
+- `where`: equality match on ALL key==value pairs (AND semantics).
+- `sort_by`: ascending; ties keep insertion order (use a STABLE sort, e.g. `sorted`).
+- `limit`: explicit cap. If `limit` is OMITTED, a **DEFAULT page size** applies —
+  the default value will be set by a future ticket. Track that default here when set.
+- `offset`: skip N (default 0). Apply offset, then limit (paging).
+- Likely application order once built: filter(where) -> sort(sort_by) -> offset -> limit.
+
+## Process notes
+- Sandbox = this work dir only. Write COMPLETE module to `miniquery.py` each session.
+- No change-history comments in code; history lives HERE.
+- Only implement the CURRENT ticket; don't pre-build future features.
+- Verified S0 with `python -c "import miniquery"` + manual add/all/query + copy checks.
+
+
+(Maintain a free-form NOTES.md; carried notes are capped to ~2600 chars.)

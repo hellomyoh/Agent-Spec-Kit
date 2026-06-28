@@ -1,0 +1,53 @@
+invariants
+- Use `copy.deepcopy` on BOTH add and read so callers can never mutate internal
+  state (records may hold nested dicts/lists). Keep this invariant for every
+  future feature (e.g. select-projection must also return fresh dicts).
+- Records kept in a private list `self._records`; insertion order is the source
+  of truth (contract: "ties keep insertion order" for sort_by).
+
+## TODO for future tickets (NOT yet implemented — do not pre-build)
+- where: equality match on ALL key==value pairs.
+- sort_by: ascending, stable (ties keep insertion order).
+- limit / offset: pagination (apply offset then limit; offset default 0).
+- select: project to listed keys only.
+- Likely order when combined: where -> sort_by -> offset/limit -> select.
+
+
+=== S1 NOTES ===
+# NOTES (miniquery)
+
+## State / contract
+- Single file `miniquery.py`, `class Store`. Signatures PINNED in
+  provided/contract.py — never change them; only add behaviour per ticket.
+- query() full signature declared: where, sort_by, limit, offset, select.
+
+## Implemented so far
+- S0: add(record) deep-copies in; all() returns deep copies; query() no-arg -> all.
+- S1: query(where={k:v,...}) -> records matching ALL key==value pairs (deep copies).
+
+## Key decisions / invariants
+- `copy.deepcopy` on BOTH add and read so callers can never mutate internal
+  state (records may hold nested dicts/lists). Keep for EVERY future feature
+  (e.g. select-projection must also return fresh dicts).
+- Records in private list `self._records`; insertion order is the source of
+  truth (contract: "ties keep insertion order" for sort_by).
+
+## WHERE policy (S1 — DECIDED ONCE, applies to ALL future where handling)
+- Unknown field = HARD ERROR: if a where key is in NO stored record, raise
+  `KeyError(key)`. NOT a silent no-match. Validate keys BEFORE filtering.
+- A record that simply lacks a present key fails the equality test (excluded),
+  but is NOT an error — because the key exists in *some* record.
+- Empty/None where = no filtering (no-arg behaviour preserved). `if where:`
+  guards this, so where={} is also a no-op (no keys to validate).
+- Matching is ALL pairs (AND), using `==`.
+- NOTE for future combos: keep the key-existence check evaluated against the
+  FULL store (`self._records`), independent of sort/limit/offset/select.
+
+## TODO future tickets (NOT yet implemented — do not pre-build)
+- sort_by: ascending, stable (ties keep insertion order).
+- limit / offset: pagination (apply offset then limit; offset default 0).
+- select: project to listed keys only.
+- Likely combined order: where -> sort_by -> offset/limit -> select.
+
+
+(Maintain a free-form NOTES.md; carried notes are capped to ~2600 chars.)

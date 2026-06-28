@@ -1,0 +1,31 @@
+--- notes from session S4 (capped 600 chars) ---
+# S4 — Projection (`select`)
+
+Implemented `query(select=[field, ...])`: each returned record keeps ONLY the
+selected keys PRESENT on it.
+
+Decisions:
+- Applied LAST, on the output copies. Pipeline: where -> sort_by -> paginate ->
+  copy out -> select.
+- Missing keys are SKIPPED silently (no KeyError, no None filler) — `{k:r[k] for
+  k in select if k in r}`. Note: differs from S1 `where`'s hard-error policy;
+  select is lenient by ticket ("those present on the record").
+- `select=None` => full records (off). `select=[]` => empty dicts.
+- S1/S2/S3 policies preserved unchanged. All query params no
+
+--- notes from session S5 (capped 600 chars) ---
+# S5 — Unknown-field in `where` => no match (was KeyError)
+
+CHANGED S1 policy: a `where` field absent from EVERY record now yields `[]`,
+no raise.
+
+Decisions:
+- Removed the explicit unknown-field check loop that raised KeyError(key).
+- No new code needed: the existing match `all(k in r and r[k] == v ...)`
+  already drops records lacking the key, so a field present nowhere matches
+  nothing => []. Records that have the key on some rows still filter normally.
+- S2 sort / S3 paginate / S4 select policies preserved unchanged.
+- `where=None` or `{}` still returns all (falsy guard untouched).
+
+
+(Write a short NOTES.md this session; only the last 2 sessions' notes survive, capped.)

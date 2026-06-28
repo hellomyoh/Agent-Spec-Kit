@@ -1,0 +1,3 @@
+(this is the first session)
+
+(Maintain a free-form NOTES.md; carried notes are capped to ~2600 chars.)

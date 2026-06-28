@@ -1,0 +1,206 @@
+{
+ "ASK-solo": [
+  {
+   "S": 0,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": null
+  },
+  {
+   "S": 1,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  },
+  {
+   "S": 2,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  },
+  {
+   "S": 3,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  },
+  {
+   "S": 4,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  },
+  {
+   "S": 5,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": null
+  },
+  {
+   "S": 6,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  }
+ ],
+ "B-code": [
+  {
+   "S": 0,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": null
+  },
+  {
+   "S": 1,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  },
+  {
+   "S": 2,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  },
+  {
+   "S": 3,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  },
+  {
+   "S": 4,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  },
+  {
+   "S": 5,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": null
+  },
+  {
+   "S": 6,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  }
+ ],
+ "B-limited": [
+  {
+   "S": 0,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": null
+  },
+  {
+   "S": 1,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  },
+  {
+   "S": 2,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  },
+  {
+   "S": 3,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  },
+  {
+   "S": 4,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  },
+  {
+   "S": 5,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": null
+  },
+  {
+   "S": 6,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  }
+ ],
+ "P-notes": [
+  {
+   "S": 0,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": null
+  },
+  {
+   "S": 1,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  },
+  {
+   "S": 2,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  },
+  {
+   "S": 3,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  },
+  {
+   "S": 4,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  },
+  {
+   "S": 5,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": null
+  },
+  {
+   "S": 6,
+   "func": 1.0,
+   "inv_viol": 0,
+   "regr": 0,
+   "restore_ok": true
+  }
+ ]
+}
