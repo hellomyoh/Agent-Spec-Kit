@@ -413,7 +413,7 @@ Cautions:
 - If AGENTSPECKIT/SOURCES/INDEX.md has Not-applied/Under-review change requests, report them and confirm whether to process them first.
 - Write document cross-references as relative-path links, and when changing feature/docs/ADR, update the corresponding index in the same commit.
 - When starting work, provisionally record the progress state and the first command of the next session in PROGRESS.md.
-- When a meaningful unit of work is complete, bundle code + documents into a single commit and commit/push.
+- When a meaningful unit of work is complete, bundle code + documents into a single commit and commit. Push follows the project's push policy (default: commit only, no automatic push).
 - Direct push to main/master is forbidden.
 - After completing the work, update ARCHITECTURE.md (if changed), PLAN.md, PROGRESS.md, and HISTORY.md.
 - On push, if there is any impact on users/installation/run/architecture, update the project README.md in the same commit.
@@ -548,7 +548,9 @@ Run the persona deliberation as actual subagents in parallel, not as role-play.
 ```
 
 > Why Method 2 is possible: a `personas/` instance file is itself the subagent's role definition (system prompt), and
-> the `discussion/` log format is identical regardless of the execution method (role-play / actual parallel) (see Section 9.2).
+> the `discussion/` log **format** is identical regardless of the execution method (role-play / actual parallel) (see Section 9.2).
+> But an identical format does not mean you may report role-play as actual parallel — **state the actual execution mode in the log** (KICKOFF 4.1).
+> If subagent tools are unavailable, do not imitate Method 2; fall back to Method 1 (role-play), and do not report independent parallel review you did not perform.
 
 **Method 3 — combine with a formal change request**: after submitting a change-request document to `AGENTSPECKIT/SOURCES/` as in Section 5.1,
 add `This review is the application process of the SOURCES/<file-name> change request.` as the first line of the Method 1 or 2 prompt.
@@ -577,7 +579,7 @@ Read only the feature documents related to the current Phase and the related ADR
 Check only the QA documents needed for the current work.
 
 When starting work, provisionally update the progress state in PROGRESS.md, and
-when the work is done, update PLAN.md, PROGRESS.md, HISTORY.md, and ASSUMPTIONS.md, bundle code + documents, and commit/push.
+when the work is done, update PLAN.md, PROGRESS.md, HISTORY.md, and ASSUMPTIONS.md, bundle code + documents, and commit (push follows the project's push policy).
 ```
 
 ---
@@ -657,7 +659,7 @@ discussion/review-*.md deliberation-process record — per-persona risks·eviden
       ↓ (only the conclusions are reflected)
 features/*.md          a 3–4-line review summary (participants/key issues/conclusion) + log link. Important decisions split off into adr/.
       ↓ (spot-check verification)
-AUDIT.md 3.10          do the sources really exist, do the personas really exist, is the log not theatrical.
+AUDIT.md 3.10          do sources·personas really exist, does the execution mode match the environment, is the log not theatrical.
 ```
 
 **Personas (personas/)** — KICKOFF.md Section 5:

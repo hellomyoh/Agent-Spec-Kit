@@ -190,7 +190,7 @@ For the current Phase, work in the following order.
 23. Record the implementation results, test-run results, and QA results in HISTORY.md
 24. If there is a non-trivial fact learned in this work, record it in NOTES.md (facts only; guesses go in ASSUMPTIONS)
 25. Record in ASSUMPTIONS.md if needed (check for conflicts with existing assumptions)
-26. **Bundle the code change and the corresponding document changes (including README) atomically into a single commit and commit / push**
+26. **Bundle the code change and the corresponding document changes (including README) atomically into a single commit** (push follows the AGENTS.md push policy — default is commit only)
 
 > Key point: PROGRESS is **provisionally recorded at the start (step 10) and finalized at the end (step 22)** — so the code and the record do not diverge even if interrupted midway.
 
@@ -246,6 +246,19 @@ Caution:
 * Applying a change request is **incremental**. Do not re-initialize the project.
 * For the authority / immutability / supersede-chain rules, follow `KICKOFF.md` 15.2.
   In particular, **do not implement by looking only at the request document without updating the artifacts** (a request document is not authoritative before it is Applied).
+
+### 4.2.1 Relationship between live chat instructions and the SOURCES procedure (avoiding authority conflicts)
+
+When the user instructs a change directly in chat (e.g., "go do that"), **the chat message itself** becomes the
+intent basis for that change. This does **not** grant authority to a SOURCES change-request *document* that is still
+`Not applied` / `Under review` (the 15.2 authority rule stands — a dormant request document still has no authority).
+
+* **Non-core change**: proceed immediately and record the decision in `ASSUMPTIONS.md` / `HISTORY.md` (3.5).
+* **Core / cross-cutting change** (per 3.1: MVP scope, data model, auth/permissions, cross-cutting contracts, etc.):
+  even if the user says "just do it," **do not skip** updating the artifacts (ARCHITECTURE/features/ADR). Reflect it
+  into the artifacts via the 4.2 routing within the same work, and thereafter the **artifact** — not the request
+  document — holds authority. A chat instruction only *starts* the work; it does not let you *omit* the artifact
+  record for a core change.
 
 ## 4.3 Backlog (TODO.md) registration / promotion procedure
 
@@ -328,7 +341,7 @@ Caution:
 For the detailed Git rules (branch format, Conventional Commits, etc.), follow `AGENTS.md` (always loaded).
 Only the non-negotiable items are reaffirmed.
 
-* No direct work on or direct push to `main` / `master`. Work on a work branch, and commit / push without asking at each meaningful unit of work.
+* No direct work on or direct push to `main` / `master`. Work on a work branch, and commit without asking at each meaningful unit of work. **Push follows the AGENTS.md push policy (default: commit only, no automatic push).**
 * **Bundle the code change and the corresponding document changes together into one atomic commit.**
 * Never commit `.env` / Secret / certificate / private-key / token files. Force push and PR merge only after the user's approval.
 
@@ -349,7 +362,7 @@ Development work is complete only when it satisfies all of the following.
   when a feature/docs/ADR is added or its status changes, the corresponding index is updated /
   if it is SOURCES-originated work, the INDEX status is updated (`Applied` only when all items are reflected) + a source link in the artifact /
   if it is work promoted from a TODO, the TODO.md status is updated to `Done`
-* **Git**: a commit bundling code + documents atomically / push complete
+* **Git**: a commit bundling code + documents atomically complete (push follows the push policy)
 
 ---
 

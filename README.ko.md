@@ -413,7 +413,7 @@ AGENTS.md와 AGENTSPECKIT/DEVELOPINIT.md를 읽고, 현재 프로젝트 문서�
 - AGENTSPECKIT/SOURCES/INDEX.md에 미반영/검토 중 변경요청이 있으면 보고하고, 우선 처리할지 확인하세요.
 - 문서 상호참조는 상대경로 링크로 적고, feature/docs/ADR 변경 시 해당 인덱스를 같은 commit에서 갱신하세요.
 - 작업 시작 시 PROGRESS.md의 진행 상태와 다음 세션 첫 명령을 잠정 기록하세요.
-- 의미 있는 작업 단위가 끝나면 코드+문서를 하나의 commit으로 묶어 commit/push 하세요.
+- 의미 있는 작업 단위가 끝나면 코드+문서를 하나의 commit으로 묶어 commit 하세요. push는 프로젝트 push 정책을 따릅니다(기본: commit까지, 자동 push 안 함).
 - main/master 직접 push는 금지입니다.
 - 작업 완료 후 ARCHITECTURE.md(변경 시), PLAN.md, PROGRESS.md, HISTORY.md를 갱신하세요.
 - push 시 사용자·설치·실행·아키텍처에 영향이 있으면 프로젝트 README.md를 같은 커밋에서 갱신하세요.
@@ -548,7 +548,9 @@ OOO 기능 추가를 검토하고 설계하세요. 구현은 시작하지 마세
 ```
 
 > 방식 2가 가능한 이유: `personas/` 인스턴스 파일이 곧 서브에이전트의 역할 정의(시스템 프롬프트)이고,
-> `discussion/` 로그 형식은 실행 방식(역할극/실제 병렬)과 무관하게 동일합니다 (9.2절 참조).
+> `discussion/` 로그 **형식**은 실행 방식(역할극/실제 병렬)과 무관하게 동일하기 때문입니다 (9.2절 참조).
+> 단, 형식이 같다고 역할극을 실제 병렬로 보고해도 되는 것은 아닙니다 — **로그에 실제 실행 방식을 명시**하세요(KICKOFF 4.1).
+> 서브에이전트 도구가 없는 환경이면 방식 2를 흉내 내지 말고 방식 1(역할극)로 내려가고, 수행하지 않은 독립 병렬 검토를 한 것처럼 보고하지 마세요.
 
 **방식 3 — 정식 변경요청과 결합**: 5.1절대로 변경요청 문서를 `AGENTSPECKIT/SOURCES/`에 제출한 뒤,
 방식 1 또는 2의 프롬프트 첫 줄에 `이 검토는 SOURCES/<파일명> 변경요청의 반영 과정입니다.`를 추가하세요.
@@ -577,7 +579,7 @@ AGENTSPECKIT/의 ARCHITECTURE.md와 PLAN.md를 함께 읽어 횡단 계약을 �
 현재 작업에 필요한 QA 문서만 확인하세요.
 
 작업 시작 시 PROGRESS.md의 진행 상태를 잠정 갱신하고,
-작업이 끝나면 PLAN.md, PROGRESS.md, HISTORY.md, ASSUMPTIONS.md를 갱신하고 코드+문서를 묶어 commit/push 하세요.
+작업이 끝나면 PLAN.md, PROGRESS.md, HISTORY.md, ASSUMPTIONS.md를 갱신하고 코드+문서를 묶어 commit 하세요(push는 프로젝트 push 정책에 따름).
 ```
 
 ---
@@ -657,7 +659,7 @@ discussion/review-*.md 토의 과정 기록 — 페르소나별 위험·근거/�
       ↓ (결론만 반영)
 features/*.md          검토 요약 3~4줄(참여/핵심 쟁점/결론) + 로그 링크. 중요 결정은 adr/로 분리.
       ↓ (표본 검증)
-AUDIT.md 3.10          출처가 실재하는가, 페르소나가 실재하는가, 연극성 로그는 아닌가.
+AUDIT.md 3.10          출처·페르소나가 실재하는가, 실행 방식이 환경과 맞는가, 연극성 로그는 아닌가.
 ```
 
 **페르소나 (personas/)** — KICKOFF.md 5절:
