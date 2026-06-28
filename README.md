@@ -15,6 +15,7 @@ Requirements compile into specs and a plan; decisions, facts, and deliberations 
 [Getting started](#2-one-time-only-project-initialization-prompt) •
 [Development progress](#5-prompt-to-start-actual-development) •
 [Usage flow](#10-usage-flow-summary) •
+[Benchmarks](#appendix-benchmark-evidence-drift-suppression-pilots) •
 [Update history](#12-update-history)
 
 Codex · Claude Code · Cursor Agent
@@ -750,6 +751,18 @@ Items marked `⚠ structural change` require migration work (file moves·merges,
 > Maintenance rule: when committing a meaningful change to the template, this section is updated in the same commit.
 > When entries grow long, older years are compressed into a `<details>` fold.
 
+### [2026-06-28]
+
+- **Reinforced the ASK Solo/Team prompts** (KICKOFF/AUDIT/DEVELOPINIT, both `en/` and `ko/`) on four gaps surfaced by a prompt review:
+  - **PLAN.md rotation rule** (KICKOFF 12) + made AUDIT 3.9/4 operational — mechanical PLAN-archive vs observe-only ARCHITECTURE — resolving a KICKOFF↔AUDIT contradiction.
+  - **Live chat vs SOURCES authority** (DEVELOPINIT 4.2.1) — a chat instruction authorizes the described change, not a dormant SOURCES doc; core/cross-cutting changes still route through artifacts.
+  - **Relaxed the commit/push default to commit-only** — push follows the AGENTS.md push policy (KICKOFF 10 template + DEVELOPINIT + the README prompt blocks). main/master/force/secret guards kept.
+  - **Execution-mode honesty for Multi-Agent review** (KICKOFF 4.1 log gains an execution-mode field + "no faking parallel review"; AUDIT 3.10 spot-check; README Sections 5.3 fallback / 9.2 nuance), with a per-persona verifiable-failure-condition clause.
+
+### [2026-06-29]
+
+- **Added benchmark evidence** (`benchmark-solo-pilot/`, `benchmark-vibe-ask-solo/`) and an [Appendix: Benchmark evidence](#appendix-benchmark-evidence-drift-suppression-pilots) summarizing two single-seed drift-suppression pilots — memory-retention (an early decision survives only in a memory artifact) and vibe-coding drift (SSOT + conflict check vs plain progress across beginner/intermediate/advanced prompt levels). Honest go/no-go discrimination checks, not powered results. Documentation-only; no change to the kit prompts.
+
 ### [2026-06-13]
 
 - **Split the kit into per-language folders `en/AGENTSPECKIT/` and `ko/AGENTSPECKIT/`** — each folder is self-contained, with every file named canonically (`KICKOFF.md`, `ADOPT.md`, …), so you copy only your language's folder and get no foreign-language clutter in your project. This also fixes a latent issue where the Korean prompts referenced sibling files by their canonical `.md` names while the files were actually packaged as `.ko.md`. Removed the per-file language switcher from the working prompts (it now lives only in this guide README). **No migration is needed for already-applied projects** — the structure inside a project's `AGENTSPECKIT/` is unchanged; this only reorganizes the template repository.
@@ -782,6 +795,46 @@ Items marked `⚠ structural change` require migration work (file moves·merges,
 ### [2026-06-09]
 
 - First public release of Agent-Spec-Kit — the three prompts AGENTINIT/KICKOFF/DEVELOPINIT and the operations document system (AGENTS/ARCHITECTURE/PLAN/PROGRESS/HISTORY/ASSUMPTIONS, features/docs/qa/adr)
+
+---
+
+## Appendix: Benchmark evidence (drift-suppression pilots)
+
+The framework's central claim — that an external, structured memory (SSOT) curbs the **silent intent-drift** that plain LLM sessions suffer — is testable. Two runnable pilots in this repository measure it. Both are **single-seed go/no-go discrimination checks, not statistically powered results** (a powered claim needs ≥3 seeds across multiple tasks); they show *direction*, not magnitude. Each is fully reproducible (sandboxed dev-agents, a hidden oracle the agent never sees, an automated harness self-test gate).
+
+### Pilot 1 — `benchmark-solo-pilot/`: does memory of an early decision survive?
+
+A 7-session `miniquery` task where the original default page size (**7**) is overwritten twice (→25→40), then session 6 asks to "restore the original" — under a coding norm that forbids change-history in code comments, so the original survives **only in a memory artifact**. Four memory regimes build the same task:
+
+| Group | Memory regime | S6 restored value | Correct (7)? |
+|---|---|---:|:--:|
+| **ASK-solo** | structured SSOT (append-only DECISIONS) | **7** | ✅ |
+| P-notes | free notes, ~2600-char cap | 7 | ✅ |
+| B-limited | last 2 sessions' notes, 600-char cap | 25 | ❌ |
+| B-code | no memory (code + ticket only) | 10 | ❌ |
+
+**Findings.** (1) Memory of the original decision is *necessary* — the two memoryless/lossy groups failed, the two memory-bearing groups passed. (2) **Lossy memory is not merely weaker, it is actively misleading**: B-limited didn't admit ignorance — it *confidently restored a plausible wrong value* (25, the value just outside its window), a silent drift harder to catch than B-code's honest "this is a guess." (3) At this small scale, structured SSOT and disciplined free-notes did **not** separate — both kept the lineage. So this pilot demonstrates the **memory-retention** effect, not yet the ASK *structural* advantage over good ad-hoc notes.
+
+### Pilot 2 — `benchmark-vibe-ask-solo/`: does SSOT curb vibe-coding drift?
+
+The vibe-coding scenario: users give incomplete instructions and forget their own past intent. A `catalog` task is run at **3 prompt-explicitness levels** (beginner / intermediate / advanced) × **2 modes** — `baseline-general` (just build the request) vs `ask-solo` (maintain SSOT + run a conflict check) — over 7 sessions each (42 dev-agent sessions). The discriminator is session 6: the user asks to "show everything when the search box is empty," which conflicts with an earlier safety policy (blank → `[]`). Level-aware correct answer: beginner/intermediate should **preserve** the policy (the user forgot — silent compliance = drift); advanced should **adopt** (an explicit, knowing override).
+
+Composite score (out of 90; cost axis pending):
+
+| Level | baseline-general | ask-solo | Δ |
+|---|---:|---:|---:|
+| beginner | 70.4 | **76.0** | +5.6 |
+| intermediate | 66.0 | **90.0** | **+24.0** |
+| advanced | 84.3 | **90.0** | +5.7 |
+
+**Findings.** ask-solo ≥ baseline at every level. (1) **Intermediate is the clean win**: baseline silently complied and broke the safety policy (invariant violation + regression); ask-solo detected the conflict, **held the policy, and flagged it for the user** → zero regression. (2) **Advanced shows code-parity** (both correctly adopt the explicit override) — here ASK's value reduces to doc/process quality, as hypothesized. (3) **Doc quality is the most consistent ASK effect** — ask-solo scored 15/15 on documentation at every level (a visible supersede chain) vs baseline's 7–11. (4) **Honest caveat**: at the *beginner* level ask-solo detected the conflict but mis-classified it as intentional and adopted the drift — under maximum ambiguity, ASK's payoff hinges on the classification step, which was unreliable. (A separate single-seed coding accident also depressed the beginner code score — per-seed noise that ≥3 seeds would average out.)
+
+### What these pilots do and do not establish
+
+- **Do**: the task harnesses discriminate (no ceiling/floor); external memory demonstrably curbs the wrong-value and policy-drift failures that memoryless/baseline agents commit; structured docs yield a consistent authority/completeness advantage.
+- **Do not**: prove ASK wins on all tasks, isolate the structural advantage of SSOT over disciplined free-notes at small scale, cover Team/multi-agent effects, or constitute a powered statistical result. Next steps (recorded in each `RESULTS*.md`): scale to ≥3 seeds, capture the cost axis, and design a longer horizon where free-notes lose the decision but an append-only SSOT keeps it.
+
+> Full design, raw trajectories, and go/no-go verdicts: `benchmark-solo-pilot/RESULTS_v2.md` and `benchmark-vibe-ask-solo/RESULTS_seed1.md`.
 
 ---
 
