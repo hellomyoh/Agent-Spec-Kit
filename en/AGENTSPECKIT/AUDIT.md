@@ -84,18 +84,24 @@ Running is recommended if any of the following applies.
 * Are the artifact links of `Applied` items valid?
 * Has the original not been modified after `Applied`? (immutability-principle violation — verify via git history)
 
-## 3.9 Always-Loaded Document Bloat (Monitoring)
+## 3.9 Always-Loaded Document Bloat
 
-* If the number of completed Phases in PLAN.md **exceeds 4**, or if ARCHITECTURE.md still contains background explanations or deprecated past contracts
-  rather than contract declarations, **mark it as a diet candidate in the report**.
-* This item is for monitoring. Do not compress or migrate documents here; once a threshold breach is reported,
-  decide with the user whether to introduce rotation rules (e.g., archiving completed Phases).
+* **PLAN completed-Phase rotation (mechanical):** If the number of completed-status Phases in PLAN.md **exceeds 4**,
+  migrate the older completed Phases to `PLAN-archive.md` per the KICKOFF.md Section 12 rotation rule
+  (include it in the audit commit — perform immediately). Do so without losing the information needed to prevent
+  duplicate implementation and re-execution of completed Phases.
+* **ARCHITECTURE background residue (monitoring):** If ARCHITECTURE.md still contains background explanations or
+  deprecated past contracts rather than contract declarations, **only mark it as a diet candidate in the report**.
+  Do not compress ARCHITECTURE arbitrarily here (judgment needed); decide with the user whether to move deprecated
+  contracts to an ADR (Deprecated/Superseded).
 
 ## 3.10 Review Logs (discussion) — Spot-Check
 
 * Does each non-trivial feature document have a review log link? (If not, suspect a missing review)
 * Open 1–2 sample logs and check whether the **sourcing obligation** was met — in particular, whether the Research Agent's web
   sources are **preserved as full URLs in the log** (not abbreviated/name-only) and **actually exist** (a missing or abbreviated source = a signal of a forged/unverifiable review)
+* Does the **execution mode** stated in the log (role-play / real parallel) not contradict the environment's capability?
+  (marking "real parallel" in an environment without subagents = a signal of a forged execution mode)
 * Does the log follow the structure in KICKOFF.md 4.1 (review per persona / issues / conclusion), and is it not a theatrical log that merely lists generic platitudes?
 * Do the participating personas in the log actually exist as instances in `personas/`, and do they match the INDEX?
 * Do the persona instances contain only links and checklists, without copying knowledge (the KICKOFF.md 5.2 rule)?
@@ -125,6 +131,7 @@ Running is recommended if any of the following applies.
 | Assumption that should have been confirmed/dropped | Update status if the evidence is clear; record as "verification needed" if unclear |
 | Code↔specification inconsistency | Do not fix; record in the findings list → separate into a task to be handled via DEVELOPINIT 3.4 |
 | HISTORY rotation needed | Can be performed immediately (the KICKOFF.md Section 14 rule) |
+| PLAN completed-Phase rotation needed (exceeds 4) | Can be performed immediately (the KICKOFF.md Section 12 rule — migrate to PLAN-archive.md) |
 | Code violating an ARCHITECTURE contract | Record only; the fix becomes a development task |
 | Neglected Not-applied / Under-review change request | List it in PROGRESS.md's remaining work and state it in the report |
 | Missing review log / nonexistent source / theatrical log | Separate the re-review of that feature into a follow-up task and state it in the report |

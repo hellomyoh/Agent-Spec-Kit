@@ -1,0 +1,1 @@
+Your SSOT docs live in ssot/ (PRODUCT.md, DECISIONS.md, DATA_MODEL.md, PROGRESS.md). READ them first, then UPDATE them this session (record durable decisions in DECISIONS.md).

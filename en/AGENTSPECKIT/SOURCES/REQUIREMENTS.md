@@ -29,6 +29,17 @@ This document follows the same lifecycle rules as the other submitted materials 
 > this `REQUIREMENTS.md` is **optional**. In that case you only need to write "future goals, unimplemented requirements, and constraints" (the current state is reverse-extracted from the code),
 > and if you leave it empty, the Agent will create the current-state documents from the code and then ask only as many questions as needed.
 
+> 💡 **Tip — submitting reference material makes the result better.**
+> If an idea is hard to put into words, **save it as a file in the `SOURCES/` folder and reference it from this document.**
+> The Agent reads it together with this document during initialization and registers it in `SOURCES/INDEX.md`.
+>
+> - **A web/app with a design you have in mind**: **capture the reference screen (PNG/JPG) or save it as a PDF**, drop it in `SOURCES/`,
+>   and write something like `Reference design: SOURCES/design-ref.png` under "7. Screen / UX Requirements".
+> - **Using an external API**: save the API docs as `SOURCES/api-spec.pdf` (or `.md`/`.html`) and reference it under "5. External Integration > API documentation".
+> - **A service/flow you want to emulate**: capture that screen, put it in `SOURCES/`, and link it from the relevant item.
+>
+> Write references as `Item: SOURCES/<filename>`. A single screenshot is often more precise than a long written description.
+
 ---
 
 # 0. Delegating Items You Don't Know to the AI
@@ -72,7 +83,7 @@ Example:
 
 ## Project Name
 
-<!-- e.g., Stability Metrics Collection and Analysis Application -->
+<!-- Write the project name in one line. -->
 
 ## Project Purpose
 
@@ -96,19 +107,6 @@ Example:
 # 2. Project Description
 
 <!-- Write freely. A rough draft is fine. -->
-
-Example:
-
-Stability Metrics Collection and Analysis Application
-
-* Collects data via the l&cs API.
-* Refer to the following URL for the API spec.
-
-  * https://docs.nhncloud.com/en/Data%20&%20Analytics/Log%20&%20Crash%20Search/en/api-guide/
-* Stores the collected data as local data.
-* Analyzes the characteristics and fields of the locally stored data.
-* Builds graphs based on the analysis results.
-* Provides a screen where users can easily check the metrics.
 
 ---
 

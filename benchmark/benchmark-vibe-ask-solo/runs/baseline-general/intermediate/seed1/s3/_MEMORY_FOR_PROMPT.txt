@@ -1,0 +1,1 @@
+MODE=baseline-general. You may keep a short docs/NOTES.md if you like, but it is not an authority document. Follow agents/dev_baseline-general.md: implement the user's current request against the current code. No required spec/SSOT structure.

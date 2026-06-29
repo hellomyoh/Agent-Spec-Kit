@@ -243,6 +243,8 @@ Review-log structure (follow this structure, not free-form narrative):
 ```md
 # Review log: <feature-name> (YYYY-MM-DD)
 
+Execution mode: state which was actually performed — role-play (single-agent roleplay) / real parallel (independent subagents)
+
 ## Participating personas and selection rationale
 
 Link the instance files used (e.g., [Security Agent](../personas/security.md)).
@@ -250,6 +252,7 @@ Link the instance files used (e.g., [Security Agent](../personas/security.md)).
 ## Review by persona
 
 For each persona: perspective / risks found / **rationale·sources (mandatory)** / proposal.
+Where possible, state each risk as a **verifiable failure condition** (a form checkable by a test or checklist item).
 In particular, the Research Agent must always specify sources — for web sources the **full, resolvable URL preserved verbatim in the log** (not abbreviated or name-only), and for submitted material the `SOURCES/` relative path — so that AUDIT can verify they exist.
 If a source cannot be cited, record it as "could not perform research." Do not assert research findings without sources.
 
@@ -268,6 +271,8 @@ Log operation rules:
 * The log is **neither always-loaded nor normally selectively loaded.** Open it only during a dispute (authority diagnosis) or an AUDIT spot-check.
 * The log is not "evidence" of the review, but a **device that forces the review to be performed and makes spot-check verification possible.**
   A log that does not honor the rationale·source obligation is not recognized as a review.
+* The **execution mode** stated in the log must be the mode actually performed. If you reviewed via role-play because
+  subagent tools were unavailable, record it as "role-play" and **do not report it as if independent parallel review was performed.**
 
 ---
 
@@ -712,7 +717,7 @@ Include the Git rules below in AGENTS.md.
 - When a meaningful unit of work is complete, commit without asking the user.
 - In a single commit, atomically bundle the code change together with its corresponding document change (AGENTSPECKIT/'s features/ARCHITECTURE/PROGRESS/HISTORY, etc.).
 - Use the Conventional Commits format for commit messages.
-- After committing, push to the working branch.
+- Push policy (default: commit only): do not push automatically by default. If this project permits automatic pushing, push to the working branch. In CI / branch-protection / review-gate environments, the user/CI performs the push.
 - Direct push to `main` / `master` is prohibited.
 - Force push is performed only when the user explicitly requests it.
 - Never commit files containing `.env`, secrets, certificates, private keys, or tokens.
@@ -773,6 +778,18 @@ Each Phase must include the following information.
 * Related feature documents
 * Related ARCHITECTURE items / ADRs
 * Status
+
+Rotation / archive rule:
+
+```text
+PLAN.md is an always-loaded document, so it bloats as completed Phases accumulate.
+When the number of completed-status Phases exceeds 4, compress and summarize the older
+completed Phases and migrate them to PLAN-archive.md, keeping in PLAN.md only the
+recent/in-progress Phases and a link to the summary.
+Perform this rotation without losing the information needed to prevent duplicate
+implementation and re-execution of completed Phases (the existence of completed
+Phases/features) — the same principle as the HISTORY rotation rule in Section 14.
+```
 
 ---
 

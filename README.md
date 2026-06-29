@@ -4,10 +4,9 @@
 
 🌐 **English** · [한국어](README.ko.md)
 
-**Your AI coding agent forgets everything when the session ends.**
+**Agent-Spec-Kit is a Spec-Driven Development framework for AI coding agents — a panel of expert personas debate and agree on every spec *before* a line of code is written.**
 
-Agent-Spec-Kit gives it a memory that persists — and a panel of expert personas that debate and agree on every spec *before* a line of code is written.
-Requirements compile into specs and a plan; decisions, facts, and deliberations accumulate in a plain **markdown + git** file system that the next session picks up exactly where the last one stopped. No lock-in — the same kit runs in **Claude Code, Codex, and Cursor**.
+Requirements compile into specs and a plan; decisions, facts, and deliberations accumulate in a plain **markdown + git** memory that the next session picks up exactly where the last one stopped — so the work stays consistent across sessions instead of drifting. No lock-in — the same kit runs in **Claude Code, Codex, and Cursor**.
 
 [Quick Start](#quick-start) •
 [Why this structure?](#why-this-structure--the-limits-of-llms-and-the-benefits-of-this-framework) •
@@ -15,7 +14,7 @@ Requirements compile into specs and a plan; decisions, facts, and deliberations 
 [Getting started](#2-one-time-only-project-initialization-prompt) •
 [Development progress](#5-prompt-to-start-actual-development) •
 [Usage flow](#10-usage-flow-summary) •
-[Update history](#12-update-history)
+[Benchmarks](#appendix-benchmark-evidence-drift-suppression-pilots)
 
 Codex · Claude Code · Cursor Agent
 
@@ -23,26 +22,9 @@ Codex · Claude Code · Cursor Agent
 
 ---
 
-## Two editions: Solo and Team
+## Team development? → ASK-Team
 
-Agent-Spec-Kit comes in two frameworks. **This document (README) is the Solo guide.** When several people develop at the same time, use **ASK-Team** instead.
-
-| | **Solo (ASK)** — this guide | **Team (ASK-Team)** |
-|---|---|---|
-| For | 1 developer / sequential, autonomous | multiple developers & AI agents, **concurrent** |
-| Progress | single `PROGRESS.md` cursor | `workitems/` + `sessions/<handle>--<WI>` |
-| History / assumptions / notes | single files | `history/` · `assumptions/` · `notes/` directories |
-| Indexes | hand-updated | none — frontmatter read directly (no index files) |
-| Conflicts | n/a | `touches` + `conflicts/` (agent cross-checks) |
-| Identity | not needed | `team/` + git identity (`git config user.email`) |
-| Runtime | none | none (markdown + git only) |
-| Kit folder | `en/AGENTSPECKIT/` · `ko/AGENTSPECKIT/` | `en/ASK-TEAM/` · `ko/ASK-TEAM/` |
-
-- **Solo guide:** keep reading this document. ([한국어](README.ko.md))
-- **Team guide:** [en/ASK-TEAM/README.md](en/ASK-TEAM/README.md) · [ko/ASK-TEAM/README.md](ko/ASK-TEAM/README.md)
-- For a single developer, Solo is lighter — use Team only when N people actually develop concurrently.
-
-> This repository's [OUTLINE.md](OUTLINE.md) is a **research-paper draft** about the framework (for authors); it is not needed to use the kit.
+This guide (README) is the **Solo** edition — one developer, sequential. For **multiple developers and AI agents building the same codebase concurrently**, use the Team edition: **[README.team.md](README.team.md)** ([한국어](README.team.ko.md)).
 
 ---
 
@@ -326,6 +308,8 @@ However, two things cannot be delegated. **If you leave or delegate both the pro
 
 The same applies in the development step. If you delegate in a prompt with "just handle this for me," the autonomous-decision scope for that item widens, but core items are decided conservatively and left in `ASSUMPTIONS.md` and the completion report.
 
+> 📝 **Writing the requirements:** the [`REQUIREMENTS.md` template](en/AGENTSPECKIT/SOURCES/REQUIREMENTS.md) carries its own in-file guide — which items to fill in first, the `[AI-delegated]` marker, and a **tip on attaching reference material** (capture a target design or API doc into `SOURCES/` and reference it from the document, instead of describing it in prose). Skim it before you start writing.
+
 ---
 
 ## 4. Documents generated after initialization is complete
@@ -436,7 +420,7 @@ Cautions:
 - If AGENTSPECKIT/SOURCES/INDEX.md has Not-applied/Under-review change requests, report them and confirm whether to process them first.
 - Write document cross-references as relative-path links, and when changing feature/docs/ADR, update the corresponding index in the same commit.
 - When starting work, provisionally record the progress state and the first command of the next session in PROGRESS.md.
-- When a meaningful unit of work is complete, bundle code + documents into a single commit and commit/push.
+- When a meaningful unit of work is complete, bundle code + documents into a single commit and commit. Push follows the project's push policy (default: commit only, no automatic push).
 - Direct push to main/master is forbidden.
 - After completing the work, update ARCHITECTURE.md (if changed), PLAN.md, PROGRESS.md, and HISTORY.md.
 - On push, if there is any impact on users/installation/run/architecture, update the project README.md in the same commit.
@@ -510,6 +494,16 @@ At this step, do not do any feature-change work.
 If there is a place in a related feature/ARCHITECTURE document that should reference this material as evidence, add only a link.
 ```
 
+### 5.1.1 Making changes by talking to the agent (live chat)
+
+You don't always have to write a document. You can also request a change just by telling the agent in chat — the framework routes by impact (`DEVELOPINIT.md` 4.2.1):
+
+- **Small / non-core changes** (wording, non-core UI, an internal tweak): say it in chat and the agent makes the change, recording the decision in `ASSUMPTIONS.md` / `HISTORY.md`. No document needed.
+- **Core / cross-cutting changes** (MVP scope, data model, authentication/authorization, the `ARCHITECTURE.md` contract): a chat instruction *starts* the work but does **not** let the agent skip the record. The agent confirms with you first, then reflects the change into the artifacts (ARCHITECTURE / features / ADR) within the same work — and from then on the **artifact**, not the chat message, is the source of truth.
+- **When you want traceability** ("why did we change this months ago?") or the change is large/contentious: prefer the document channel in Section 5.1. The submitted original is preserved, so the reason survives.
+
+> **Authority note.** A chat instruction authorizes **the change it describes** — it does not activate a `SOURCES/` change-request document that is still `Not applied` / `Under review`. A dormant request document carries no authority until it is `Applied` (KICKOFF.md 15.2).
+
 ### 5.2 How to use the backlog (TODO.md)
 
 For ideas at the "would be nice to do later" level during development, instead of writing a change-request document, instruct registration in one line.
@@ -571,7 +565,9 @@ Run the persona deliberation as actual subagents in parallel, not as role-play.
 ```
 
 > Why Method 2 is possible: a `personas/` instance file is itself the subagent's role definition (system prompt), and
-> the `discussion/` log format is identical regardless of the execution method (role-play / actual parallel) (see Section 9.2).
+> the `discussion/` log **format** is identical regardless of the execution method (role-play / actual parallel) (see Section 9.2).
+> But an identical format does not mean you may report role-play as actual parallel — **state the actual execution mode in the log** (KICKOFF 4.1).
+> If subagent tools are unavailable, do not imitate Method 2; fall back to Method 1 (role-play), and do not report independent parallel review you did not perform.
 
 **Method 3 — combine with a formal change request**: after submitting a change-request document to `AGENTSPECKIT/SOURCES/` as in Section 5.1,
 add `This review is the application process of the SOURCES/<file-name> change request.` as the first line of the Method 1 or 2 prompt.
@@ -600,7 +596,7 @@ Read only the feature documents related to the current Phase and the related ADR
 Check only the QA documents needed for the current work.
 
 When starting work, provisionally update the progress state in PROGRESS.md, and
-when the work is done, update PLAN.md, PROGRESS.md, HISTORY.md, and ASSUMPTIONS.md, bundle code + documents, and commit/push.
+when the work is done, update PLAN.md, PROGRESS.md, HISTORY.md, and ASSUMPTIONS.md, bundle code + documents, and commit (push follows the project's push policy).
 ```
 
 ---
@@ -680,7 +676,7 @@ discussion/review-*.md deliberation-process record — per-persona risks·eviden
       ↓ (only the conclusions are reflected)
 features/*.md          a 3–4-line review summary (participants/key issues/conclusion) + log link. Important decisions split off into adr/.
       ↓ (spot-check verification)
-AUDIT.md 3.10          are sources full URLs that really exist, do the personas really exist, is the log not theatrical.
+AUDIT.md 3.10          are sources full URLs that really exist, do personas really exist, does the execution mode match the environment, is the log not theatrical.
 ```
 
 **Personas (personas/)** — KICKOFF.md Section 5:
@@ -762,47 +758,43 @@ flowchart TD
 
 ---
 
-## 12. Update history
+## Appendix: Benchmark evidence (drift-suppression pilots)
 
-This is the change history of the kit (template). It is separate from each project's work history (`AGENTSPECKIT/HISTORY.md`).
-**When upgrading the kit per Section 2.2, the items subject to application are those after the date the project last applied.**
-Items marked `⚠ structural change` require migration work (file moves·merges, etc.) on existing projects.
+The framework's central claim — that an external, structured memory (SSOT) curbs the **silent intent-drift** that plain LLM sessions suffer — is testable. Two runnable pilots in this repository measure it. Both are **single-seed go/no-go discrimination checks, not statistically powered results** (a powered claim needs ≥3 seeds across multiple tasks); they show *direction*, not magnitude. Each is fully reproducible (sandboxed dev-agents, a hidden oracle the agent never sees, an automated harness self-test gate).
 
-> Maintenance rule: when committing a meaningful change to the template, this section is updated in the same commit.
-> When entries grow long, older years are compressed into a `<details>` fold.
+### Pilot 1 — `benchmark/benchmark-solo-pilot/`: does memory of an early decision survive?
 
-### [2026-06-13]
+A 7-session `miniquery` task where the original default page size (**7**) is overwritten twice (→25→40), then session 6 asks to "restore the original" — under a coding norm that forbids change-history in code comments, so the original survives **only in a memory artifact**. Four memory regimes build the same task:
 
-- **Split the kit into per-language folders `en/AGENTSPECKIT/` and `ko/AGENTSPECKIT/`** — each folder is self-contained, with every file named canonically (`KICKOFF.md`, `ADOPT.md`, …), so you copy only your language's folder and get no foreign-language clutter in your project. This also fixes a latent issue where the Korean prompts referenced sibling files by their canonical `.md` names while the files were actually packaged as `.ko.md`. Removed the per-file language switcher from the working prompts (it now lives only in this guide README). **No migration is needed for already-applied projects** — the structure inside a project's `AGENTSPECKIT/` is unchanged; this only reorganizes the template repository.
+| Group | Memory regime | S6 restored value | Correct (7)? |
+|---|---|---:|:--:|
+| **ASK-solo** | structured SSOT (append-only DECISIONS) | **7** | ✅ |
+| P-notes | free notes, ~2600-char cap | 7 | ✅ |
+| B-limited | last 2 sessions' notes, 600-char cap | 25 | ❌ |
+| B-code | no memory (code + ticket only) | 10 | ❌ |
 
-### [2026-06-12]
+**Findings.** (1) Memory of the original decision is *necessary* — the two memoryless/lossy groups failed, the two memory-bearing groups passed. (2) **Lossy memory is not merely weaker, it is actively misleading**: B-limited didn't admit ignorance — it *confidently restored a plausible wrong value* (25, the value just outside its window), a silent drift harder to catch than B-code's honest "this is a guess." (3) At this small scale, structured SSOT and disciplined free-notes did **not** separate — both kept the lineage. So this pilot demonstrates the **memory-retention** effect, not yet the ASK *structural* advantage over good ad-hoc notes.
 
-- **New artifact-language policy** — descriptive prose is unified into the primary language of `REQUIREMENTS.md` (or a designated language), code identifiers·API paths·commit messages stay in English, and per-section language switching is forbidden. Prevents English-Korean mixing in feature/docs at initialization (KICKOFF preamble·Section 9, REQUIREMENTS "artifact-writing language" item, AUDIT 3.12 spot-check)
-- **Single-responsibility recording model** — PROGRESS·HISTORY are limited to coding work + system events (initialization/adoption/upgrade/audit) only. For document-unit work (specification/change request/TODO), each one's index·status column is responsible for recording (eliminating double entry). Code-less specification edits state the commit reason (KICKOFF Sections 13·14, DEVELOPINIT Sections 2·4.2·4.3·8)
-- **Merge-language harmonization rule** — for ADOPT merges·2.2 upgrades, existing content is prescribed to be merged into the prescribed language by **meaning-preserving translation** rather than verbatim wording (preventing merge artifacts like a mixed CLAUDE.md where an English original + a Korean block are concatenated — ADOPT Section 5, README 2.2)
+### Pilot 2 — `benchmark/benchmark-vibe-ask-solo/`: does SSOT curb vibe-coding drift?
 
-### [2026-06-11]
+The vibe-coding scenario: users give incomplete instructions and forget their own past intent. A `catalog` task is run at **3 prompt-explicitness levels** (beginner / intermediate / advanced) × **2 modes** — `baseline-general` (just build the request) vs `ask-solo` (maintain SSOT + run a conflict check) — over 7 sessions each (42 dev-agent sessions). The discriminator is session 6: the user asks to "show everything when the search box is empty," which conflicts with an earlier safety policy (blank → `[]`). Level-aware correct answer: beginner/intermediate should **preserve** the policy (the user forgot — silent compliance = drift); advanced should **adopt** (an explicit, knowing override).
 
-- Added the `TODO.md` backlog system — "register this feature in the todo" registration·promotion funnel (KICKOFF 15.3, DEVELOPINIT 4.3, usage Section 5.2)
-- New kit-upgrade procedure (Section 2.2) — an official path for applying a new version to an already-applied project
-- Organized the `AGENTSPECKIT/` prefix for artifact paths in the README prompt blocks; added the update history (this section)
-- Reorganized the guide README onboarding — added a Quick Start section, consolidated the core-principle sections, summarized the question-criteria·QA sections, moved context cost into an appendix, added a license section
-- Slimmed the CLAUDE.md template into a **malfunction-prevention-only safety net** (workflow rules have AGENTS.md as their single source; about -200 tokens per session) — added re-initialization-forbidden·authority-diagnosis (no-specification-disguise) defenses, added a bloat-prevention standard. Existing projects apply Section 2.2 upgrade 3-1 (replace via the lossless gate)
-- Added three feature-addition review·design prompts (Section 5.3) — explicit invocation of the standard review / actual parallel deliberation by subagents / combination with a SOURCES change request
+Composite score (out of 90; cost axis pending):
 
-### [2026-06-10] ⚠ structural change
+| Level | baseline-general | ask-solo | Δ |
+|---|---:|---:|---:|
+| beginner | 70.4 | **76.0** | +5.6 |
+| intermediate | 66.0 | **90.0** | **+24.0** |
+| advanced | 84.3 | **90.0** | +5.7 |
 
-- **Isolated all artifacts into the `AGENTSPECKIT/` folder** — only the three files project README·AGENTS.md·CLAUDE.md at the root. Existing projects need to move their artifacts
-- Introduced the `SOURCES/` submission channel — submit reference material·change requests as documents, original immutable·append-only, INDEX lifecycle management
-- **Consolidated initial requirements into `SOURCES/REQUIREMENTS.md`** (the old `AGENTINIT.md` abolished) — frozen at initialization completion, KICKOFF re-run forbidden
-- New brownfield adoption prompt (`ADOPT.md`) and document-audit prompt (`AUDIT.md`)
-- Borrowed from the Karpathy LLM wiki: `NOTES.md` (learned-fact accumulation), index standardization (features/docs), HISTORY fixed prefix, relative-path link convention
-- Added the persona-instance (`personas/`) and review-log (`discussion/`) system — enforced review performance + source obligation + AUDIT spot-check verification
-- DEVELOPINIT lossless diet (-11%), README hero header·Mermaid usage flow chart
+**Findings.** ask-solo ≥ baseline at every level. (1) **Intermediate is the clean win**: baseline silently complied and broke the safety policy (invariant violation + regression); ask-solo detected the conflict, **held the policy, and flagged it for the user** → zero regression. (2) **Advanced shows code-parity** (both correctly adopt the explicit override) — here ASK's value reduces to doc/process quality, as hypothesized. (3) **Doc quality is the most consistent ASK effect** — ask-solo scored 15/15 on documentation at every level (a visible supersede chain) vs baseline's 7–11. (4) **Honest caveat**: at the *beginner* level ask-solo detected the conflict but mis-classified it as intentional and adopted the drift — under maximum ambiguity, ASK's payoff hinges on the classification step, which was unreliable. (A separate single-seed coding accident also depressed the beginner code score — per-seed noise that ≥3 seeds would average out.)
 
-### [2026-06-09]
+### What these pilots do and do not establish
 
-- First public release of Agent-Spec-Kit — the three prompts AGENTINIT/KICKOFF/DEVELOPINIT and the operations document system (AGENTS/ARCHITECTURE/PLAN/PROGRESS/HISTORY/ASSUMPTIONS, features/docs/qa/adr)
+- **Do**: the task harnesses discriminate (no ceiling/floor); external memory demonstrably curbs the wrong-value and policy-drift failures that memoryless/baseline agents commit; structured docs yield a consistent authority/completeness advantage.
+- **Do not**: prove ASK wins on all tasks, isolate the structural advantage of SSOT over disciplined free-notes at small scale, cover Team/multi-agent effects, or constitute a powered statistical result. Next steps (recorded in each `RESULTS*.md`): scale to ≥3 seeds, capture the cost axis, and design a longer horizon where free-notes lose the decision but an append-only SSOT keeps it.
+
+> Full design, raw trajectories, and go/no-go verdicts: `benchmark/benchmark-solo-pilot/RESULTS_v2.md` and `benchmark/benchmark-vibe-ask-solo/RESULTS_seed1.md`.
 
 ---
 
@@ -824,4 +816,4 @@ An estimate based on Korean + markdown at about 2 characters/token, for a medium
 
 ## License
 
-_(In preparation — the license will be specified later.)_
+Released under the [MIT License](LICENSE) — free to use, copy, modify, and distribute (including commercially), with attribution. Copyright (c) 2026 hellomyoh.

@@ -1,0 +1,14 @@
+--- notes from session S0 (capped 600 chars) ---
+# S0 — Scaffold
+
+Implemented `Store` in `miniquery.py`:
+- `add(record)`: stores a `copy.deepcopy` of the record (callers can't mutate internal state via the dict they passed).
+- `all()`: returns deep copies, insertion order.
+- `query()`: no-args returns all records (deep copies), insertion order.
+
+Decisions:
+- Used `copy.deepcopy` everywhere (records may hold nested mutable values).
+- `query()` carries the FULL pinned signature (where/sort_by/limit/offset/select) but only the no-args path is implemented this session — extra params not yet honoured. Future tickets fill these in.
+- Internal stor
+
+(Write a short NOTES.md this session; only the last 2 sessions' notes survive, capped.)

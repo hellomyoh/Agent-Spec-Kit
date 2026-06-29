@@ -1,0 +1,47 @@
+plemented so far
+- S0: add(record) deep-copies in; all() returns deep copies; query() no-arg -> all.
+- S1: query(where={k:v,...}) -> records matching ALL key==value pairs.
+- S2: query(sort_by=field) -> ASCENDING, STABLE sort (ties keep insertion order).
+- S3: query(limit, offset) -> pagination, applied AFTER sort.
+- S4: query(select=[...]) -> project each result to ONLY the listed keys that
+  are PRESENT on that record. DONE.
+
+## Key decisions / invariants
+- `copy.deepcopy` on add AND read so callers can never mutate internal state
+  (records may hold nested dicts/lists). EVERY return path must yield fresh dicts.
+- Records in private list `self._records`; insertion order = source of truth.
+
+## WHERE policy (S1 — DECIDED, applies to ALL future where handling)
+- Unknown field = HARD ERROR: if a where key is in NO stored record, raise
+  `KeyError(key)`. Validate keys BEFORE filtering, against FULL store.
+- A record that merely LACKS a present key fails equality (excluded), not error.
+- Empty/None where = no filter (`if where:` guard). Matching is ALL pairs (AND), `==`.
+
+## SORT policy (S2 — DECIDED)
+- `if sort_by is not None:` guard (so "" still sorts). Ascending only; builtin
+  `sorted` gives stability. Key = `r[sort_by]`.
+- OPEN: missing sort_by key -> KeyError; uncomparable -> TypeError. Not forced; don't pre-build.
+
+## PAGINATION policy (S3 — DECIDED)
+- Combined order LOCKED: where -> sort_by -> offset/limit -> select.
+- One slice: `stop = None if limit is None else offset+limit; records[offset:stop]`.
+  limit=0 => empty (only None = no cap); offset past end => []; limit beyond => clamps.
+- offset default 0, limit default None.
+- OPEN: negative limit/offset — raw Python slice semantics, NOT validated. If a
+  ticket specifies, validate up front like where-policy. Don't pre-build.
+
+## SELECT policy (S4 — DECIDED)
+- `if select is not None:` guard (so select=[] -> every result becomes `{}`).
+- Projection is the LAST step (after offset/limit). Per ticket: keep ONLY keys
+  "present on the record" => `{k: r[k] for k in select if k in r}`. A selected
+  key absent from a record is SILENTLY OMITTED (NOT KeyError — differs from
+  where-policy; ticket wording is explicit). Order of keys follows `select`.
+- This path deep-copies each kept VALUE and returns directly (skips the trailing
+  deepcopy) — still fresh dicts + fresh nested values.
+- OPEN: duplicate field in select (harmless, dict dedups); select interaction
+  with sort_by on a non-selected field is fine (sort runs before projection).
+
+(Maintain a free-form NOTES.md; carried notes are capped to ~2600 chars.)
+
+
+(Maintain a free-form NOTES.md; carried notes are capped to ~2600 chars.)

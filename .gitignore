@@ -1,2 +1,4 @@
 # oh-my-claudecode internal state
 .omc/
+.claude/
+.dont-me-push/

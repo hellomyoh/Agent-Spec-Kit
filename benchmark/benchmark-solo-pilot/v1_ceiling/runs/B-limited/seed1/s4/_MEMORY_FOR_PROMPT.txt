@@ -1,0 +1,26 @@
+--- notes from session S2 (capped 600 chars) ---
+# S2 — Sorting (`sort_by`)
+
+Implemented `query(sort_by=field)`: ascending sort by that field's value.
+
+Decisions:
+- POLICY (applies to ALL future `sort_by`): STABLE sort — ties (equal sort keys)
+  keep INSERTION ORDER. Used Python `sorted(key=lambda r: r[sort_by])`, which is
+  stable, so this falls out for free.
+- Applied AFTER `where` filtering, on the filtered set, BEFORE copying out.
+- `sort_by=None` => no sorting (unchanged). `where` policy from S1 preserved.
+- limit/offset/select still unimplemented (future tickets).
+
+
+--- notes from session S3 (capped 600 chars) ---
+# S3 — Pagination (`limit`, `offset`)
+
+Implemented `query(limit, offset)`, applied AFTER sorting (so order: where -> sort_by -> paginate -> copy out).
+
+Decisions:
+- `offset` (default 0) skips leading results; `limit` (default None => no cap) caps count.
+- Used list slicing `records[offset:stop]` where stop = offset+limit (or None). Slicing handles out-of-range safely: offset past end => [], limit > remaining => all remaining.
+- Guard `if offset or limit is not None:` so the no-pagination path is untouched.
+- S1 `where` KeyError policy + S2 stable-sort policy preserved. Only `select` remains un
+
+(Write a short NOTES.md this session; only the last 2 sessions' notes survive, capped.)

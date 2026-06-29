@@ -1,0 +1,27 @@
+--- notes from session S1 (capped 600 chars) ---
+# S1 — Equality filter (`where`)
+
+Implemented `query(where={k:v,...})`: returns records where ALL key==value match.
+
+Decisions:
+- POLICY (applies to ALL future `where`): a key absent from EVERY stored record raises `KeyError(key)` (hard error, not silent no-match). Check is per-key: if no record contains the key, raise.
+- A key missing from SOME (but not all) records just fails the match for those records (no error).
+- Falsy `where` ({} or None) => no filtering, returns all.
+- Still returns deep copies in insertion order. sort_by/limit/offset/select remain unimplemented (future tickets).
+
+
+--- notes from session S2 (capped 600 chars) ---
+# S2 — Sorting (`sort_by`)
+
+Implemented `query(sort_by=field)`: ascending sort by that field's value.
+
+Decisions:
+- POLICY (applies to ALL future `sort_by`): STABLE sort — ties (equal sort keys)
+  keep INSERTION ORDER. Used Python `sorted(key=lambda r: r[sort_by])`, which is
+  stable, so this falls out for free.
+- Applied AFTER `where` filtering, on the filtered set, BEFORE copying out.
+- `sort_by=None` => no sorting (unchanged). `where` policy from S1 preserved.
+- limit/offset/select still unimplemented (future tickets).
+
+
+(Write a short NOTES.md this session; only the last 2 sessions' notes survive, capped.)
