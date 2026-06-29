@@ -1,6 +1,6 @@
 # Vibe ASK-Solo Benchmark
 
-Implements `BENCHMARK-PLAN-VIBE-ASK-SOLO.md` (repo root) as a runnable file structure.
+Implements `BENCHMARK-PLAN-VIBE-ASK-SOLO.md` (in this folder) as a runnable file structure.
 
 **Hypothesis.** In vibe-coding, users give incomplete/inconsistent instructions and forget their own
 past intent. ASK-solo (feature spec + SSOT docs + a conflict-handling discipline) should beat plain
@@ -52,7 +52,7 @@ benchmark-vibe-ask-solo/
 The driver does plumbing + automated code scoring; the ORCHESTRATOR runs a fresh dev-agent per session.
 
 ```
-cd benchmark-vibe-ask-solo
+cd benchmark/benchmark-vibe-ask-solo
 PYTHONIOENCODING=utf-8 python eval/_selftest.py          # Stage -1 gate (must pass)
 
 # for each mode in {baseline-general, ask-solo}, level in {beginner,intermediate,advanced}, n in 0..6:

@@ -91,7 +91,7 @@ never saw `eval/`). 28 sessions ran clean (no chain deaths, no import errors).
 ## Reproduce
 
 ```
-cd benchmark-solo-pilot
+cd benchmark/benchmark-solo-pilot
 PYTHONIOENCODING=utf-8 python eval/_selftest.py
 # per (group, session): prepare -> fresh dev-agent edits runs/<group>/seed1/work/ -> score
 PYTHONIOENCODING=utf-8 python driver.py prepare <group> <n>

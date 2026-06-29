@@ -4,10 +4,9 @@
 
 🌐 **English** · [한국어](README.ko.md)
 
-**Your AI coding agent forgets everything when the session ends.**
+**Agent-Spec-Kit is a Spec-Driven Development framework for AI coding agents — a panel of expert personas debate and agree on every spec *before* a line of code is written.**
 
-Agent-Spec-Kit gives it a memory that persists — and a panel of expert personas that debate and agree on every spec *before* a line of code is written.
-Requirements compile into specs and a plan; decisions, facts, and deliberations accumulate in a plain **markdown + git** file system that the next session picks up exactly where the last one stopped. No lock-in — the same kit runs in **Claude Code, Codex, and Cursor**.
+Requirements compile into specs and a plan; decisions, facts, and deliberations accumulate in a plain **markdown + git** memory that the next session picks up exactly where the last one stopped — so the work stays consistent across sessions instead of drifting. No lock-in — the same kit runs in **Claude Code, Codex, and Cursor**.
 
 [Quick Start](#quick-start) •
 [Why this structure?](#why-this-structure--the-limits-of-llms-and-the-benefits-of-this-framework) •
@@ -488,6 +487,16 @@ At this step, do not do any feature-change work.
 If there is a place in a related feature/ARCHITECTURE document that should reference this material as evidence, add only a link.
 ```
 
+### 5.1.1 Making changes by talking to the agent (live chat)
+
+You don't always have to write a document. You can also request a change just by telling the agent in chat — the framework routes by impact (`DEVELOPINIT.md` 4.2.1):
+
+- **Small / non-core changes** (wording, non-core UI, an internal tweak): say it in chat and the agent makes the change, recording the decision in `ASSUMPTIONS.md` / `HISTORY.md`. No document needed.
+- **Core / cross-cutting changes** (MVP scope, data model, authentication/authorization, the `ARCHITECTURE.md` contract): a chat instruction *starts* the work but does **not** let the agent skip the record. The agent confirms with you first, then reflects the change into the artifacts (ARCHITECTURE / features / ADR) within the same work — and from then on the **artifact**, not the chat message, is the source of truth.
+- **When you want traceability** ("why did we change this months ago?") or the change is large/contentious: prefer the document channel in Section 5.1. The submitted original is preserved, so the reason survives.
+
+> **Authority note.** A chat instruction authorizes **the change it describes** — it does not activate a `SOURCES/` change-request document that is still `Not applied` / `Under review`. A dormant request document carries no authority until it is `Applied` (KICKOFF.md 15.2).
+
 ### 5.2 How to use the backlog (TODO.md)
 
 For ideas at the "would be nice to do later" level during development, instead of writing a change-request document, instruct registration in one line.
@@ -761,7 +770,7 @@ Items marked `⚠ structural change` require migration work (file moves·merges,
 
 ### [2026-06-29]
 
-- **Added benchmark evidence** (`benchmark-solo-pilot/`, `benchmark-vibe-ask-solo/`) and an [Appendix: Benchmark evidence](#appendix-benchmark-evidence-drift-suppression-pilots) summarizing two single-seed drift-suppression pilots — memory-retention (an early decision survives only in a memory artifact) and vibe-coding drift (SSOT + conflict check vs plain progress across beginner/intermediate/advanced prompt levels). Honest go/no-go discrimination checks, not powered results. Documentation-only; no change to the kit prompts.
+- **Added benchmark evidence** (`benchmark/benchmark-solo-pilot/`, `benchmark/benchmark-vibe-ask-solo/`) and an [Appendix: Benchmark evidence](#appendix-benchmark-evidence-drift-suppression-pilots) summarizing two single-seed drift-suppression pilots — memory-retention (an early decision survives only in a memory artifact) and vibe-coding drift (SSOT + conflict check vs plain progress across beginner/intermediate/advanced prompt levels). Honest go/no-go discrimination checks, not powered results. Documentation-only; no change to the kit prompts.
 
 ### [2026-06-13]
 
@@ -802,7 +811,7 @@ Items marked `⚠ structural change` require migration work (file moves·merges,
 
 The framework's central claim — that an external, structured memory (SSOT) curbs the **silent intent-drift** that plain LLM sessions suffer — is testable. Two runnable pilots in this repository measure it. Both are **single-seed go/no-go discrimination checks, not statistically powered results** (a powered claim needs ≥3 seeds across multiple tasks); they show *direction*, not magnitude. Each is fully reproducible (sandboxed dev-agents, a hidden oracle the agent never sees, an automated harness self-test gate).
 
-### Pilot 1 — `benchmark-solo-pilot/`: does memory of an early decision survive?
+### Pilot 1 — `benchmark/benchmark-solo-pilot/`: does memory of an early decision survive?
 
 A 7-session `miniquery` task where the original default page size (**7**) is overwritten twice (→25→40), then session 6 asks to "restore the original" — under a coding norm that forbids change-history in code comments, so the original survives **only in a memory artifact**. Four memory regimes build the same task:
 
@@ -815,7 +824,7 @@ A 7-session `miniquery` task where the original default page size (**7**) is ove
 
 **Findings.** (1) Memory of the original decision is *necessary* — the two memoryless/lossy groups failed, the two memory-bearing groups passed. (2) **Lossy memory is not merely weaker, it is actively misleading**: B-limited didn't admit ignorance — it *confidently restored a plausible wrong value* (25, the value just outside its window), a silent drift harder to catch than B-code's honest "this is a guess." (3) At this small scale, structured SSOT and disciplined free-notes did **not** separate — both kept the lineage. So this pilot demonstrates the **memory-retention** effect, not yet the ASK *structural* advantage over good ad-hoc notes.
 
-### Pilot 2 — `benchmark-vibe-ask-solo/`: does SSOT curb vibe-coding drift?
+### Pilot 2 — `benchmark/benchmark-vibe-ask-solo/`: does SSOT curb vibe-coding drift?
 
 The vibe-coding scenario: users give incomplete instructions and forget their own past intent. A `catalog` task is run at **3 prompt-explicitness levels** (beginner / intermediate / advanced) × **2 modes** — `baseline-general` (just build the request) vs `ask-solo` (maintain SSOT + run a conflict check) — over 7 sessions each (42 dev-agent sessions). The discriminator is session 6: the user asks to "show everything when the search box is empty," which conflicts with an earlier safety policy (blank → `[]`). Level-aware correct answer: beginner/intermediate should **preserve** the policy (the user forgot — silent compliance = drift); advanced should **adopt** (an explicit, knowing override).
 
@@ -834,7 +843,7 @@ Composite score (out of 90; cost axis pending):
 - **Do**: the task harnesses discriminate (no ceiling/floor); external memory demonstrably curbs the wrong-value and policy-drift failures that memoryless/baseline agents commit; structured docs yield a consistent authority/completeness advantage.
 - **Do not**: prove ASK wins on all tasks, isolate the structural advantage of SSOT over disciplined free-notes at small scale, cover Team/multi-agent effects, or constitute a powered statistical result. Next steps (recorded in each `RESULTS*.md`): scale to ≥3 seeds, capture the cost axis, and design a longer horizon where free-notes lose the decision but an append-only SSOT keeps it.
 
-> Full design, raw trajectories, and go/no-go verdicts: `benchmark-solo-pilot/RESULTS_v2.md` and `benchmark-vibe-ask-solo/RESULTS_seed1.md`.
+> Full design, raw trajectories, and go/no-go verdicts: `benchmark/benchmark-solo-pilot/RESULTS_v2.md` and `benchmark/benchmark-vibe-ask-solo/RESULTS_seed1.md`.
 
 ---
 

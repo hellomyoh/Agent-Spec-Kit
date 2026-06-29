@@ -11,7 +11,7 @@
 > files (`tickets/`, `eval/tests.py`, `provided/contract.py`, `driver.py`) and `runs/` are **v2**.
 
 This folder runs the **ASK-solo** benchmark described in
-`benchmark/ASK_PROMPT_AND_BENCHMARK_REVIEW.md` §6 (Solo-only revision), with the 4 review
+[ASK_PROMPT_AND_BENCHMARK_REVIEW.md](ASK_PROMPT_AND_BENCHMARK_REVIEW.md) §6 (Solo-only revision), with the 4 review
 recommendations baked in. It is a **compact, runnable pilot** — not the full M-scale OpsBoard
 program — built to be executable in one sitting while still answering the core question:
 

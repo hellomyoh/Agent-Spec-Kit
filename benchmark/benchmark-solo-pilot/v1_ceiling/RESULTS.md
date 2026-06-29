@@ -89,7 +89,7 @@ What would make it discriminate (candidate fixes for the next iteration):
 ## Reproduce
 
 ```
-cd benchmark-solo-pilot
+cd benchmark/benchmark-solo-pilot
 PYTHONIOENCODING=utf-8 python eval/_selftest.py            # Stage -1 gate
 # per (group, session): prepare -> dev-agent edits runs/<group>/seed1/work/ -> score
 PYTHONIOENCODING=utf-8 python driver.py prepare <group> <n>
