@@ -1,1 +1,0 @@
-Your SSOT docs are in ssot/ (PRODUCT.md, DATA_MODEL.md, API_CONTRACTS.md, CACHE_POLICY.md, ARCHITECTURE.md, DECISIONS.md, PROGRESS.md). Read them, then UPDATE them this session.

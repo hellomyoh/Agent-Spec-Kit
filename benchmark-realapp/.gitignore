@@ -1,4 +1,0 @@
-__pycache__/
-*.pyc
-# transient per-session scratch workspace (rebuilt by driver.py prepare)
-runs/*/seed*/work/
