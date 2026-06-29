@@ -1,9 +1,0 @@
-# OpsBoard Session Notes
-
---- S5 ---
-get_dashboard: {total, by_status} for actor's org. Cache key dashboard:{org_id} (org-isolated), invalidated after every mutation (create/update/submit/approve/reject/schedule), TTL=60. Org isolation + staleness verified.
-
---- S6 ---
-add_comment: requires task_id + body; org-isolated via _get_task check (returns 404 if cross-org); stores org_id on comment row.
-list_comments: requires task_id; gate-checks task existence in actor's org first (404 on cross-org); queries comments by task_id+org_id.
-Both endpoints were already implemented in app.py from schema setup. Comments table defined with task_id/org_id/user_id/body. No dashboard invalidation needed for comments (read-only data not tracked by dashboard).
