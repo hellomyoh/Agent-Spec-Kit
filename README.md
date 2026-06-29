@@ -14,8 +14,7 @@ Requirements compile into specs and a plan; decisions, facts, and deliberations 
 [Getting started](#2-one-time-only-project-initialization-prompt) •
 [Development progress](#5-prompt-to-start-actual-development) •
 [Usage flow](#10-usage-flow-summary) •
-[Benchmarks](#appendix-benchmark-evidence-drift-suppression-pilots) •
-[Update history](#12-update-history)
+[Benchmarks](#appendix-benchmark-evidence-drift-suppression-pilots)
 
 Codex · Claude Code · Cursor Agent
 
@@ -26,8 +25,6 @@ Codex · Claude Code · Cursor Agent
 ## Team development? → ASK-Team
 
 This guide (README) is the **Solo** edition — one developer, sequential. For **multiple developers and AI agents building the same codebase concurrently**, use the Team edition: **[README.team.md](README.team.md)** ([한국어](README.team.ko.md)).
-
-> This repository's [OUTLINE.md](OUTLINE.md) is a **research-paper draft** about the framework (for authors); it is not needed to use the kit.
 
 ---
 
@@ -310,6 +307,8 @@ For items you do not know the answer to or find hard to decide, instead of leavi
 However, two things cannot be delegated. **If you leave or delegate both the project purpose and the core features** (so that there is no "what this project even is"), the Agent will not accept the delegation and will ask. Also, for items where **cost, payment, legal impact, or hard-to-reverse behavior** is at stake, even if delegated, it does not decide silently; it chooses a conservative default and then requests confirmation.
 
 The same applies in the development step. If you delegate in a prompt with "just handle this for me," the autonomous-decision scope for that item widens, but core items are decided conservatively and left in `ASSUMPTIONS.md` and the completion report.
+
+> 📝 **Writing the requirements:** the [`REQUIREMENTS.md` template](en/AGENTSPECKIT/SOURCES/REQUIREMENTS.md) carries its own in-file guide — which items to fill in first, the `[AI-delegated]` marker, and a **tip on attaching reference material** (capture a target design or API doc into `SOURCES/` and reference it from the document, instead of describing it in prose). Skim it before you start writing.
 
 ---
 
@@ -759,62 +758,6 @@ flowchart TD
 
 ---
 
-## 12. Update history
-
-This is the change history of the kit (template). It is separate from each project's work history (`AGENTSPECKIT/HISTORY.md`).
-**When upgrading the kit per Section 2.2, the items subject to application are those after the date the project last applied.**
-Items marked `⚠ structural change` require migration work (file moves·merges, etc.) on existing projects.
-
-> Maintenance rule: when committing a meaningful change to the template, this section is updated in the same commit.
-> When entries grow long, older years are compressed into a `<details>` fold.
-
-### [2026-06-28]
-
-- **Reinforced the ASK Solo/Team prompts** (KICKOFF/AUDIT/DEVELOPINIT, both `en/` and `ko/`) on four gaps surfaced by a prompt review:
-  - **PLAN.md rotation rule** (KICKOFF 12) + made AUDIT 3.9/4 operational — mechanical PLAN-archive vs observe-only ARCHITECTURE — resolving a KICKOFF↔AUDIT contradiction.
-  - **Live chat vs SOURCES authority** (DEVELOPINIT 4.2.1) — a chat instruction authorizes the described change, not a dormant SOURCES doc; core/cross-cutting changes still route through artifacts.
-  - **Relaxed the commit/push default to commit-only** — push follows the AGENTS.md push policy (KICKOFF 10 template + DEVELOPINIT + the README prompt blocks). main/master/force/secret guards kept.
-  - **Execution-mode honesty for Multi-Agent review** (KICKOFF 4.1 log gains an execution-mode field + "no faking parallel review"; AUDIT 3.10 spot-check; README Sections 5.3 fallback / 9.2 nuance), with a per-persona verifiable-failure-condition clause.
-
-### [2026-06-29]
-
-- **Added benchmark evidence** (`benchmark/benchmark-solo-pilot/`, `benchmark/benchmark-vibe-ask-solo/`) and an [Appendix: Benchmark evidence](#appendix-benchmark-evidence-drift-suppression-pilots) summarizing two single-seed drift-suppression pilots — memory-retention (an early decision survives only in a memory artifact) and vibe-coding drift (SSOT + conflict check vs plain progress across beginner/intermediate/advanced prompt levels). Honest go/no-go discrimination checks, not powered results. Documentation-only; no change to the kit prompts.
-
-### [2026-06-13]
-
-- **Split the kit into per-language folders `en/AGENTSPECKIT/` and `ko/AGENTSPECKIT/`** — each folder is self-contained, with every file named canonically (`KICKOFF.md`, `ADOPT.md`, …), so you copy only your language's folder and get no foreign-language clutter in your project. This also fixes a latent issue where the Korean prompts referenced sibling files by their canonical `.md` names while the files were actually packaged as `.ko.md`. Removed the per-file language switcher from the working prompts (it now lives only in this guide README). **No migration is needed for already-applied projects** — the structure inside a project's `AGENTSPECKIT/` is unchanged; this only reorganizes the template repository.
-
-### [2026-06-12]
-
-- **New artifact-language policy** — descriptive prose is unified into the primary language of `REQUIREMENTS.md` (or a designated language), code identifiers·API paths·commit messages stay in English, and per-section language switching is forbidden. Prevents English-Korean mixing in feature/docs at initialization (KICKOFF preamble·Section 9, REQUIREMENTS "artifact-writing language" item, AUDIT 3.12 spot-check)
-- **Single-responsibility recording model** — PROGRESS·HISTORY are limited to coding work + system events (initialization/adoption/upgrade/audit) only. For document-unit work (specification/change request/TODO), each one's index·status column is responsible for recording (eliminating double entry). Code-less specification edits state the commit reason (KICKOFF Sections 13·14, DEVELOPINIT Sections 2·4.2·4.3·8)
-- **Merge-language harmonization rule** — for ADOPT merges·2.2 upgrades, existing content is prescribed to be merged into the prescribed language by **meaning-preserving translation** rather than verbatim wording (preventing merge artifacts like a mixed CLAUDE.md where an English original + a Korean block are concatenated — ADOPT Section 5, README 2.2)
-
-### [2026-06-11]
-
-- Added the `TODO.md` backlog system — "register this feature in the todo" registration·promotion funnel (KICKOFF 15.3, DEVELOPINIT 4.3, usage Section 5.2)
-- New kit-upgrade procedure (Section 2.2) — an official path for applying a new version to an already-applied project
-- Organized the `AGENTSPECKIT/` prefix for artifact paths in the README prompt blocks; added the update history (this section)
-- Reorganized the guide README onboarding — added a Quick Start section, consolidated the core-principle sections, summarized the question-criteria·QA sections, moved context cost into an appendix, added a license section
-- Slimmed the CLAUDE.md template into a **malfunction-prevention-only safety net** (workflow rules have AGENTS.md as their single source; about -200 tokens per session) — added re-initialization-forbidden·authority-diagnosis (no-specification-disguise) defenses, added a bloat-prevention standard. Existing projects apply Section 2.2 upgrade 3-1 (replace via the lossless gate)
-- Added three feature-addition review·design prompts (Section 5.3) — explicit invocation of the standard review / actual parallel deliberation by subagents / combination with a SOURCES change request
-
-### [2026-06-10] ⚠ structural change
-
-- **Isolated all artifacts into the `AGENTSPECKIT/` folder** — only the three files project README·AGENTS.md·CLAUDE.md at the root. Existing projects need to move their artifacts
-- Introduced the `SOURCES/` submission channel — submit reference material·change requests as documents, original immutable·append-only, INDEX lifecycle management
-- **Consolidated initial requirements into `SOURCES/REQUIREMENTS.md`** (the old `AGENTINIT.md` abolished) — frozen at initialization completion, KICKOFF re-run forbidden
-- New brownfield adoption prompt (`ADOPT.md`) and document-audit prompt (`AUDIT.md`)
-- Borrowed from the Karpathy LLM wiki: `NOTES.md` (learned-fact accumulation), index standardization (features/docs), HISTORY fixed prefix, relative-path link convention
-- Added the persona-instance (`personas/`) and review-log (`discussion/`) system — enforced review performance + source obligation + AUDIT spot-check verification
-- DEVELOPINIT lossless diet (-11%), README hero header·Mermaid usage flow chart
-
-### [2026-06-09]
-
-- First public release of Agent-Spec-Kit — the three prompts AGENTINIT/KICKOFF/DEVELOPINIT and the operations document system (AGENTS/ARCHITECTURE/PLAN/PROGRESS/HISTORY/ASSUMPTIONS, features/docs/qa/adr)
-
----
-
 ## Appendix: Benchmark evidence (drift-suppression pilots)
 
 The framework's central claim — that an external, structured memory (SSOT) curbs the **silent intent-drift** that plain LLM sessions suffer — is testable. Two runnable pilots in this repository measure it. Both are **single-seed go/no-go discrimination checks, not statistically powered results** (a powered claim needs ≥3 seeds across multiple tasks); they show *direction*, not magnitude. Each is fully reproducible (sandboxed dev-agents, a hidden oracle the agent never sees, an automated harness self-test gate).
@@ -873,4 +816,4 @@ An estimate based on Korean + markdown at about 2 characters/token, for a medium
 
 ## License
 
-_(In preparation — the license will be specified later.)_
+Released under the [MIT License](LICENSE) — free to use, copy, modify, and distribute (including commercially), with attribution. Copyright (c) 2026 hellomyoh.
