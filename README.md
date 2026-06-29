@@ -23,6 +23,14 @@ Codex · Claude Code · Cursor Agent
 
 ---
 
+## Team development? → ASK-Team
+
+This guide (README) is the **Solo** edition — one developer, sequential. For **multiple developers and AI agents building the same codebase concurrently**, use the Team edition: **[README.team.md](README.team.md)** ([한국어](README.team.ko.md)).
+
+> This repository's [OUTLINE.md](OUTLINE.md) is a **research-paper draft** about the framework (for authors); it is not needed to use the kit.
+
+---
+
 This document is a **framework user manual** that explains how to use the `AGENTSPECKIT/` folder (four prompts — `KICKOFF.md` · `ADOPT.md` · `DEVELOPINIT.md` · `AUDIT.md` + the input channel `SOURCES/`) with Codex · Claude Code · Cursor Agent, and the like.
 
 ## Quick Start
@@ -535,7 +543,7 @@ Review and design the addition of the OOO feature. Do not start implementation.
 2. From AGENTSPECKIT/personas/INDEX.md, pick and inject the persona instances related to this feature, and
    if a needed perspective is missing, create a new instance per the KICKOFF.md 5.2 standard.
 3. Record the deliberation process in AGENTSPECKIT/discussion/review-<feature-slug>-YYYYMMDD.md.
-   Leave each persona's risks/evidence, and the Research Agent must always state its sources (URL/SOURCES path).
+   Leave each persona's risks/evidence, and the Research Agent must always record its sources as full URLs (verbatim) or SOURCES/ paths.
 4. As the agreed proposal, write a draft feature document (KICKOFF.md 6.1 template).
    If there is impact on MVP scope/data model/authentication/cross-cutting contract, request confirmation before applying.
 5. Report the review summary (participating personas / key issues / conclusion in 3–4 lines + log link) and the design proposal.
@@ -669,7 +677,7 @@ discussion/review-*.md deliberation-process record — per-persona risks·eviden
       ↓ (only the conclusions are reflected)
 features/*.md          a 3–4-line review summary (participants/key issues/conclusion) + log link. Important decisions split off into adr/.
       ↓ (spot-check verification)
-AUDIT.md 3.10          do sources·personas really exist, does the execution mode match the environment, is the log not theatrical.
+AUDIT.md 3.10          are sources full URLs that really exist, do personas really exist, does the execution mode match the environment, is the log not theatrical.
 ```
 
 **Personas (personas/)** — KICKOFF.md Section 5:
@@ -683,11 +691,11 @@ AUDIT.md 3.10          do sources·personas really exist, does the execution mod
 
 - When reviewing a non-trivial feature, the entire deliberation process is recorded in `discussion/review-<feature-slug>-YYYYMMDD.md`
   in a structured format (participating personas/per-persona review/issues and conflicts/conclusions and where reflected).
-- **Evidence·source obligation**: the Research Agent in particular must always state its sources (URL/SOURCES path/document name), and
+- **Evidence·source obligation**: the Research Agent in particular must always record its sources — web sources as the **full, resolvable URL preserved verbatim in the log** (not abbreviated/name-only), submitted material as a `SOURCES/` path — and
   if it cannot, it records "could not perform research." Research results without sources cannot be asserted.
 - The log is **immutable·append-only** (a new file on re-review), and it is not loaded in normal sessions, so it has **no fixed token cost**.
 - The log is not the "evidence" of the review but **a device that enforces the performance and enables spot-check verification.**
-  AUDIT opens a sample and cross-checks whether the sources really exist and whether the personas really exist.
+  AUDIT opens a sample and cross-checks whether the sources are full URLs that really exist and whether the personas really exist.
 
 Trivial features (simple CRUD · static screens) omit the persona deliberation·log and are marked "simple feature — no additional review needed."
 

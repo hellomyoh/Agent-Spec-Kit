@@ -98,8 +98,8 @@ Running is recommended if any of the following applies.
 ## 3.10 Review Logs (discussion) — Spot-Check
 
 * Does each non-trivial feature document have a review log link? (If not, suspect a missing review)
-* Open 1–2 sample logs and check whether the **sourcing obligation** was met — in particular, whether the
-  sources the Research Agent cited (URL, SOURCES/ path, document name) **actually exist** (a nonexistent source = a signal of a forged review)
+* Open 1–2 sample logs and check whether the **sourcing obligation** was met — in particular, whether the Research Agent's web
+  sources are **preserved as full URLs in the log** (not abbreviated/name-only) and **actually exist** (a missing or abbreviated source = a signal of a forged/unverifiable review)
 * Does the **execution mode** stated in the log (role-play / real parallel) not contradict the environment's capability?
   (marking "real parallel" in an environment without subagents = a signal of a forged execution mode)
 * Does the log follow the structure in KICKOFF.md 4.1 (review per persona / issues / conclusion), and is it not a theatrical log that merely lists generic platitudes?
