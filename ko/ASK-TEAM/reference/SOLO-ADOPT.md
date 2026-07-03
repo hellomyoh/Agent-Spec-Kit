@@ -1,3 +1,5 @@
+> **[ASK-Team 참조 사본]** 솔로 킷 `ADOPT.md`의 원문 사본으로, 배포된 프로젝트 안에서 팀 프롬프트의 절 참조가 열리도록 동봉한 것입니다. 여기서 **실행하는 프롬프트가 아니며**, 팀 킷과 충돌하는 내용(고정 INDEX 파일, 단일 PROGRESS/HISTORY/ASSUMPTIONS/NOTES/TODO 파일, 솔로 git 규칙)은 **CONVENTIONS.md·팀 프롬프트가 우선**합니다. 본문에 언급되는 파일명(KICKOFF.md, DEVELOPINIT.md, ADOPT.md, AUDIT.md)은 이 폴더의 `SOLO-*.md` 사본을 가리킵니다. [README.md](README.md) 참조.
+
 # ADOPT.md
 
 이미 개발이 진행 중인 프로젝트(브라운필드)에 이 프레임워크를 **적용(채택)** 하기 위한 프롬프트입니다.

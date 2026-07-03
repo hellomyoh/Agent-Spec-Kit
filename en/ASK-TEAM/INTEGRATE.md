@@ -12,7 +12,7 @@ It covers semantic-conflict re-detection, global-contract serialization, history
 ## 0. Session start (mandatory)
 
 1. **Identity check** — match `git config user.email` against `team/*.md`. If `role` is not `maintainer`, stop and delegate to a maintainer.
-2. **Survey the state** — gather the workitems with `status: review` and their PRs/branches.
+2. **Survey the state** — `git fetch` first, then gather the workitems with `status: review` and their PRs/branches from the latest shared branch (CONVENTIONS §4.5).
 
 ---
 
@@ -25,7 +25,7 @@ It covers semantic-conflict re-detection, global-contract serialization, history
 
 ## 2. Re-detect conflicts (before merge — mandatory, performed by the agent)
 
-Exhaustively cross-check the `touches` of the integration candidates + all other in-flight (`claimed`/`in_progress`) workitems.
+After `git fetch` (CONVENTIONS §4.5), exhaustively cross-check the `touches` of the integration candidates + all other in-flight (`claimed`/`in_progress`) workitems.
 
 * **contracts overlap (STOP):** two or more touch the same global contract → handle via §3 serialization. Do not merge them concurrently.
 * **modules overlap (WARN):** check whether `conflicts/CF-*.md` has a resolution decision. If not, register it and proceed after agreeing on order with the owners.
@@ -50,7 +50,7 @@ Merge the PRs in serialization order (contract change → dependent workitems �
 
 * Resolve git conflicts via the normal procedure.
 * Since there are no fixed INDEX files, INDEX merge conflicts don't occur.
-* After merge, change each `WI-*.md` status to `done`.
+* After merge, change each `WI-*.md` status to `done` (the maintainer commits this on the shared branch — the sanctioned exception to the WI single-writer rule, CONVENTIONS §4.1).
 
 ---
 

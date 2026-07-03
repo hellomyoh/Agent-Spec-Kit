@@ -1,3 +1,5 @@
+> **[ASK-Team reference copy]** A verbatim copy of the solo kit's `DEVELOPINIT.md`, bundled so the team prompts' section references resolve inside a deployed project. This is **not an executable prompt** here — where it conflicts with the team kit (fixed INDEX files, single PROGRESS/HISTORY/ASSUMPTIONS/NOTES/TODO files, solo git rules), **CONVENTIONS.md and the team prompts win**. File names mentioned inside (KICKOFF.md, DEVELOPINIT.md, ADOPT.md, AUDIT.md) refer to the sibling `SOLO-*.md` copies in this folder. See [README.md](README.md).
+
 # DEVELOPINIT.md
 
 Carry out actual development based on the current project documentation.

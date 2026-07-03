@@ -38,8 +38,9 @@ Solo 가이드: [README.ko.md](README.ko.md) · 팀 전체 가이드·프롬프�
 ## 빠른 시작
 
 1. 이 저장소를 클론하고 [`ko/ASK-TEAM/`](ko/ASK-TEAM/)(또는 [`en/ASK-TEAM/`](en/ASK-TEAM/))의 내용을 프로젝트 루트의 `AGENTSPECKIT/`로 복사합니다.
-2. **maintainer**가 `role: maintainer`로 자기 `team/<handle>.md`를 먼저 등록하고(`templates/team-TEMPLATE.md` 복사), 각 **contributor**도 자기 것을 등록합니다.
-3. Contributor는 [`DEVELOP.md`](ko/ASK-TEAM/DEVELOP.md) 프롬프트로, maintainer는 [`INTEGRATE.md`](ko/ASK-TEAM/INTEGRATE.md)로 작업합니다. 초기화는 [`KICKOFF.md`](ko/ASK-TEAM/KICKOFF.md)(신규) / [`ADOPT.md`](ko/ASK-TEAM/ADOPT.md)(기존 코드), 주기 점검은 [`AUDIT.md`](ko/ASK-TEAM/AUDIT.md)를 사용합니다.
+2. **신규 프로젝트**면 `AGENTSPECKIT/SOURCES/REQUIREMENTS.md`에 초기 요구사항을 작성합니다(솔로 킷의 [REQUIREMENTS 템플릿](ko/AGENTSPECKIT/SOURCES/REQUIREMENTS.md) 재사용 가능); 기존 코드베이스(ADOPT)면 선택 사항입니다.
+3. **maintainer**가 `role: maintainer`로 자기 `team/<handle>.md`를 먼저 등록하고(`templates/team-TEMPLATE.md` 복사), 각 **contributor**도 자기 것을 등록합니다.
+4. Contributor는 [`DEVELOP.md`](ko/ASK-TEAM/DEVELOP.md) 프롬프트로, maintainer는 [`INTEGRATE.md`](ko/ASK-TEAM/INTEGRATE.md)로 작업합니다. 초기화는 [`KICKOFF.md`](ko/ASK-TEAM/KICKOFF.md)(신규) / [`ADOPT.md`](ko/ASK-TEAM/ADOPT.md)(기존 코드), 주기 점검은 [`AUDIT.md`](ko/ASK-TEAM/AUDIT.md)를 사용합니다.
 
 ## 프롬프트·참조 ([`ko/ASK-TEAM/`](ko/ASK-TEAM/) 안)
 
@@ -50,5 +51,6 @@ Solo 가이드: [README.ko.md](README.ko.md) · 팀 전체 가이드·프롬프�
 | [DEVELOP.md](ko/ASK-TEAM/DEVELOP.md) · [INTEGRATE.md](ko/ASK-TEAM/INTEGRATE.md) | 기여자 / 메인테이너 프롬프트 |
 | [AUDIT.md](ko/ASK-TEAM/AUDIT.md) | 팀 문서 감사 (드리프트 + 조정 정합성) |
 | [CONVENTIONS.md](ko/ASK-TEAM/CONVENTIONS.md) · [SCHEMAS.md](ko/ASK-TEAM/SCHEMAS.md) | 구조 규약 & frontmatter 스키마 |
+| [reference/](ko/ASK-TEAM/reference/README.md) | 팀 프롬프트가 인용하는 솔로 킷 참조 사본(동봉) |
 
 > ASK-Team은 Solo의 철학을 그대로 유지합니다 — markdown + git, 도구 독립성(Claude Code · Codex · Cursor), 세션 간 기억, 추적성, 멀티 페르소나 리뷰 하네스. 충돌 탐지 모델·개발 흐름·정직한 한계(탐지 ≠ 강제, 거버넌스 ≠ 도구)는 **[전체 가이드](ko/ASK-TEAM/README.md)**를 참고하세요.

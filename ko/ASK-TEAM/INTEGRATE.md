@@ -12,7 +12,7 @@
 ## 0. 세션 시작 (필수)
 
 1. **신원 확인** — `git config user.email`을 `team/*.md`와 매칭. `role`이 `maintainer`가 아니면 중단하고 maintainer에게 위임합니다.
-2. **현황 파악** — `workitems/*.md` 중 `status: review`인 항목과 그 PR/브랜치를 모읍니다.
+2. **현황 파악** — 먼저 `git fetch`한 뒤, 최신 공유 브랜치(CONVENTIONS §4.5)의 `workitems/*.md` 중 `status: review`인 항목과 그 PR/브랜치를 모읍니다.
 
 ---
 
@@ -25,7 +25,7 @@
 
 ## 2. 충돌 재검출 (merge 전 — 필수, 에이전트가 수행)
 
-통합 후보 + 다른 in-flight(`claimed`/`in_progress`) workitem 전체의 `touches`를 전수 교차합니다.
+`git fetch` 후(CONVENTIONS §4.5), 통합 후보 + 다른 in-flight(`claimed`/`in_progress`) workitem 전체의 `touches`를 전수 교차합니다.
 
 * **contracts 겹침(STOP):** 두 개 이상이 같은 전역 계약을 건드림 → §3 직렬화로 처리. 동시에 merge하지 않습니다.
 * **modules 겹침(WARN):** `conflicts/CF-*.md`에 해소 결정이 있는지 확인. 없으면 등재하고 owner들과 순서를 합의한 뒤 진행.
@@ -50,7 +50,7 @@
 
 * git 충돌은 일반 절차로 해소합니다.
 * 고정 INDEX 파일이 없으므로 INDEX merge 충돌은 발생하지 않습니다.
-* merge 후 각 `WI-*.md` status를 `done`으로 바꿉니다.
+* merge 후 각 `WI-*.md` status를 `done`으로 바꿉니다 (maintainer가 공유 브랜치에서 커밋 — WI single-writer 규칙의 공인된 예외, CONVENTIONS §4.1).
 
 ---
 

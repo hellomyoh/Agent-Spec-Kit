@@ -62,6 +62,8 @@ summary: Request to add an admin role model
 ---
 ```
 
+> `REQUIREMENTS.md` (initial requirements) is the one source that does not follow `SRC-*` naming: its meta file is **`SOURCES/REQUIREMENTS.meta.md`** with `id: REQUIREMENTS` (the other fields are identical).
+
 ---
 
 ## §assumption — `assumptions/ASM-<YYYYMMDD>-<slug>.md`

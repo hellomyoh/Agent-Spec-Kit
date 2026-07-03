@@ -16,11 +16,13 @@
 | 등급 | 파일 | 작성 권한 | 동시성 규칙 |
 |---|---|---|---|
 | **Stable contract** | `ARCHITECTURE.md`, `PLAN.md`, `AGENTS.md`, 프롬프트 | **maintainer만** | 동시편집 금지. 변경은 §6 직렬화 |
-| **Coordination** | `workitems/WI-*.md`, `conflicts/CF-*.md`, `team/<handle>.md` | 해당 owner | claim 시 공유 브랜치 published (§4) |
+| **Coordination** | `workitems/WI-*.md`, `conflicts/CF-*.md`, `team/<handle>.md`, `personas/*.md` | 해당 owner (personas: 생성자) | 공유 브랜치 published (§4.2·§4.5) |
 | **Work-scoped** | `features/*.md`, `qa/*.md`, `sessions/*.md`, `notes/*` | 관련 workitem owner | 무관한 workitem은 만지지 않음 |
 | **Event (append)** | `history/**`, `assumptions/ASM-*.md`, `adr/ADR-*.md`, `SOURCES/SRC-*.md`, `discussion/*.md` | 생성자 | 새 사건 = 새 파일. 기존 기록은 삭제 대신 supersede |
 
 핵심 원칙: **두 스트림이 같은 파일 영역을 동시에 쓰지 않는다.** 공유 파일에 append하지 말고 새 파일을 만든다. **고정 INDEX 파일은 두지 않는다**(§3).
+
+`personas/*.md`(공유 리뷰 인프라)는 날짜-slug가 아니라 **역할명 파일**(`security.md`)이라, 동시 생성이 충돌할 수 있는 유일한 지점입니다. 인스턴스를 만들기 전에 `git fetch`하여 그 역할의 인스턴스가 이미 없는지 확인하고, 생성/갱신은 **공유 브랜치에서** 합니다(§4.5). 갱신은 생성자 또는 maintainer가 합니다.
 
 ---
 
@@ -81,10 +83,10 @@ proposed → ready → claimed → in_progress → review → done
                           ↘ blocked ↗
 ```
 - `proposed`/`ready`가 백로그 역할을 합니다(solo ASK의 `TODO.md`를 흡수).
-- `done`은 INTEGRATE에서 merge·history 기록이 끝났을 때만 부여합니다.
+- `done`은 INTEGRATE에서 merge·history 기록이 끝났을 때만 부여합니다 (status→`done` 기록은 INTEGRATE 중 maintainer가 수행 — WI single-writer 규칙의 공인된 예외).
 
 ### 4.2 claim = 조율층 published (핵심)
-workitem을 claim하면 `WI-*.md`(`touches` 포함)를 **공유 브랜치에 먼저 커밋**합니다(파일 추가만 → 저충돌). 이로써 모든 기여자가 in-flight 작업과 그 `touches`를 볼 수 있습니다. 코드 작업은 그 다음 `feat/WI-*` 브랜치에서 시작합니다.
+workitem을 claim하면 `WI-*.md`(`touches` 포함)를 **공유 브랜치에 먼저 커밋하고 즉시 push**합니다(파일 추가만 → 저충돌; 발행 절차 §4.5). 이로써 모든 기여자가 in-flight 작업과 그 `touches`를 볼 수 있습니다. 코드 작업은 그 다음 `feat/WI-*` 브랜치에서 시작합니다.
 
 ### 4.3 필수 필드
 `id`·`title`·`owner`·`status`·`branch`·`feature`·`touches`(`contracts`·`modules`). 스키마는 `SCHEMAS.md` §workitem.
@@ -92,12 +94,20 @@ workitem을 claim하면 `WI-*.md`(`touches` 포함)를 **공유 브랜치에 먼
 ### 4.4 ID 규약
 `WI-<YYYYMMDD>-<slug>` (예: `WI-20260620-admin-role`). 순차번호를 쓰지 않아 동시 할당 충돌을 회피합니다. `ADR-*`도 동일하게 `ADR-<YYYYMMDD>-<slug>`.
 
+### 4.5 공유 브랜치와 발행(publishing) 절차 (normative)
+
+* **공유 브랜치**는 저장소의 기본 통합 브랜치입니다(`main`/`master`, 또는 팀이 지정한 trunk). KICKOFF가 선택한 이름을 `AGENTS.md`에 기록합니다. 플랫폼이 직접 push를 막으면(브랜치 보호) 별도의 `coordination` 브랜치를 공유 브랜치로 지정하고 그것을 기록합니다.
+* **발행 = 공유 브랜치에 커밋 + 즉시 push.** claim, `WI-*.md` 상태 변경, `conflicts/CF-*.md`, `team/<handle>.md` 등록, `personas/*.md` 인스턴스 생성/갱신은 모두 이 방식으로 발행합니다. 공유 브랜치에 직접 push할 수 있는 것은 이 조율층 파일들**뿐**이고 — 코드/작업층 변경은 PR(INTEGRATE)로만 도달합니다.
+* **`WI-*.md`는 공유 브랜치에서만 편집합니다**(단일 거처). WI 상태 변경을 feature 브랜치에 싣지 마세요 — feature 브랜치 원자 커밋은 `WI-*.md`를 제외합니다(§7).
+* **읽기 전 fetch:** 공유 브랜치의 조율 상태를 읽는 모든 단계(검출 §5.1, INTEGRATE, AUDIT)는 먼저 `git fetch`를 실행하고 **최신** 공유 브랜치(`origin/<공유 브랜치>`)를 읽습니다. 낡았을 수 있는 로컬 사본을 읽지 않습니다.
+* 동시에 발행이 겹쳐 push가 거부되면 공유 브랜치를 `git pull --rebase`한 뒤 다시 push합니다 — 조율 파일은 owner별 새 파일/추가 전용이라 내용 충돌은 구조적으로 드뭅니다.
+
 ---
 
 ## 5. 충돌 규약
 
 ### 5.1 검출 (에이전트가 수행)
-**claim 직후**와 **integrate 직전**에, 공유 브랜치의 `workitems/*.md` 중 `status ∈ {claimed, in_progress}`인 것을 읽어 내 `touches`와 전수 교차합니다.
+**claim 직후**와 **integrate 직전**에, 먼저 `git fetch`(§4.5)한 뒤 최신 공유 브랜치의 `workitems/*.md` 중 `status ∈ {claimed, in_progress}`인 것을 읽어 내 `touches`와 전수 교차합니다.
 
 | 겹침 | 의미 | 처리 |
 |---|---|---|
@@ -124,17 +134,18 @@ workitem을 claim하면 `WI-*.md`(`touches` 포함)를 **공유 브랜치에 먼
   ④ 의존 workitem들이 새 계약으로 rebase 후 진행
 ```
 
-ADR 작성 트리거(아키텍처·인증·DB 구조·외부 API·배포·테스트 전략 등)는 solo ASK [KICKOFF §16](../AGENTSPECKIT/KICKOFF.md)을 따릅니다. lock 파일은 두지 않습니다(maintainer + merge 순서가 직렬화 장치).
+ADR 작성 트리거(아키텍처·인증·DB 구조·외부 API·배포·테스트 전략 등)는 solo ASK KICKOFF §16([reference/SOLO-KICKOFF.md](reference/SOLO-KICKOFF.md))을 따르되, 거기서 의무화하는 `adr/INDEX.md` 등재는 **예외**입니다(고정 INDEX 없음, §3; ADR ID는 순차번호가 아니라 §4.4의 `ADR-<YYYYMMDD>-<slug>`). lock 파일은 두지 않습니다(maintainer + merge 순서가 직렬화 장치).
 
 ---
 
 ## 7. 원자 커밋 규약
 
-feature 브랜치의 한 커밋 = **코드 + 그 workitem의 작업층 파일**(feature 명세, qa, notes, assumptions, 자기 `WI-*.md` status).
+feature 브랜치의 한 커밋 = **코드 + 그 workitem의 작업층 파일**(feature 명세, qa, notes, assumptions, 자기 세션 파일).
 
 포함하지 않는 것:
 - `ARCHITECTURE.md`/`PLAN.md` (maintainer 영역)
 - `history/**` (INTEGRATE가 기록)
+- `workitems/WI-*.md` (조율 등급 — 상태 변경은 공유 브랜치에서 커밋·push, §4.5)
 
 이로써 "코드와 대응 문서를 한 커밋에"라는 원칙을 workitem 스코프 내에서 유지하면서, 브랜치 간 merge에서 stable 파일이 충돌하지 않게 합니다. (고정 INDEX가 없으므로 INDEX는 애초에 커밋 대상이 아닙니다.)
 
@@ -146,7 +157,8 @@ feature 브랜치의 한 커밋 = **코드 + 그 workitem의 작업층 파일**(
 - `SOURCES/SRC-<YYYYMMDD-hhmm>-<slug>.md` — 제출 원본. **불변 content.**
 - `SOURCES/SRC-*.meta.md` — 해당 원본의 **가변 triage**(status·owner·연결 workitem). per-source single-writer라 서로 다른 source를 동시에 triage해도 충돌하지 않습니다. **같은 source는 한 명만 triage**합니다.
 - source 목록·상태는 `SRC-*.meta.md` frontmatter를 직접 읽어 파악합니다(고정 INDEX 없음).
-- 권위 규칙: 변경요청은 `applied` 전까지 권위가 없습니다. 현재 의도는 산출물(ARCHITECTURE/features/PLAN)에서 읽습니다. (solo ASK [KICKOFF §15.2](../AGENTSPECKIT/KICKOFF.md) 권위·불변·대체 체인 규칙을 계승.)
+- `SOURCES/REQUIREMENTS.meta.md` — `REQUIREMENTS.md`의 triage meta. `SRC-*` 명명을 따르지 않는 유일한 source입니다(`id: REQUIREMENTS`, 나머지 필드는 동일 — SCHEMAS §source). KICKOFF가 생성하고 초기화 완료 시 status를 `applied`로 동결합니다.
+- 권위 규칙: 변경요청은 `applied` 전까지 권위가 없습니다. 현재 의도는 산출물(ARCHITECTURE/features/PLAN)에서 읽습니다. (solo ASK KICKOFF §15.2([reference/SOLO-KICKOFF.md](reference/SOLO-KICKOFF.md)) 권위·불변·대체 체인 규칙을 계승.)
 
 ---
 

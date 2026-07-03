@@ -2,7 +2,7 @@
 
 > A framework that uses markdown + git alone to reduce the Git conflicts, semantic conflicts,
 > and intent conflicts that arise when multiple developers and multiple AI agents develop **concurrently**.
-> It is the **sister framework** of the existing [Agent-Spec-Kit](../AGENTSPECKIT/) (solo/sequential).
+> It is the **sister framework** of the existing Agent-Spec-Kit (solo/sequential). Reference copies of the solo sections the team prompts cite are bundled in [reference/](reference/README.md).
 
 > **This kit is built entirely from markdown prompts.** It requires no separate runtime (Python, etc.) or executable binary,
 > and operates solely with the abilities an agent already has (reading/writing files + `git` commands) — identical on Claude Code · Codex · Cursor.
@@ -29,7 +29,7 @@ So for `touches`-based conflict detection to work, **coordination metadata must 
 
 | Layer | Content | Where it lives |
 |---|---|---|
-| **Coordination** | workitem declarations (`touches`), conflicts, global contracts (ARCHITECTURE/PLAN) | **shared branch — published immediately at claim** |
+| **Coordination** | workitem declarations (`touches`), conflicts, persona instances, global contracts (ARCHITECTURE/PLAN) | **shared branch — published immediately at claim** |
 | **Work** | code, feature specs, qa, notes, assumptions | **feature branch (isolated)** |
 
 If coordination metadata isn't shared ahead of time, you discover semantic conflicts **only at merge time**. Claim-time publishing enables **early detection**.
@@ -75,6 +75,7 @@ AGENTSPECKIT/
   # inputs
   SOURCES/
     REQUIREMENTS.md              # initial requirements (kept frozen)
+    REQUIREMENTS.meta.md         # its triage meta (id: REQUIREMENTS)
     SRC-*.md                     # immutable original content
     SRC-*.meta.md                # mutable triage (per-source single-writer)
 
@@ -82,6 +83,7 @@ AGENTSPECKIT/
   features/*.md   personas/*.md   discussion/review-*.md   adr/ADR-*.md   docs/  qa/
 
   templates/                     # schema examples for copying
+  reference/                     # bundled solo-kit reference copies (format reference only — reference/README.md)
 ```
 
 > **We don't keep fixed INDEX files.** The listing·status of each directory has the item file's frontmatter as its source of truth, and the agent reads it directly when needed (§5). If you want a human-readable table, ask the agent for one at that point.
@@ -105,7 +107,7 @@ For detailed conventions see [CONVENTIONS.md §2](CONVENTIONS.md).
 
 ## 5. Status — the item file is the source of truth (no fixed INDEX)
 
-- **SoT = the frontmatter in each item file.** A single writer writes only their own file (`WI-*.md`, `ASM-*.md`, `SRC-*.meta.md`, `HIST-*.md`, `team/*.md`, `CF-*.md`).
+- **SoT = the frontmatter in each item file.** A single writer writes only their own file (`WI-*.md`, `ASM-*.md`, `SRC-*.meta.md`, `HIST-*.md`, `team/*.md`, `CF-*.md`, `personas/*.md`).
 - **We don't create fixed INDEX files.** When the agent needs to understand progress·the work list, it **reads the `*.md` frontmatter directly** from the relevant directory (selective loading — only what's needed).
 - If you need a **human-readable aggregate view**, ask the agent at that point — e.g. "summarize the workitems as a table" — and receive it as markdown. **We don't force-generate·commit it as a file.**
 
@@ -121,8 +123,8 @@ Effects:
 **Detection (right after claim · right before integrate — performed by the agent):**
 
 ```text
-read the shared branch's workitems/*.md with status ∈ {claimed, in_progress}
-and cross-check against my touches.
+git fetch, then read the latest shared branch's workitems/*.md
+with status ∈ {claimed, in_progress} and cross-check against my touches. (CONVENTIONS §4.5)
   · contracts overlap → STOP. maintainer serializes (below)
   · modules overlap   → register conflicts/CF-*.md + agree on order
   · none              → proceed
@@ -145,7 +147,7 @@ ARCHITECTURE / global-contract change =
 
 ```text
 1. Gather requirements   SOURCES/SRC-*.md (immutable original) + SRC-*.meta.md (triage)
-2. Decompose / claim     write workitems/WI-*.md (touches) → commit to shared branch → detect (§6)
+2. Decompose / claim     write workitems/WI-*.md (touches) → commit·push to shared branch → detect (§6)
 3. Develop               feat/WI-* branch: code + feature/qa/notes/assumptions (work layer)
                          review non-trivial features via personas/discussion
 4. review                WI status=review, PR
@@ -154,17 +156,31 @@ ARCHITECTURE / global-contract change =
 6. audit                 periodic: orphan WIs / undetected touches / neglected SRC / link integrity
 ```
 
-**Atomic commit (redefined):** a feature-branch atomic commit = **code + that workitem's work-layer files**. It does **not** include ARCHITECTURE/PLAN (maintainer) or history (INTEGRATE). The "code and corresponding docs in one commit" principle is kept *within the workitem scope*.
+**Atomic commit (redefined):** a feature-branch atomic commit = **code + that workitem's work-layer files**. It does **not** include ARCHITECTURE/PLAN (maintainer), history (INTEGRATE), or `workitems/WI-*.md` (coordination — status changes are committed·pushed on the shared branch, CONVENTIONS §4.5). The "code and corresponding docs in one commit" principle is kept *within the workitem scope*.
 
 ---
 
 ## 8. Quick start
 
 1. Clone this repository and copy the contents of `en/ASK-TEAM/` into the project root's `AGENTSPECKIT/`.
-2. **The maintainer** registers their own `team/<handle>.md` first with `role: maintainer` (copy `templates/team-TEMPLATE.md`). Each contributor also registers their own `team/<handle>.md`.
-3. Contributors work with the `DEVELOP.md` prompt, the maintainer with `INTEGRATE.md`. At session start the agent confirms identity (§4) and reads the item files it needs directly — there is no separate command to enter.
+2. For a **new project**, write the initial requirements in `AGENTSPECKIT/SOURCES/REQUIREMENTS.md` before running KICKOFF — this kit ships no template, so reuse the solo kit's `SOURCES/REQUIREMENTS.md` template or write the purpose / target users / MVP features / cross-cutting baseline freeform. For an **existing codebase** (ADOPT) it is optional.
+3. **The maintainer** registers their own `team/<handle>.md` first with `role: maintainer` (copy `templates/team-TEMPLATE.md`). Each contributor also registers their own `team/<handle>.md`.
+4. Contributors work with the `DEVELOP.md` prompt, the maintainer with `INTEGRATE.md`. At session start the agent confirms identity (§4) and reads the item files it needs directly — there is no separate command to enter.
 
-> Use `KICKOFF.md` (new) / `ADOPT.md` (existing code) for initialization, and `AUDIT.md` for periodic checks.
+### Which prompt when (usage map)
+
+Each prompt is run by telling your agent to read the file and follow it (e.g., "Read AGENTSPECKIT/KICKOFF.md and initialize the project").
+
+| Situation | Run | Who |
+|---|---|---|
+| Initialize a new team project (requirements → structure + initial workitems) | [KICKOFF.md](KICKOFF.md) | maintainer |
+| Apply to an existing codebase (as-built reverse-documentation) | [ADOPT.md](ADOPT.md) | maintainer |
+| Start / continue development (claim → detect → implement → PR) | [DEVELOP.md](DEVELOP.md) | contributor |
+| Merge review-ready workitems (re-detect → serialize → merge → history) | [INTEGRATE.md](INTEGRATE.md) | maintainer |
+| Periodic drift & coordination audit (Phase end / release / drift suspected) | [AUDIT.md](AUDIT.md) | maintainer |
+| Look up a rule (file grades · identity · conflicts · shared branch · commits) | [CONVENTIONS.md](CONVENTIONS.md) | all |
+| Look up a frontmatter format | [SCHEMAS.md](SCHEMAS.md) · [templates/](templates/) | all |
+| Detailed formats cited from the solo kit (feature / QA / persona / audit) | [reference/](reference/README.md) | all |
 
 ---
 
@@ -188,7 +204,7 @@ ARCHITECTURE / global-contract change =
 ## 10. Honest limitations (no unfounded positivity)
 
 1. **Governance ≠ tooling.** Multi-human intent conflicts are solved only by maintainer arbitration. The framework only surfaces conflicts; it can't create consensus.
-2. **Detection ≠ enforcement.** If `touches` is undeclared/misdeclared, detection fails. It relies on the agent following the convention (a prompt is not enforcement — see the residual limitations in [README.md](../../README.md)), and INTEGRATE's re-detection is the last net but it's after the fact. If you need real *enforcement*, layer on the git platform tier (protected branch / CI) as an option.
+2. **Detection ≠ enforcement.** If `touches` is undeclared/misdeclared, detection fails. It relies on the agent following the convention (a prompt is not enforcement — see the "honest residual limits" section of the Agent-Spec-Kit repository's guide README), and INTEGRATE's re-detection is the last net but it's after the fact. If you need real *enforcement*, layer on the git platform tier (protected branch / CI) as an option.
 3. **The cost is an intended trade-off.** It accepts per-session overhead (reading in-flight workitem frontmatter at detection time) and the maintainer's INTEGRATE burden. For solo, solo ASK is cheaper.
 4. **Single point of failure.** The maintainer can become a bottleneck → multiple maintainers are possible, but the ARCHITECTURE single-writer discipline is kept by domain partitioning.
 5. **No at-a-glance dashboard.** Since there is no fixed INDEX, you check progress ad hoc via `git`/`grep`/`gh` or by asking the agent.
@@ -208,3 +224,4 @@ ARCHITECTURE / global-contract change =
 | `INTEGRATE.md` | maintainer integration prompt (re-detect → merge → history) |
 | `AUDIT.md` | team document audit (drift + coordination integrity) |
 | `templates/` | example files for copying schemas |
+| `reference/` | bundled verbatim copies of the solo kit (SOLO-KICKOFF·DEVELOPINIT·ADOPT·AUDIT) — cited-format reference only; the team kit wins on conflict |

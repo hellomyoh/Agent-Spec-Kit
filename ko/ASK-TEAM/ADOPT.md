@@ -4,7 +4,7 @@
 산출물 구조는 [KICKOFF.md](KICKOFF.md)와 동일하므로, 채택이 끝나면 곧바로 [DEVELOP.md](DEVELOP.md)로 개발을 잇습니다.
 
 > 규약은 [CONVENTIONS.md](CONVENTIONS.md), 스키마는 [SCHEMAS.md](SCHEMAS.md)가 우선합니다.
-> 코드 역문서화의 **세부 방식**(읽은 범위 명시·as-built 명세·추정 표기)은 solo 킷 [ADOPT.md](../AGENTSPECKIT/ADOPT.md)를 따릅니다 — 여기서는 **팀 구조 차이만** 규정합니다.
+> 코드 역문서화의 **세부 방식**(읽은 범위 명시·as-built 명세·추정 표기)은 solo 킷 ADOPT.md([reference/SOLO-ADOPT.md](reference/SOLO-ADOPT.md) — 동봉된 참조 사본, 충돌 시 팀 킷 우선)를 따릅니다 — 여기서는 **팀 구조 차이만** 규정합니다.
 > **이 프롬프트는 maintainer가 실행**합니다. 이 단계에서 **코드를 수정하지 않습니다.**
 
 ---
@@ -25,10 +25,11 @@
 4. **as-built 명세 → `features/*.md`** — 각 동작 주장은 코드 위치(파일/함수) 근거. 직접 안 읽은 동작은 단정하지 말고 "추정(검증 필요)". 코드↔의도 괴리 지점을 별도 표시.
 5. **기존 테스트 실제 실행 → `history/YYYY/MM/HIST-*.md`** 에 baseline(pass/fail/absent) 기록.
 6. **남은/미구현 작업 → `workitems/WI-*.md`(proposed)** 로 분해, `touches` 채움. 이미 구현된 것은 feature as-built로, 앞으로 할 것은 workitem으로.
-7. `SOURCES/REQUIREMENTS.md`가 있으면 미래 목표/미구현 요구로 사용. as-built와 충돌하면 질문. 채택 완료 시 `SRC-*.meta.md`에 등록하고 `applied`로 동결.
+7. `SOURCES/REQUIREMENTS.md`가 있으면 미래 목표/미구현 요구로 사용. as-built와 충돌하면 질문. 채택 완료 시 `SOURCES/REQUIREMENTS.meta.md`(`id: REQUIREMENTS` — SCHEMAS §source)에 등록하고 `applied`로 동결.
 8. `PLAN.md`(안정 로드맵)에 현재 상태를 done/in-progress/remaining으로 반영. `PROGRESS.md` 호환 스텁 작성([KICKOFF.md](KICKOFF.md) 5절).
 9. `AGENTS.md`(팀 규약 — KICKOFF 4절)·`CLAUDE.md` 작성/merge. (고정 INDEX 파일·추가 런타임 없음.)
-10. 채택 완료 보고(아래).
+10. **채택 산출물 commit.** maintainer가 공유 브랜치에 push할 수 있으면(CONVENTIONS §4.5) 공유 브랜치에서 직접 채택을 수행하고, 아니면 작업 브랜치(`docs/agentspeckit-adopt`)에서 수행한 뒤 **기여자들이 claim을 시작하기 전에** PR로 merge합니다(claim은 조율층이 공유 브랜치에 있어야 가능). 문서만 포함 — 코드 변경 없음; 중간 지점 commit 허용. 비어 있는 디렉토리에는 `.gitkeep`을 넣습니다.
+11. 채택 완료 보고(아래).
 
 ---
 
@@ -38,6 +39,7 @@
 * `ARCHITECTURE.md`(역추출)·as-built `features/*.md`(코드 근거)·테스트 baseline(`history/`) 생성
 * 미구현/미독파 작업이 `workitems/`(proposed, `touches` 포함)에 등재
 * 코드↔의도 괴리 목록 정리
+* 채택 산출물이 commit됨(문서 전용; 공유 브랜치에서, 또는 claim 시작 전 PR merge)
 
 보고 형식:
 

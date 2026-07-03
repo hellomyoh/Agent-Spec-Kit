@@ -1,6 +1,6 @@
 # ASK 효과 측정 — 전체 결과 종합
 
-> 방법론: [METHODOLOGY.md](METHODOLOGY.md) · 단발/누적/복원 상세: [FINAL_REPORT.md](FINAL_REPORT.md) · 중규모 설계: [REALWORLD_DESIGN.md](REALWORLD_DESIGN.md) · 중규모 파일럿 상세: [../benchmark-realapp/REPORT_STAGE0.md](../benchmark-realapp/REPORT_STAGE0.md)
+> 방법론: [METHODOLOGY.md](METHODOLOGY.md) · 단발/누적/복원 상세: [FINAL_REPORT.md](FINAL_REPORT.md) · 중규모 설계: [REALWORLD_DESIGN.md](REALWORLD_DESIGN.md) · 중규모 파일럿(B7 Stage 0) 상세: `benchmark-realapp/`은 후속 벤치마크로 대체되어 저장소에서 제거됨(커밋 f6c8cc9) — 요약은 본 문서 §1 및 [FINAL_REPORT.md](FINAL_REPORT.md) 참조
 > 이 문서는 모든 벤치마크 항목의 결과를 한곳에 모아 **"ASK는 효과가 있는가"** 에 대한 정직한(과장·축소 없는) 종합 판정을 제시한다. 원칙: 효과 입증과 "효과 없음"을 동등하게 보고한다.
 
 ## 1. 한눈에 보기

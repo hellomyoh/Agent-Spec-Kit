@@ -11,7 +11,7 @@ ASK-Team 팀 개발에서 **한 명의 기여자(인간/AI 에이전트)가 하�
 ## 0. 세션 시작 (에이전트가 자동 수행)
 
 1. **신원 확인** — `git config user.email`을 읽어 `team/*.md`의 `emails`와 매칭해 내 `handle`·`role`을 확인합니다. 매칭 실패(미등록)면 `team/<handle>.md`를 먼저 등록(`templates/team-TEMPLATE.md`)한 뒤 진행합니다.
-2. **현황 파악** — 공유 브랜치의 `workitems/*.md` frontmatter를 읽어 in-flight 작업(특히 `claimed`/`in_progress`)과 그 `touches`를 확인합니다(고정 INDEX 파일 없음 — 항목 파일이 SoT).
+2. **현황 파악** — 먼저 `git fetch`한 뒤, **최신** 공유 브랜치의 `workitems/*.md` frontmatter(`origin/<공유 브랜치>` — CONVENTIONS §4.5)를 읽어 in-flight 작업(특히 `claimed`/`in_progress`)과 그 `touches`를 확인합니다(고정 INDEX 파일 없음 — 항목 파일이 SoT).
 
 ---
 
@@ -33,20 +33,20 @@ ASK-Team 팀 개발에서 **한 명의 기여자(인간/AI 에이전트)가 하�
 
 1. 해당 `WI-*.md`의 `owner`를 내 handle로, `status`를 `claimed`로 바꿉니다.
 2. `branch`를 `feat/<WI-id>`로 기록합니다.
-3. **공유 브랜치에 이 변경만 커밋**합니다 (코드 작업 전 — 조율층 published).
+3. **공유 브랜치에 이 변경만 커밋하고 즉시 push**합니다 (코드 작업 전 — 발행, CONVENTIONS §4.5).
 
 ### 2.2 새 workitem 생성
 `templates/WI-TEMPLATE.md`를 복사해 `workitems/WI-<YYYYMMDD>-<slug>.md`로 만듭니다.
 
 * `touches`를 **반드시 채웁니다** — 이 작업이 건드릴 횡단 계약(`contracts`)과 모듈(`modules`). 충돌 검출의 핵심이므로 정확히 선언합니다.
 * `feature`에 대응 명세 파일을 링크하고, `source_refs`에 근거 SRC를 링크합니다.
-* 공유 브랜치에 커밋합니다.
+* 공유 브랜치에 커밋하고 즉시 push합니다 (발행 — CONVENTIONS §4.5).
 
 ---
 
 ## 3. 충돌 검출 (claim 직후 — 필수, 에이전트가 수행)
 
-공유 브랜치의 `workitems/*.md` 중 `status ∈ {claimed, in_progress}`인 것을 읽어, 내 `touches`와 교차합니다.
+먼저 `git fetch`한 뒤, 최신 공유 브랜치의 `workitems/*.md` 중 `status ∈ {claimed, in_progress}`인 것을 읽어(CONVENTIONS §4.5), 내 `touches`와 교차합니다.
 
 | 결과 | 의미 | 해야 할 일 |
 |---|---|---|
@@ -62,10 +62,10 @@ ASK-Team 팀 개발에서 **한 명의 기여자(인간/AI 에이전트)가 하�
 
 작업 순서:
 
-1. `WI-*.md` status를 `in_progress`로 (공유 브랜치 또는 다음 동기화 시 반영).
-2. `features/*.md`의 명세와 `ARCHITECTURE.md` 계약을 확인합니다(없으면 명세부터, 비자명 기능은 `personas/`+`discussion/` 리뷰 — solo ASK [DEVELOPINIT §6](../AGENTSPECKIT/DEVELOPINIT.md) 방식).
+1. `WI-*.md` status를 `in_progress`로 — **공유 브랜치에서 커밋·push**합니다 (WI 파일은 공유 브랜치에서만 편집 — CONVENTIONS §4.5).
+2. `features/*.md`의 명세와 `ARCHITECTURE.md` 계약을 확인합니다(없으면 명세부터, 비자명 기능은 `personas/`+`discussion/` 리뷰 — solo ASK DEVELOPINIT §6 방식, [reference/SOLO-DEVELOPINIT.md](reference/SOLO-DEVELOPINIT.md)).
 3. 구현 + 자동 테스트 작성 → **실제 실행**(명령·결과 캡처). 실행 없이 통과를 주장하지 않습니다.
-4. 코드 ↔ 명세 불일치 시 **권위 진단** 후 처리(solo ASK [DEVELOPINIT §3.4](../AGENTSPECKIT/DEVELOPINIT.md)). 임의로 명세를 고쳐 불일치를 지우지 않습니다.
+4. 코드 ↔ 명세 불일치 시 **권위 진단** 후 처리합니다: ① 어느 쪽이 권위인지 진단 → ② 명세가 의도를 담고 코드가 틀렸으면 코드 수정 → ③ 명세의 낡음이 확인되면 명세를 먼저 갱신한 뒤 코드를 맞춤 → ④ 판단 불가면 질문(maintainer/사용자) — 근거는 `assumptions/`·`notes/`에 기록. 임의로 명세를 고쳐 불일치를 지우지 않습니다(상세: solo DEVELOPINIT §3.4, [reference/SOLO-DEVELOPINIT.md](reference/SOLO-DEVELOPINIT.md)).
 5. 자율 판단은 `assumptions/ASM-*.md`로 **새 파일** 생성(공유 단일 파일에 append하지 않음). 기존 가정과 충돌하면 `conflicts/`에 기록.
 6. 학습한 비자명한 사실은 `notes/<topic>.md`에 기록(추측은 assumptions로).
 
@@ -77,8 +77,8 @@ ASK-Team 팀 개발에서 **한 명의 기여자(인간/AI 에이전트)가 하�
 
 의미 있는 단위마다 **코드 + 그 workitem의 작업층 파일**을 하나의 커밋으로 묶습니다.
 
-* 포함: 코드, `features/*.md`, `qa/*.md`, `assumptions/ASM-*.md`, `notes/*`, 자기 `WI-*.md`, `sessions/<handle>--<WI-id>.md`.
-* **제외**: `ARCHITECTURE.md`/`PLAN.md`(maintainer), `history/**`(INTEGRATE).
+* 포함: 코드, `features/*.md`, `qa/*.md`, `assumptions/ASM-*.md`, `notes/*`, `sessions/<handle>--<WI-id>.md`.
+* **제외**: `ARCHITECTURE.md`/`PLAN.md`(maintainer), `history/**`(INTEGRATE), `workitems/WI-*.md`(조율층 — 상태 변경은 공유 브랜치에서, CONVENTIONS §4.5).
 * commit 메시지: Conventional Commits + 트레일러
   ```text
   feat: <요약>
@@ -86,13 +86,13 @@ ASK-Team 팀 개발에서 **한 명의 기여자(인간/AI 에이전트)가 하�
   Session-Id: <YYYY-MM-DDThhmm>-<handle>-<WI-id>
   Co-Authored-By: <에이전트 런타임>
   ```
-* `main`/`master`·공유 브랜치 직접 push 금지. `.env`·Secret·키 파일 commit 금지.
+* 코드/작업층 변경은 `main`/`master`·공유 브랜치에 직접 push하지 않습니다 — PR(INTEGRATE)로만 도달합니다. **예외:** 조율층 파일(`workitems/`·`conflicts/`·`team/`·`personas/`)은 공유 브랜치에 직접 커밋·push합니다 — 그것이 곧 발행 메커니즘입니다(CONVENTIONS §4.5). `.env`·Secret·키 파일 commit 금지.
 
 ---
 
 ## 6. review 제출
 
-1. `WI-*.md` status를 `review`로.
+1. `WI-*.md` status를 `review`로 (공유 브랜치에서 커밋·push — CONVENTIONS §4.5).
 2. `feat/<WI-id>` push 후 PR 생성(merge는 maintainer가 INTEGRATE에서).
 3. PR 본문에 WI-id, 변경 요약, 테스트 결과, `touches`, 미해소 `conflicts/`를 명시합니다.
 
