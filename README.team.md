@@ -38,8 +38,9 @@ For a single developer, Solo is lighter — use Team only when N people actually
 ## Quick start
 
 1. Clone this repo and copy the contents of [`en/ASK-TEAM/`](en/ASK-TEAM/) (or [`ko/ASK-TEAM/`](ko/ASK-TEAM/)) into your project root's `AGENTSPECKIT/`.
-2. The **maintainer** registers `team/<handle>.md` with `role: maintainer` (copy `templates/team-TEMPLATE.md`); each **contributor** registers their own.
-3. Contributors run the [`DEVELOP.md`](en/ASK-TEAM/DEVELOP.md) prompt; the maintainer runs [`INTEGRATE.md`](en/ASK-TEAM/INTEGRATE.md). Use [`KICKOFF.md`](en/ASK-TEAM/KICKOFF.md) (new) / [`ADOPT.md`](en/ASK-TEAM/ADOPT.md) (existing code) to initialize, and [`AUDIT.md`](en/ASK-TEAM/AUDIT.md) for periodic checks.
+2. For a **new project**, write the initial requirements in `AGENTSPECKIT/SOURCES/REQUIREMENTS.md` (reuse the solo kit's [REQUIREMENTS template](en/AGENTSPECKIT/SOURCES/REQUIREMENTS.md)); for an existing codebase (ADOPT) it is optional.
+3. The **maintainer** registers `team/<handle>.md` with `role: maintainer` (copy `templates/team-TEMPLATE.md`); each **contributor** registers their own.
+4. Contributors run the [`DEVELOP.md`](en/ASK-TEAM/DEVELOP.md) prompt; the maintainer runs [`INTEGRATE.md`](en/ASK-TEAM/INTEGRATE.md). Use [`KICKOFF.md`](en/ASK-TEAM/KICKOFF.md) (new) / [`ADOPT.md`](en/ASK-TEAM/ADOPT.md) (existing code) to initialize, and [`AUDIT.md`](en/ASK-TEAM/AUDIT.md) for periodic checks.
 
 ## Prompts & reference (in [`en/ASK-TEAM/`](en/ASK-TEAM/))
 
@@ -50,5 +51,6 @@ For a single developer, Solo is lighter — use Team only when N people actually
 | [DEVELOP.md](en/ASK-TEAM/DEVELOP.md) · [INTEGRATE.md](en/ASK-TEAM/INTEGRATE.md) | contributor / maintainer prompts |
 | [AUDIT.md](en/ASK-TEAM/AUDIT.md) | team document audit (drift + coordination integrity) |
 | [CONVENTIONS.md](en/ASK-TEAM/CONVENTIONS.md) · [SCHEMAS.md](en/ASK-TEAM/SCHEMAS.md) | structural conventions & frontmatter schemas |
+| [reference/](en/ASK-TEAM/reference/README.md) | bundled solo-kit reference copies cited by the team prompts |
 
 > ASK-Team keeps the Solo philosophy — markdown + git, tool independence (Claude Code · Codex · Cursor), cross-session memory, traceability, the multi-persona review harness. See the **[full guide](en/ASK-TEAM/README.md)** for the conflict-detection model, the development flow, and the honest limitations (detection ≠ enforcement; governance ≠ tooling).

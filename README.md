@@ -4,7 +4,7 @@
 
 🌐 **English** · [한국어](README.ko.md)
 
-**Agent-Spec-Kit is a Spec-Driven Development framework for AI coding agents — a panel of expert personas debate and agree on every spec *before* a line of code is written.**
+**Agent-Spec-Kit is a Spec-Driven Development framework for AI coding agents — a panel of expert personas debate and agree on every non-trivial spec *before* a line of code is written.**
 
 Requirements compile into specs and a plan; decisions, facts, and deliberations accumulate in a plain **markdown + git** memory that the next session picks up exactly where the last one stopped — so the work stays consistent across sessions instead of drifting. No lock-in — the same kit runs in **Claude Code, Codex, and Cursor**.
 
@@ -55,7 +55,7 @@ Before using it, start by understanding "what gets solved, and what does not."
 | LLM limit | How this framework overcomes it |
 |---|---|
 | **Memory disappears when the session ends** | `PROGRESS.md` ("the first command of the next session"), `HISTORY.md`, and `NOTES.md` act as external memory → the next session picks up exactly where it left off |
-| **The context window is finite** — not every document can be read every time | Four always-loaded files (AGENTS/ARCHITECTURE/PLAN/PROGRESS) + indexes (features · docs · adr · SOURCES INDEX) enable **selective loading that cheaply picks only the documents needed** |
+| **The context window is finite** — not every document can be read every time | Four always-loaded files (AGENTS/ARCHITECTURE/PLAN/PROGRESS) + a per-session SOURCES/INDEX status check + indexes (features · docs · adr) enable **selective loading that cheaply picks only the documents needed** |
 | **It re-derives every time** — repeating the same analysis and the same debugging session after session | A fact once discovered is "compiled" into `NOTES.md`, a decision once made into an ADR, a specification once agreed into `features/`, so it is not recomputed |
 | **Plausible fabrication + silent drift** — disguising implementation mistakes as specifications, with documents and code gradually diverging | An authority-diagnosis rule (diagnose first when code↔specification disagree), atomic commits (code and documents always in the same state), and `AUDIT.md` (periodic recovery of drift) |
 
@@ -168,6 +168,8 @@ Be sure to do the following.
 11. Before finishing initialization, change the status of REQUIREMENTS.md in AGENTSPECKIT/SOURCES/INDEX.md to 'Applied' and
     record the links to the applied artifacts. Afterward the REQUIREMENTS.md original is immutable, and
     additional requirements are received as new change-request documents.
+11-1. Commit the initialization artifacts per KICKOFF.md Section 3.1 (one commit bundling the three root files + AGENTSPECKIT/;
+    interim milestone commits are allowed if initialization spans multiple sessions).
 12. When initialization is complete, report the list of generated files, the ARCHITECTURE summary, the list of feature specifications, the list of QA documents, the list of ADRs, the development Phase summary, and the command to start the next development session.
 ```
 
@@ -208,6 +210,7 @@ Be sure to keep the following.
 8. Make AGENTSPECKIT/PLAN.md reflect the current state as done/in progress/remaining, and write the first command of the next session in AGENTSPECKIT/PROGRESS.md.
 9. If AGENTSPECKIT/SOURCES/REQUIREMENTS.md exists, use it as future goals/unimplemented requirements, and if it conflicts with as-built, ask.
    When adoption is complete, register it in AGENTSPECKIT/SOURCES/INDEX.md with type 'Initial requirements' and freeze it to 'Applied'.
+9-1. Commit the adoption artifacts on a work branch per ADOPT.md work-order step 18 (documentation-only commit — no code changes).
 10. When adoption is complete, report the results in the format of ADOPT.md Section 7 (including the ranges read, the list of code↔intent divergences, and the test baseline).
 ```
 
@@ -400,6 +403,7 @@ Be sure to proceed in the following order.
 2. Read AGENTSPECKIT/ARCHITECTURE.md. (cross-cutting contract — always loaded)
 3. Read AGENTSPECKIT/PLAN.md.
 4. Read AGENTSPECKIT/PROGRESS.md and check the "first command of the next session."
+4-1. Check AGENTSPECKIT/SOURCES/INDEX.md (always checked): if there are Not-applied / Under-review change requests, report them.
 5. To the extent needed, check AGENTSPECKIT/HISTORY.md for whether something has been implemented redundantly.
 6. Check AGENTSPECKIT/features/README.md and AGENTSPECKIT/adr/INDEX.md.
 7. Selectively read only the feature documents related to the current Phase and the related ADRs.
@@ -411,7 +415,7 @@ Cautions:
 
 - Do not re-initialize the project based on AGENTSPECKIT/SOURCES/REQUIREMENTS.md (Applied).
   Receive new requirements as change-request documents in AGENTSPECKIT/SOURCES/ and process them per DEVELOPINIT.md 4.2.
-- AGENTSPECKIT/'s ARCHITECTURE.md, PLAN.md, and PROGRESS.md are always loaded. Read only the feature/QA documents needed for the current Phase.
+- AGENTSPECKIT/'s ARCHITECTURE.md, PLAN.md, PROGRESS.md, and the SOURCES/INDEX.md status check are always performed. Read only the feature/QA documents needed for the current Phase.
 - Follow common decisions (data model/naming/API/authentication) according to ARCHITECTURE.md.
 - Do not implement by guessing without a specification.
 - If code and specification differ, first diagnose which side is authoritative, then handle it. Do not disguise an implementation mistake as the specification.
@@ -561,12 +565,13 @@ Run the persona deliberation as actual subagents in parallel, not as role-play.
 3. Aggregate the results, organize the issues and conflicts, and derive an agreed proposal.
    For issues that cannot be reasonably agreed, attach the options and a recommendation and confirm with the user.
 4. Record the entire deliberation process in AGENTSPECKIT/discussion/review-<feature-slug>-YYYYMMDD.md
-   (with instance-file links in the participating-personas item), write a draft feature document, and report.
+   (with instance-file links in the participating-personas item, execution mode `parallel-subagents`, and
+   per-subagent evidence — identifier·input scope·output summary), write a draft feature document, and report.
 ```
 
 > Why Method 2 is possible: a `personas/` instance file is itself the subagent's role definition (system prompt), and
 > the `discussion/` log **format** is identical regardless of the execution method (role-play / actual parallel) (see Section 9.2).
-> But an identical format does not mean you may report role-play as actual parallel — **state the actual execution mode in the log** (KICKOFF 4.1).
+> But an identical format does not mean you may report role-play as actual parallel — **state the actual execution mode in the log with the 4.1 enum** (`role-play` / `parallel-subagents` / `parallel-external`), and for `parallel-*` record the per-subagent evidence (KICKOFF 4.1).
 > If subagent tools are unavailable, do not imitate Method 2; fall back to Method 1 (role-play), and do not report independent parallel review you did not perform.
 
 **Method 3 — combine with a formal change request**: after submitting a change-request document to `AGENTSPECKIT/SOURCES/` as in Section 5.1,
@@ -676,13 +681,14 @@ discussion/review-*.md deliberation-process record — per-persona risks·eviden
       ↓ (only the conclusions are reflected)
 features/*.md          a 3–4-line review summary (participants/key issues/conclusion) + log link. Important decisions split off into adr/.
       ↓ (spot-check verification)
-AUDIT.md 3.10          are sources full URLs that really exist, do personas really exist, does the execution mode match the environment, is the log not theatrical.
+AUDIT.md 3.10          sources are full URLs that really exist · personas exist and meet the specificity floor (≥3 project links) · the execution mode is enum + evidence-backed · issues are status-tagged and risks traced to tests · the log is not theatrical.
 ```
 
 **Personas (personas/)** — KICKOFF.md Section 5:
 
 - At initialization, from the catalog (PM/Research/Architect/DB/Backend/Frontend/Security/QA, etc., 10 kinds),
-  pick **only those the project needs (usually 4–7)** and generate them as instance files with project-specific checklists.
+  pick **only those the project needs (usually 4–7)** and generate them as instance files with project-specific checklists
+  (each instance carries **≥3 project-specific links** — the 5.2 specificity floor).
 - An instance holds only the perspective·checklist·reference links. It **does not copy the knowledge** of ARCHITECTURE/NOTES (maintaining a single source).
 - At review points where issues·research·choices are needed, pick from the INDEX and read/inject only that file. When a new perspective is needed, add it then.
 
@@ -726,7 +732,7 @@ flowchart TD
 
     %% ── Common development loop ──
     subgraph DEV["Development loop (common to new·existing)"]
-        D1["Run the DEVELOPINIT.md development prompt (Section 5)<br/>ARCHITECTURE/PLAN/PROGRESS always loaded"]
+        D1["Run the DEVELOPINIT.md development prompt (Section 5)<br/>ARCHITECTURE/PLAN/PROGRESS + SOURCES INDEX always loaded"]
         D1 --> D2["Continue development based on PROGRESS.md (Section 7)"]
         D2 --> D1
     end
@@ -794,7 +800,7 @@ Composite score (out of 90; cost axis pending):
 - **Do**: the task harnesses discriminate (no ceiling/floor); external memory demonstrably curbs the wrong-value and policy-drift failures that memoryless/baseline agents commit; structured docs yield a consistent authority/completeness advantage.
 - **Do not**: prove ASK wins on all tasks, isolate the structural advantage of SSOT over disciplined free-notes at small scale, cover Team/multi-agent effects, or constitute a powered statistical result. Next steps (recorded in each `RESULTS*.md`): scale to ≥3 seeds, capture the cost axis, and design a longer horizon where free-notes lose the decision but an append-only SSOT keeps it.
 
-> Full design, raw trajectories, and go/no-go verdicts: `benchmark/benchmark-solo-pilot/RESULTS_v2.md` and `benchmark/benchmark-vibe-ask-solo/RESULTS_seed1.md`.
+> Full design, raw trajectories, and go/no-go verdicts: `benchmark/benchmark-solo-pilot/RESULTS_v2.md` and `benchmark/benchmark-vibe-ask-solo/RESULTS_seed1.md`. The most conservative cross-benchmark verdict — including the mid-scale experiments where no ASK advantage was shown — is consolidated in `benchmark/RESULTS_SUMMARY.md`.
 
 ---
 

@@ -4,7 +4,7 @@
 
 🌐 [English](README.md) · **한국어**
 
-**Agent-Spec-Kit은 AI 코딩 에이전트를 위한 명세 주도 개발(SDD) 프레임워크입니다 — 전문가 페르소나 그룹이 코드 한 줄을 쓰기 *전에* 모든 명세를 토론·합의합니다.**
+**Agent-Spec-Kit은 AI 코딩 에이전트를 위한 명세 주도 개발(SDD) 프레임워크입니다 — 전문가 페르소나 그룹이 코드 한 줄을 쓰기 *전에* 모든 비자명한 명세를 토론·합의합니다.**
 
 요구사항은 명세와 계획으로 컴파일되고, 결정·사실·토의가 **마크다운 + git** 메모리에 쌓여 다음 세션이 끊긴 지점을 정확히 이어받습니다 — 그래서 세션이 쌓여도 작업이 흔들리지 않고 일관되게 유지됩니다. 종속성 없음 — 같은 키트가 **Claude Code·Codex·Cursor**에서 그대로 동작합니다.
 
@@ -55,7 +55,7 @@ Codex · Claude Code · Cursor Agent
 | LLM의 한계 | 이 프레임워크의 극복 메커니즘 |
 |---|---|
 | **세션이 끝나면 기억이 사라짐** | `PROGRESS.md`("다음 세션 첫 명령"), `HISTORY.md`, `NOTES.md`가 외부 기억 역할 → 다음 세션이 끊긴 지점을 정확히 이어받음 |
-| **컨텍스트 창이 유한함** — 모든 문서를 매번 읽을 수 없음 | 항상 로드 4개(AGENTS/ARCHITECTURE/PLAN/PROGRESS) + 인덱스(features·docs·adr·SOURCES의 INDEX)로 **필요한 문서만 싸게 골라 읽는 선택적 로딩** |
+| **컨텍스트 창이 유한함** — 모든 문서를 매번 읽을 수 없음 | 항상 로드 4개(AGENTS/ARCHITECTURE/PLAN/PROGRESS) + 매 세션 SOURCES/INDEX 상태 확인 + 인덱스(features·docs·adr)로 **필요한 문서만 싸게 골라 읽는 선택적 로딩** |
 | **매번 재유도(re-derive)함** — 같은 분석·같은 디버깅을 세션마다 반복 | 한 번 알아낸 사실은 `NOTES.md`에, 한 번 내린 결정은 ADR에, 한 번 합의한 명세는 `features/`에 "컴파일"되어 다시 계산하지 않음 |
 | **그럴듯하게 지어냄 + 조용한 표류** — 구현 실수를 명세처럼 둔갑, 문서와 코드가 서서히 어긋남 | 권위 진단 규칙(코드↔명세 불일치 시 진단 먼저), 원자적 commit(코드와 문서가 항상 같은 상태), `AUDIT.md`(주기적 표류 회수) |
 
@@ -168,6 +168,8 @@ REQUIREMENTS.md는 사용자가 작성한 초기 요구사항이고, KICKOFF.md�
 11. 초기화를 마치기 전에 AGENTSPECKIT/SOURCES/INDEX.md에서 REQUIREMENTS.md의 상태를 '반영 완료'로 바꾸고
     반영 산출물 링크를 기록하세요. 이후 REQUIREMENTS.md 원본은 불변이며,
     추가 요구사항은 새 변경요청 문서로 받습니다.
+11-1. KICKOFF.md 3.1절에 따라 초기화 산출물을 commit하세요 (루트 3파일 + AGENTSPECKIT/를 묶는 단일 commit;
+    여러 세션에 걸치면 중간 지점 commit 허용).
 12. 초기화가 끝나면 생성한 파일 목록, ARCHITECTURE 요약, 기능명세서 목록, QA 문서 목록, ADR 목록, 개발 Phase 요약, 다음 개발 시작 명령을 보고하세요.
 ```
 
@@ -208,6 +210,7 @@ AGENTSPECKIT/ADOPT.md를 읽고, 그 지시에 따라 이미 개발 중인 이 �
 8. AGENTSPECKIT/PLAN.md는 완료/진행 중/남은 것으로 현재 상태를 반영하고, AGENTSPECKIT/PROGRESS.md에 다음 세션 첫 명령을 적으세요.
 9. AGENTSPECKIT/SOURCES/REQUIREMENTS.md가 있으면 앞으로의 목표·미구현 요구사항으로 사용하고, as-built와 충돌하면 질문하세요.
    채택이 끝나면 AGENTSPECKIT/SOURCES/INDEX.md에 유형 '초기 요구사항'으로 등록하고 '반영 완료'로 동결하세요.
+9-1. ADOPT.md 작업 순서 18단계에 따라 채택 산출물을 작업 브랜치에 commit하세요 (문서 전용 commit — 코드 변경 없음).
 10. 채택이 끝나면 ADOPT.md 7절 형식으로 결과를 보고하세요(읽은 범위, 코드↔의도 괴리 목록, 테스트 baseline 포함).
 ```
 
@@ -400,6 +403,7 @@ AGENTS.md와 AGENTSPECKIT/DEVELOPINIT.md를 읽고, 현재 프로젝트 문서�
 2. AGENTSPECKIT/ARCHITECTURE.md를 읽으세요. (횡단 계약 — 항상 로드)
 3. AGENTSPECKIT/PLAN.md를 읽으세요.
 4. AGENTSPECKIT/PROGRESS.md를 읽고 "다음 세션 첫 명령"을 확인하세요.
+4-1. AGENTSPECKIT/SOURCES/INDEX.md를 확인하세요(항상 확인): 미반영/검토 중 변경요청이 있으면 보고하세요.
 5. 필요한 범위에서 AGENTSPECKIT/HISTORY.md로 중복 구현 여부를 확인하세요.
 6. AGENTSPECKIT/features/README.md와 AGENTSPECKIT/adr/INDEX.md를 확인하세요.
 7. 현재 Phase와 관련된 feature 문서와 관련 ADR만 선택적으로 읽으세요.
@@ -411,7 +415,7 @@ AGENTS.md와 AGENTSPECKIT/DEVELOPINIT.md를 읽고, 현재 프로젝트 문서�
 
 - AGENTSPECKIT/SOURCES/REQUIREMENTS.md(반영 완료)를 기준으로 프로젝트를 다시 초기화하지 마세요.
   새 요구사항은 AGENTSPECKIT/SOURCES/에 변경요청 문서로 제출받아 DEVELOPINIT.md 4.2로 처리하세요.
-- AGENTSPECKIT/의 ARCHITECTURE.md, PLAN.md, PROGRESS.md는 항상 로드합니다. feature/QA 문서는 현재 Phase에 필요한 것만 읽으세요.
+- AGENTSPECKIT/의 ARCHITECTURE.md, PLAN.md, PROGRESS.md와 SOURCES/INDEX.md 상태 확인은 항상 수행합니다. feature/QA 문서는 현재 Phase에 필요한 것만 읽으세요.
 - 공통 결정(데이터 모델/네이밍/API/인증)은 ARCHITECTURE.md를 기준으로 따르세요.
 - 명세 없이 추측으로 구현하지 마세요.
 - 코드와 명세가 다르면 먼저 어느 쪽이 권위인지 진단한 뒤 처리하세요. 구현 실수를 명세로 둔갑시키지 마세요.
@@ -561,12 +565,13 @@ OOO 기능 추가를 검토하고 설계하세요. 구현은 시작하지 마세
 3. 결과를 취합해 쟁점과 충돌을 정리하고 합의안을 도출하세요.
    합리적으로 합의되지 않는 쟁점은 선택지와 권장안을 붙여 사용자에게 확인하세요.
 4. 토의 전 과정을 AGENTSPECKIT/discussion/review-<기능슬러그>-YYYYMMDD.md에 기록하고
-   (참여 페르소나 항목에 인스턴스 파일 링크), feature 문서 초안을 작성해 보고하세요.
+   (참여 페르소나 항목에 인스턴스 파일 링크, 실행 방식 `parallel-subagents`,
+   서브에이전트별 증거 — 식별자·입력 범위·출력 요약), feature 문서 초안을 작성해 보고하세요.
 ```
 
 > 방식 2가 가능한 이유: `personas/` 인스턴스 파일이 곧 서브에이전트의 역할 정의(시스템 프롬프트)이고,
 > `discussion/` 로그 **형식**은 실행 방식(역할극/실제 병렬)과 무관하게 동일하기 때문입니다 (9.2절 참조).
-> 단, 형식이 같다고 역할극을 실제 병렬로 보고해도 되는 것은 아닙니다 — **로그에 실제 실행 방식을 명시**하세요(KICKOFF 4.1).
+> 단, 형식이 같다고 역할극을 실제 병렬로 보고해도 되는 것은 아닙니다 — **로그에 실제 실행 방식을 4.1의 enum**(`role-play` / `parallel-subagents` / `parallel-external`)**으로 명시**하고, `parallel-*`이면 서브에이전트별 증거를 기록하세요(KICKOFF 4.1).
 > 서브에이전트 도구가 없는 환경이면 방식 2를 흉내 내지 말고 방식 1(역할극)로 내려가고, 수행하지 않은 독립 병렬 검토를 한 것처럼 보고하지 마세요.
 
 **방식 3 — 정식 변경요청과 결합**: 5.1절대로 변경요청 문서를 `AGENTSPECKIT/SOURCES/`에 제출한 뒤,
@@ -676,13 +681,14 @@ discussion/review-*.md 토의 과정 기록 — 페르소나별 위험·근거/�
       ↓ (결론만 반영)
 features/*.md          검토 요약 3~4줄(참여/핵심 쟁점/결론) + 로그 링크. 중요 결정은 adr/로 분리.
       ↓ (표본 검증)
-AUDIT.md 3.10          출처가 전체 URL로 보존·실재하는가, 페르소나가 실재하는가, 실행 방식이 환경과 맞는가, 연극성 로그는 아닌가.
+AUDIT.md 3.10          출처가 전체 URL로 보존·실재하는가 · 페르소나가 실재하고 특화 하한(프로젝트 고유 링크 ≥3)을 충족하는가 · 실행 방식이 enum+증거로 뒷받침되는가 · 쟁점에 상태가 붙고 위험이 테스트로 추적되는가 · 연극성 로그는 아닌가.
 ```
 
 **페르소나 (personas/)** — KICKOFF.md 5절:
 
 - 초기화 때 카탈로그(PM/Research/Architect/DB/Backend/Frontend/Security/QA 등 10종)에서
-  **프로젝트에 필요한 것만(보통 4~7개)** 골라, 프로젝트 특화 체크리스트를 가진 인스턴스 파일로 생성합니다.
+  **프로젝트에 필요한 것만(보통 4~7개)** 골라, 프로젝트 특화 체크리스트를 가진 인스턴스 파일로 생성합니다
+  (각 인스턴스는 **프로젝트 고유 링크 ≥3개** — 5.2절 특화 하한).
 - 인스턴스에는 관점·체크리스트·참조 링크만 담습니다. ARCHITECTURE/NOTES의 **지식을 복사하지 않습니다**(단일 출처 유지).
 - 쟁점·조사·선택이 필요한 검토 시점에 INDEX에서 골라 해당 파일만 읽어 주입합니다. 새 관점이 필요하면 그때 추가합니다.
 
@@ -726,7 +732,7 @@ flowchart TD
 
     %% ── 공통 개발 루프 ──
     subgraph DEV["개발 루프 (신규·기존 공통)"]
-        D1["DEVELOPINIT.md 개발 프롬프트 실행 (5절)<br/>ARCHITECTURE/PLAN/PROGRESS 항상 로드"]
+        D1["DEVELOPINIT.md 개발 프롬프트 실행 (5절)<br/>ARCHITECTURE/PLAN/PROGRESS + SOURCES INDEX 항상 로드"]
         D1 --> D2["PROGRESS.md 기준으로 이어서 개발 (7절)"]
         D2 --> D1
     end
@@ -794,7 +800,7 @@ flowchart TD
 - **보여주는 것**: 과제 하네스가 판별력이 있다(천장/바닥 없음); 외부 메모리가 메모리 없는/baseline 에이전트가 범하는 틀린 값·정책 드리프트 실패를 실제로 억제한다; 구조화 문서가 일관된 권위/완전성 우위를 낳는다.
 - **보여주지 못하는 것**: ASK가 모든 과제에서 이긴다는 증명, 작은 규모에서 자유 노트 대비 SSOT의 구조적 우위 분리, Team/멀티에이전트 효과, 검정력 있는 통계 결과. 다음 단계(각 `RESULTS*.md`에 기록): 시드 3개 이상으로 확장, 비용 축 측정, 자유 노트는 결정을 잃지만 append-only SSOT는 유지하는 더 긴 호라이즌 설계.
 
-> 전체 설계·원시 트래젝토리·go/no-go 판정: `benchmark/benchmark-solo-pilot/RESULTS_v2.md`, `benchmark/benchmark-vibe-ask-solo/RESULTS_seed1.md`.
+> 전체 설계·원시 트래젝토리·go/no-go 판정: `benchmark/benchmark-solo-pilot/RESULTS_v2.md`, `benchmark/benchmark-vibe-ask-solo/RESULTS_seed1.md`. 가장 보수적인 벤치마크 종합 판정 — ASK의 이점이 입증되지 않은 중규모 실험까지 포함 — 은 `benchmark/RESULTS_SUMMARY.md`에 정리되어 있습니다.
 
 ---
 
