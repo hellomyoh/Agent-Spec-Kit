@@ -1,7 +1,7 @@
 # AUDIT.md — 팀 문서 감사 (ASK-Team)
 
 팀 동시 개발에서 누적되는 표류와 **조율 구조의 무결성**을 주기적으로 점검합니다.
-solo 킷 [AUDIT.md](../AGENTSPECKIT/AUDIT.md)의 일반 표류 점검(계획↔실제, 가정 수명, 명세↔코드, 링크, 이력 위생)에 더해, **팀 전용 점검**을 추가합니다.
+solo 킷 AUDIT.md([reference/SOLO-AUDIT.md](reference/SOLO-AUDIT.md))의 일반 표류 점검(계획↔실제, 가정 수명, 명세↔코드, 링크, 이력 위생)에 더해, **팀 전용 점검**을 추가합니다.
 
 > 규약은 [CONVENTIONS.md](CONVENTIONS.md)가 우선합니다. INTEGRATE는 *합류 정합*, AUDIT는 *점진 표류 회수*를 담당합니다.
 
@@ -25,9 +25,14 @@ solo 킷 [AUDIT.md](../AGENTSPECKIT/AUDIT.md)의 일반 표류 점검(계획↔�
 
 # 3. 감사 항목
 
-## 3.1 일반 (solo AUDIT 3.1~3.12 계승)
-계획↔실제, 가정 수명, 명세↔코드 표본, 인덱스 무결성, 링크/고아, 이력 위생, README, SOURCES, 항상로드 비대화, 검토 로그(출처 실재), 백로그, 산출물 언어 일관성.
-**팀 차이:** "가정/이력/노트"는 단일 파일이 아니라 `assumptions/`·`history/`·`notes/` 디렉토리를 점검합니다.
+## 3.1 일반 (solo AUDIT 3.1~3.12 계승 — [reference/SOLO-AUDIT.md](reference/SOLO-AUDIT.md))
+계획↔실제, 가정 수명, 명세↔코드 표본, 링크/고아, README, 항상로드 비대화(ARCHITECTURE/PLAN), 검토 로그(출처 실재), 산출물 언어 일관성.
+**팀 재매핑** (아래 solo 항목은 팀 등가물로 대체 — 문자 그대로 적용하지 않습니다):
+* 인덱스 무결성(solo 3.4) → 해당 없음: 고정 INDEX 없음(§3.2). 대신 항목 파일 frontmatter가 정형인지(필수 필드 존재) 표본 점검.
+* 백로그 TODO.md(solo 3.11) → `proposed`/`ready` workitem 위생(§3.3).
+* HISTORY 회전(solo 3.6) → `history/YYYY/MM/`는 날짜 분할이라 회전 불필요(CONVENTIONS §9); 형식 점검은 `HIST-*.md` 이벤트에 적용.
+* SOURCES INDEX(solo 3.8) → `SRC-*.meta.md`·`REQUIREMENTS.meta.md` 상태 점검(§3.6).
+* 단일 ASSUMPTIONS/HISTORY/NOTES 파일 → `assumptions/`·`history/`·`notes/` 디렉토리.
 
 ## 3.2 고정 INDEX 부재 확인
 * 누군가 `INDEX.md` 같은 고정 인덱스 파일을 만들어 커밋하지 않았는가 — 이 킷은 고정 INDEX를 두지 않습니다(발견 시 삭제 후보로 보고). 목록·상태는 항상 항목 파일 frontmatter에서 직접 읽습니다.
@@ -39,7 +44,7 @@ solo 킷 [AUDIT.md](../AGENTSPECKIT/AUDIT.md)의 일반 표류 점검(계획↔�
 * 고아 workitem(어떤 PLAN Phase·source와도 연결 안 됨).
 
 ## 3.4 미검출 touches 겹침 (핵심)
-* in-flight(`claimed`/`in_progress`) workitem 전체의 `touches`를 읽어 쌍별로 교차합니다(에이전트가 직접 수행).
+* `git fetch` 후(CONVENTIONS §4.5) 최신 공유 브랜치에서 in-flight(`claimed`/`in_progress`) workitem 전체의 `touches`를 읽어 쌍별로 교차합니다(에이전트가 직접 수행).
   * **contracts 겹침인데 `conflicts/CF`도 없고 직렬화도 안 된 쌍** → 즉시 보고(maintainer 직렬화 필요).
   * **modules 겹침인데 `conflicts/CF` 미등재** → CF 등재를 후속 작업으로.
 

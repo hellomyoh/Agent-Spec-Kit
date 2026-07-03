@@ -16,11 +16,13 @@ Every file is one of four grades. The grade determines **who is the single-write
 | Grade | Files | Write permission | Concurrency rule |
 |---|---|---|---|
 | **Stable contract** | `ARCHITECTURE.md`, `PLAN.md`, `AGENTS.md`, prompts | **maintainer only** | No concurrent editing. Changes go through §6 serialization |
-| **Coordination** | `workitems/WI-*.md`, `conflicts/CF-*.md`, `team/<handle>.md` | the owning owner | published to the shared branch at claim time (§4) |
+| **Coordination** | `workitems/WI-*.md`, `conflicts/CF-*.md`, `team/<handle>.md`, `personas/*.md` | the owning owner (personas: creator) | published to the shared branch (§4.2·§4.5) |
 | **Work-scoped** | `features/*.md`, `qa/*.md`, `sessions/*.md`, `notes/*` | the related workitem owner | don't touch unrelated workitems |
 | **Event (append)** | `history/**`, `assumptions/ASM-*.md`, `adr/ADR-*.md`, `SOURCES/SRC-*.md`, `discussion/*.md` | the creator | new event = new file. Supersede existing records instead of deleting |
 
 Core principle: **two streams never write the same file region at the same time.** Don't append to a shared file; create a new file. **We don't keep fixed INDEX files** (§3).
+
+`personas/*.md` (shared review infrastructure) are **role-named** (`security.md`), not date-slug-named — the one place where concurrent creation can collide. Before creating an instance, `git fetch` and check that the role doesn't already have one; create/update instances **on the shared branch** (§4.5). Updates are made by the creator or the maintainer.
 
 ---
 
@@ -81,10 +83,10 @@ proposed → ready → claimed → in_progress → review → done
                           ↘ blocked ↗
 ```
 - `proposed`/`ready` serve as the backlog (absorbing solo ASK's `TODO.md`).
-- `done` is granted only when merge and history recording have completed in INTEGRATE.
+- `done` is granted only when merge and history recording have completed in INTEGRATE (the status→`done` write is made by the maintainer during INTEGRATE — the sanctioned exception to the WI single-writer rule).
 
 ### 4.2 claim = coordination-layer published (core)
-When you claim a workitem, you **commit `WI-*.md` (including `touches`) to the shared branch first** (add-only → low conflict). This lets every contributor see in-flight work and its `touches`. Code work then begins on the `feat/WI-*` branch afterward.
+When you claim a workitem, you **commit `WI-*.md` (including `touches`) on the shared branch first and push immediately** (add-only → low conflict; publishing procedure §4.5). This lets every contributor see in-flight work and its `touches`. Code work then begins on the `feat/WI-*` branch afterward.
 
 ### 4.3 Required fields
 `id`·`title`·`owner`·`status`·`branch`·`feature`·`touches` (`contracts`·`modules`). Schema in `SCHEMAS.md` §workitem.
@@ -92,12 +94,20 @@ When you claim a workitem, you **commit `WI-*.md` (including `touches`) to the s
 ### 4.4 ID convention
 `WI-<YYYYMMDD>-<slug>` (e.g. `WI-20260620-admin-role`). No sequential numbers, to avoid concurrent-allocation collisions. `ADR-*` is the same: `ADR-<YYYYMMDD>-<slug>`.
 
+### 4.5 Shared branch and publishing procedure (normative)
+
+* **The shared branch** is the repository's default integration branch (`main`/`master`, or the trunk the team designates). KICKOFF records the chosen name in `AGENTS.md`. If the platform blocks direct pushes to it (branch protection), designate a separate `coordination` branch as the shared branch and record that instead.
+* **Publishing = commit on the shared branch + immediate push.** Claims, `WI-*.md` status changes, `conflicts/CF-*.md`, `team/<handle>.md` registrations, and `personas/*.md` instance creation/updates are all published this way. These coordination files are the **only** things pushed directly to the shared branch — code/work-layer changes arrive there only via PR (INTEGRATE).
+* **`WI-*.md` is edited only on the shared branch** (single home). Do not carry WI status edits on the feature branch — the feature-branch atomic commit excludes `WI-*.md` (§7).
+* **Fetch before reading:** every step that reads the shared branch's coordination state (detection §5.1, INTEGRATE, AUDIT) first runs `git fetch` and reads the **latest** shared branch (`origin/<shared branch>`), not a possibly-stale local copy.
+* If a push is rejected because someone published at the same moment, `git pull --rebase` the shared branch and push again — coordination files are per-owner new files/add-only, so content conflicts are rare by construction.
+
 ---
 
 ## 5. Conflict conventions
 
 ### 5.1 Detection (performed by the agent)
-**Right after claim** and **right before integrate**, read the shared branch's `workitems/*.md` with `status ∈ {claimed, in_progress}` and exhaustively cross-check against my `touches`.
+**Right after claim** and **right before integrate**, `git fetch` first (§4.5), then read the latest shared branch's `workitems/*.md` with `status ∈ {claimed, in_progress}` and exhaustively cross-check against my `touches`.
 
 | Overlap | Meaning | Handling |
 |---|---|---|
@@ -124,17 +134,18 @@ Contract-change procedure:
   ④ dependent workitems rebase onto the new contract, then proceed
 ```
 
-ADR triggers (architecture, auth, DB structure, external API, deployment, test strategy, etc.) follow solo ASK [KICKOFF §16](../AGENTSPECKIT/KICKOFF.md). No lock files (maintainer + merge order is the serialization device).
+ADR triggers (architecture, auth, DB structure, external API, deployment, test strategy, etc.) follow solo ASK KICKOFF §16 ([reference/SOLO-KICKOFF.md](reference/SOLO-KICKOFF.md)) — **except** the `adr/INDEX.md` registration it mandates (no fixed INDEX, §3; ADR IDs follow §4.4 `ADR-<YYYYMMDD>-<slug>`, not sequential numbers). No lock files (maintainer + merge order is the serialization device).
 
 ---
 
 ## 7. Atomic-commit conventions
 
-One feature-branch commit = **code + that workitem's work-scoped files** (feature spec, qa, notes, assumptions, own `WI-*.md` status).
+One feature-branch commit = **code + that workitem's work-scoped files** (feature spec, qa, notes, assumptions, own session file).
 
 What it does not include:
 - `ARCHITECTURE.md`/`PLAN.md` (maintainer domain)
 - `history/**` (recorded by INTEGRATE)
+- `workitems/WI-*.md` (coordination grade — status updates are committed·pushed on the shared branch, §4.5)
 
 This keeps the "code and its corresponding docs in one commit" principle within the workitem scope, while preventing stable files from conflicting across cross-branch merges. (Since there is no fixed INDEX, INDEX is never a commit target in the first place.)
 
@@ -146,7 +157,8 @@ This keeps the "code and its corresponding docs in one commit" principle within 
 - `SOURCES/SRC-<YYYYMMDD-hhmm>-<slug>.md` — submitted original. **Immutable content.**
 - `SOURCES/SRC-*.meta.md` — the **mutable triage** of that original (status·owner·linked workitems). Per-source single-writer, so triaging different sources concurrently does not conflict. **Only one person triages a given source.**
 - Read the source listing·status directly from `SRC-*.meta.md` frontmatter (no fixed INDEX).
-- Authority rule: a change request has no authority until `applied`. Read current intent from the artifacts (ARCHITECTURE/features/PLAN). (Inherits solo ASK [KICKOFF §15.2](../AGENTSPECKIT/KICKOFF.md) authority·immutability·supersede-chain rules.)
+- `SOURCES/REQUIREMENTS.meta.md` — the triage meta for `REQUIREMENTS.md`, the one source that does not follow `SRC-*` naming (`id: REQUIREMENTS`, other fields identical — SCHEMAS §source). KICKOFF creates it and freezes its status to `applied` when initialization completes.
+- Authority rule: a change request has no authority until `applied`. Read current intent from the artifacts (ARCHITECTURE/features/PLAN). (Inherits solo ASK KICKOFF §15.2 ([reference/SOLO-KICKOFF.md](reference/SOLO-KICKOFF.md)) authority·immutability·supersede-chain rules.)
 
 ---
 

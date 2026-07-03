@@ -1,7 +1,7 @@
 # AUDIT.md — Team document audit (ASK-Team)
 
 Periodically check the drift that accumulates in concurrent team development and the **integrity of the coordination structure**.
-In addition to the general drift checks of the solo kit [AUDIT.md](../AGENTSPECKIT/AUDIT.md) (plan↔actual, assumption lifetime, spec↔code, links, history hygiene), add **team-specific checks**.
+In addition to the general drift checks of the solo kit AUDIT.md ([reference/SOLO-AUDIT.md](reference/SOLO-AUDIT.md)) (plan↔actual, assumption lifetime, spec↔code, links, history hygiene), add **team-specific checks**.
 
 > [CONVENTIONS.md](CONVENTIONS.md) takes precedence on conventions. INTEGRATE handles *merge-time consistency*, AUDIT handles *recovery of gradual drift*.
 
@@ -25,9 +25,14 @@ In addition to the general drift checks of the solo kit [AUDIT.md](../AGENTSPECK
 
 # 3. Audit items
 
-## 3.1 General (inherits solo AUDIT 3.1~3.12)
-plan↔actual, assumption lifetime, spec↔code sample, index integrity, links/orphans, history hygiene, README, SOURCES, always-loaded bloat, review logs (sources real), backlog, artifact language consistency.
-**Team difference:** "assumptions/history/notes" check the `assumptions/`·`history/`·`notes/` directories, not a single file.
+## 3.1 General (inherits solo AUDIT 3.1~3.12 — [reference/SOLO-AUDIT.md](reference/SOLO-AUDIT.md))
+plan↔actual, assumption lifetime, spec↔code sample, links/orphans, README, always-loaded bloat (ARCHITECTURE/PLAN), review logs (sources real), artifact language consistency.
+**Team remap** (solo items replaced by team equivalents — do not apply them literally):
+* index integrity (solo 3.4) → N/A: no fixed INDEX (§3.2). Instead spot-check that item-file frontmatter is well-formed (required fields present).
+* backlog TODO.md (solo 3.11) → `proposed`/`ready` workitem hygiene (§3.3).
+* HISTORY rotation (solo 3.6) → `history/YYYY/MM/` is date-partitioned, no rotation needed (CONVENTIONS §9); format checks apply to `HIST-*.md` events.
+* SOURCES INDEX (solo 3.8) → `SRC-*.meta.md`·`REQUIREMENTS.meta.md` status checks (§3.6).
+* single ASSUMPTIONS/HISTORY/NOTES files → the `assumptions/`·`history/`·`notes/` directories.
 
 ## 3.2 Confirm absence of fixed INDEX
 * Has someone created and committed a fixed index file like `INDEX.md` — this kit doesn't keep fixed INDEX (if found, report as a deletion candidate). The listing·status is always read directly from item file frontmatter.
@@ -39,7 +44,7 @@ plan↔actual, assumption lifetime, spec↔code sample, index integrity, links/o
 * Orphan workitems (not linked to any PLAN Phase·source).
 
 ## 3.4 Undetected touches overlap (core)
-* Read the `touches` of all in-flight (`claimed`/`in_progress`) workitems and cross-check pairwise (performed directly by the agent).
+* After `git fetch` (CONVENTIONS §4.5), read the `touches` of all in-flight (`claimed`/`in_progress`) workitems on the latest shared branch and cross-check pairwise (performed directly by the agent).
   * **contracts overlap with no `conflicts/CF` and no serialization** → report immediately (maintainer serialization needed).
   * **modules overlap with `conflicts/CF` unregistered** → register CF as a follow-up.
 

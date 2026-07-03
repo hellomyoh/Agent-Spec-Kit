@@ -62,6 +62,8 @@ summary: 관리자 역할 모델 추가 요청
 ---
 ```
 
+> `REQUIREMENTS.md`(초기 요구사항)는 `SRC-*` 명명을 따르지 않는 유일한 source입니다: meta 파일은 **`SOURCES/REQUIREMENTS.meta.md`**, `id: REQUIREMENTS`(나머지 필드는 동일).
+
 ---
 
 ## §assumption — `assumptions/ASM-<YYYYMMDD>-<slug>.md`
