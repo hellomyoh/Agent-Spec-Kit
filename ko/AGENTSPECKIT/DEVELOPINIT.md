@@ -22,6 +22,7 @@
 2. AGENTSPECKIT/ARCHITECTURE.md  (데이터 모델 · 네이밍 · API 계약 · 인증 모델 등 횡단 계약)
 3. AGENTSPECKIT/PLAN.md
 4. AGENTSPECKIT/PROGRESS.md
+5. AGENTSPECKIT/SOURCES/INDEX.md  (미처리 변경요청 상태 확인 — 원본은 처리할 때만 읽음. 아래 "중요" 참조)
 
 `PROGRESS.md`의 `다음 세션 첫 명령`을 먼저 확인하세요.
 
@@ -29,15 +30,14 @@
 
 다음 문서는 현재 작업에 필요한 것만 선택적으로 읽습니다.
 
-5. HISTORY.md (중복 구현 방지를 위해 최근 이력 확인)
-6. features/README.md
-7. 현재 Phase와 관련된 `features/*.md`
-8. adr/INDEX.md (관련 ADR이 있는지 확인 → 있으면 해당 `adr/*.md`)
-9. qa/README.md
-10. 필요한 경우 관련 `qa/*.md`
-11. 필요한 경우 관련 `docs/*.md`
-12. `NOTES.md`의 현재 작업 주제 관련 섹션 (과거에 학습한 사실을 재발견하지 않기 위해 확인)
-13. `SOURCES/INDEX.md` (미반영/검토 중 변경요청 확인 — 아래 "중요" 참조)
+6. HISTORY.md (중복 구현 방지를 위해 최근 이력 확인)
+7. features/README.md
+8. 현재 Phase와 관련된 `features/*.md`
+9. adr/INDEX.md (관련 ADR이 있는지 확인 → 있으면 해당 `adr/*.md`)
+10. qa/README.md
+11. 필요한 경우 관련 `qa/*.md`
+12. 필요한 경우 관련 `docs/*.md`
+13. `NOTES.md`의 현재 작업 주제 관련 섹션 (과거에 학습한 사실을 재발견하지 않기 위해 확인)
 14. `TODO.md` (사용자가 백로그를 언급하거나 Phase 계획을 세울 때만 — 4.3절)
 
 중요:
@@ -47,7 +47,7 @@
 * **공통 규칙(데이터 모델/네이밍/API 계약/인증)은 항상 `ARCHITECTURE.md`를 기준으로 따르세요.** feature 문서에 중복 기술돼 있지 않습니다.
 * `SOURCES/REQUIREMENTS.md`(초기 요구사항)를 포함해 `반영 완료`된 source 문서는 개발 단계의 기준 문서가 아닙니다.
   현재 의도는 항상 산출물(ARCHITECTURE/features/PLAN)에서 읽고, REQUIREMENTS.md 기준으로 재초기화하지 마세요.
-* **`SOURCES/INDEX.md`는 세션 시작 시 확인하세요.** `미반영`/`검토 중` 상태의 **변경요청**이 있으면
+* **`SOURCES/INDEX.md`는 매 세션 시작 시 항상 확인합니다(1.1).** `미반영`/`검토 중` 상태의 **변경요청**이 있으면
   사용자에게 보고하고 우선 처리 여부를 판단합니다(4.2절). 원본 문서는 처리할 때만 읽고, 평소에는 INDEX 요약만 읽습니다.
 * 프로젝트 `README.md`는 **산출물(파생 문서)**입니다. 진실의 출처가 아니므로 항상 로드하지 않고, push 단위로 갱신 필요 여부만 점검합니다(4.1 참조).
 * 개발 단계의 기준 문서는 AGENTS.md, ARCHITECTURE.md, PLAN.md, PROGRESS.md, features/*.md, qa/*.md입니다.

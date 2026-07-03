@@ -191,7 +191,9 @@ If initialization is interrupted midway, the next session reads `PROGRESS.md` an
 8. Separate the MVP scope from the lower-priority scope
 9. Decompose into feature units (for the granularity guide, see 6.0)
 9-1. Create the Agent persona instances needed for the project → `personas/` + INDEX (Section 5.2)
-10. Perform Multi-Agent review for each feature (read and inject the instance files in personas/)
+10. Perform Multi-Agent review for each feature (read and inject the instance files in personas/).
+    If subagent tools are available, review at least 1–2 core features via **actual parallel subagents** (execution mode·evidence per 4.1) —
+    role-play alone re-reviews a design this same session just drafted, so its independence is weak. Without subagent tools, use role-play and state the mode.
 11. Compile the review results and write the final feature specifications
 12. Write test scenarios per feature
 13. Write the overall QA documents
@@ -207,7 +209,15 @@ If initialization is interrupted midway, the next session reads `PROGRESS.md` an
 23. Create NOTES.md, TODO.md (empty skeletons)
 24. Finalize SOURCES/INDEX.md — change the REQUIREMENTS.md status to `Applied` (**freeze point** — the original is immutable thereafter), and record links to the resulting artifacts
 25. Write CLAUDE.md
-26. Report initialization completion (Section 18 format)
+26. Commit the initialization artifacts (Section 3.1)
+27. Report initialization completion (Section 18 format)
+
+## 3.1 Branch and Commit Rules for Initialization
+
+* Initialization ends with **a commit**: when the work order above is done (right before the completion report), bundle all generated artifacts (the three root files + AGENTSPECKIT/) into a **single commit** (Conventional Commits format, e.g., `chore: initialize project with Agent-Spec-Kit`).
+* If initialization spans multiple sessions, interim commits at meaningful milestones (e.g., after ARCHITECTURE/features are completed) are allowed — include the PROGRESS.md resume point in the same commit, so the next session takes over from a git-tracked state.
+* **Branch (bootstrap exception):** on a new (greenfield) repository that does not yet have branch protection or other collaborators, the initialization commit may be made on the current branch (including `main`). If the repository already has branch protection or collaborators, use a work branch (`chore/...` or `docs/...`).
+  The "no direct work on main/master" Git rule (Section 10) applies from the first development session (DEVELOPINIT.md) onward, and pushing follows the push policy (default: commit only) in either case.
 
 ---
 
@@ -243,7 +253,8 @@ Review-log structure (follow this structure, not free-form narrative):
 ```md
 # Review log: <feature-name> (YYYY-MM-DD)
 
-Execution mode: state which was actually performed — role-play (single-agent roleplay) / real parallel (independent subagents)
+Execution mode: exactly one of the enum — `role-play` (single-agent roleplay) | `parallel-subagents` (independent subagents in this session) | `parallel-external` (separately executed agents/tools).
+For `parallel-*`, per-subagent evidence is mandatory: an identifier (run id or timestamp), the input scope given, and a 1–2-line output summary. A parallel claim without evidence is treated as role-play.
 
 ## Participating personas and selection rationale
 
@@ -263,6 +274,9 @@ Record what clashed and how it was reconciled.
 ## Conclusion (agreed proposal) and where it is reflected
 
 Record the section number of the feature document where it is reflected, and whether an ADR was written.
+Tag **every issue** from the deliberation with exactly one status — `resolved` / `deferred (reason·owner)` / `requires user decision` / `requires ADR`.
+Do not fold dissent into "agreed": an issue that is not `resolved` must also surface in the feature document (§4 "remaining disputes" or §15 open issues).
+**Risk→test traceability (mandatory):** every verifiable failure condition raised by QA/Security(-type) personas must land as an item in the feature document §12 (test scenarios) or a qa/ checklist. A risk that exists only as prose in this log is not tracked.
 ```
 
 Log operation rules:
@@ -271,8 +285,9 @@ Log operation rules:
 * The log is **neither always-loaded nor normally selectively loaded.** Open it only during a dispute (authority diagnosis) or an AUDIT spot-check.
 * The log is not "evidence" of the review, but a **device that forces the review to be performed and makes spot-check verification possible.**
   A log that does not honor the rationale·source obligation is not recognized as a review.
-* The **execution mode** stated in the log must be the mode actually performed. If you reviewed via role-play because
-  subagent tools were unavailable, record it as "role-play" and **do not report it as if independent parallel review was performed.**
+* The **execution mode** stated in the log must be the mode actually performed, using the enum above.
+  A `parallel-*` entry without per-subagent evidence is not recognized as parallel review. If you reviewed via role-play because
+  subagent tools were unavailable, record it as `role-play` and **do not report it as if independent parallel review was performed.**
 
 ---
 
@@ -332,6 +347,9 @@ Rules:
 
 * **No copying of knowledge.** A persona file contains only perspective, checklist, and reference links.
   Do not copy the content of ARCHITECTURE/NOTES into it (maintain a single source of truth — a link needs no synchronization).
+* **Specificity floor.** An instance's checklist must contain **at least 3 project-specific relative-path links**
+  (a section of ARCHITECTURE.md, a features/ document, a NOTES topic, a SOURCES original, etc.).
+  A generic checklist that would read the same in any project is not an instance (AUDIT 3.10 checks this).
 * **Create only what is needed.** Do not create personas unrelated to the project.
   If a new perspective becomes needed during development, add the instance then and update the INDEX.
 * Persona files are **selectively loaded only in a review session.** They are not always loaded.
@@ -377,6 +395,7 @@ Do not list each Agent's opinions verbatim; organize only the final decided dire
 
 - Participating Agents:
 - Key issues and conclusion (3–4 lines):
+- Remaining disputes: none / list (each tagged `deferred` / `requires user decision` / `requires ADR`)
 - Review log: [discussion/review-<feature-slug>-YYYYMMDD.md](../discussion/review-....md)
 - (If a trivial feature, "Simple feature — no additional review needed", omit the log)
 
@@ -593,7 +612,7 @@ Content that must be included:
 * Project overview
 * Document priority
 * Work-start procedure
-* **List of always-loaded documents** (AGENTS.md, ARCHITECTURE.md, PLAN.md, PROGRESS.md)
+* **List of always-loaded documents** (AGENTS.md, ARCHITECTURE.md, PLAN.md, PROGRESS.md, SOURCES/INDEX.md — status check)
 * Feature-document reference rules (selective loading)
 * Multi-Agent review rules
 * QA procedure rules
@@ -617,6 +636,7 @@ Framework documents, except the project README.md, AGENTS.md, and CLAUDE.md (the
 are all inside the AGENTSPECKIT/ folder.
 At the start of work, the Agent first reads AGENTS.md,
 always reads ARCHITECTURE.md, PLAN.md, and PROGRESS.md in AGENTSPECKIT/ together,
+checks AGENTSPECKIT/SOURCES/INDEX.md for unprocessed change requests (Not applied / Under review),
 and then selectively reads only the feature documents needed for the current work.
 When selecting a feature document, check AGENTSPECKIT/adr/INDEX.md to see whether there is a related ADR.
 ```
@@ -1075,6 +1095,7 @@ Initialization work is complete only when all of the following conditions are sa
 * Common decisions are organized in ARCHITECTURE.md, not in feature documents
 * A Phase plan from which development can begin is established
 * The next development-start command is written in PROGRESS.md
+* The initialization artifacts are committed (Section 3.1 — a single commit, or milestone commits for a multi-session initialization)
 
 ---
 

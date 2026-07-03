@@ -22,6 +22,7 @@ The following documents are **always** read at the start of every session. They 
 2. AGENTSPECKIT/ARCHITECTURE.md  (cross-cutting contracts such as the data model, naming, API contract, auth model, etc.)
 3. AGENTSPECKIT/PLAN.md
 4. AGENTSPECKIT/PROGRESS.md
+5. AGENTSPECKIT/SOURCES/INDEX.md  (status check for unprocessed change requests — read the originals only when processing; see "Important" below)
 
 Check `PROGRESS.md`'s `First command of next session` first.
 
@@ -29,15 +30,14 @@ Check `PROGRESS.md`'s `First command of next session` first.
 
 Read only those of the following documents that the current work needs.
 
-5. HISTORY.md (check recent history to prevent duplicate implementation)
-6. features/README.md
-7. The `features/*.md` related to the current Phase
-8. adr/INDEX.md (check whether there is a relevant ADR → if so, the corresponding `adr/*.md`)
-9. qa/README.md
-10. Relevant `qa/*.md` if needed
-11. Relevant `docs/*.md` if needed
-12. The sections of `NOTES.md` related to the current work topic (check so you do not rediscover facts learned in the past)
-13. `SOURCES/INDEX.md` (check Not-applied / Under-review change requests — see "Important" below)
+6. HISTORY.md (check recent history to prevent duplicate implementation)
+7. features/README.md
+8. The `features/*.md` related to the current Phase
+9. adr/INDEX.md (check whether there is a relevant ADR → if so, the corresponding `adr/*.md`)
+10. qa/README.md
+11. Relevant `qa/*.md` if needed
+12. Relevant `docs/*.md` if needed
+13. The sections of `NOTES.md` related to the current work topic (check so you do not rediscover facts learned in the past)
 14. `TODO.md` (only when the user mentions the backlog or when planning a Phase — Section 4.3)
 
 Important:
@@ -47,7 +47,7 @@ Important:
 * **For common rules (data model / naming / API contract / auth), always follow `ARCHITECTURE.md` as the standard.** They are not duplicated in feature documents.
 * Source documents that are `Applied`, including `SOURCES/REQUIREMENTS.md` (Initial requirements), are not the reference documents for the development step.
   Always read the current intent from the artifacts (ARCHITECTURE/features/PLAN); do not re-initialize based on REQUIREMENTS.md.
-* **Check `SOURCES/INDEX.md` at the start of the session.** If there is a **change request** in the `Not applied` / `Under review` state,
+* **`SOURCES/INDEX.md` is always checked at the start of the session (1.1).** If there is a **change request** in the `Not applied` / `Under review` state,
   report it to the user and decide whether to handle it first (Section 4.2). Read the original document only when handling it; ordinarily read only the INDEX summary.
 * The project `README.md` is an **artifact (a derived document)**. It is not the source of truth, so it is not always loaded; check whether it needs updating only at push granularity (see 4.1).
 * The reference documents of the development step are AGENTS.md, ARCHITECTURE.md, PLAN.md, PROGRESS.md, features/*.md, and qa/*.md.

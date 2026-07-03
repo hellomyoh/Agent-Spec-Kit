@@ -170,7 +170,8 @@ If interrupted, the next session reads `PROGRESS.md` and continues from where it
     If `SOURCES/REQUIREMENTS.md` is present, register it with type `Initial requirements` and freeze it as `Applied` when adoption is complete.
     Whether to move and register existing scattered requirements/spec documents into SOURCES/ is done only after user confirmation
     (the non-destructive principle of Section 5 applies — do not move them arbitrarily).
-18. **Report adoption completion** (Section 7 format).
+18. **Commit the adoption artifacts.** Perform adoption on a work branch (e.g., `docs/agentspeckit-adopt`) — the project already has working code, so do not work directly on main/master. Bundle the generated/merged documents into a single commit (interim milestone commits are allowed if adoption spans multiple sessions). This commit contains documents only — no code changes (Section 2, principle 5). Push follows the push policy (default: commit only).
+19. **Report adoption completion** (Section 7 format).
 
 ---
 
@@ -266,3 +267,4 @@ Satisfy the completion criteria of `KICKOFF.md` Section 17, while additionally s
 * `ARCHITECTURE.md` was **reverse-extracted** from the code, and estimated items are stated in ASSUMPTIONS
 * `PLAN.md` reflects the **current state (done / in progress / remaining)**
 * **No code was modified** in this step (documentation/planning only)
+* The adoption artifacts are **committed on a work branch** (documentation-only commit — no code changes; interim commits allowed for a multi-session adoption)

@@ -100,11 +100,18 @@ Running is recommended if any of the following applies.
 * Does each non-trivial feature document have a review log link? (If not, suspect a missing review)
 * Open 1–2 sample logs and check whether the **sourcing obligation** was met — in particular, whether the Research Agent's web
   sources are **preserved as full URLs in the log** (not abbreviated/name-only) and **actually exist** (a missing or abbreviated source = a signal of a forged/unverifiable review)
-* Does the **execution mode** stated in the log (role-play / real parallel) not contradict the environment's capability?
-  (marking "real parallel" in an environment without subagents = a signal of a forged execution mode)
+* Is the **execution mode** one of the enum (`role-play` / `parallel-subagents` / `parallel-external`), and for `parallel-*`,
+  is the per-subagent evidence (identifier · input scope · output summary) present? A parallel claim without evidence, or one
+  that contradicts the environment's capability (no subagent tools), is a signal of a forged execution mode.
 * Does the log follow the structure in KICKOFF.md 4.1 (review per persona / issues / conclusion), and is it not a theatrical log that merely lists generic platitudes?
 * Do the participating personas in the log actually exist as instances in `personas/`, and do they match the INDEX?
-* Do the persona instances contain only links and checklists, without copying knowledge (the KICKOFF.md 5.2 rule)?
+* Do the persona instances contain only links and checklists, without copying knowledge, and do they meet the
+  **specificity floor** (≥3 project-specific links — the KICKOFF.md 5.2 rules)?
+* After recent cross-cutting contract changes (ADRs), are persona checklists **stale** (items still referring to superseded contracts)?
+  Sample 1–2 instances against recent ADRs; list stale items as update candidates in the report (the update itself is follow-up work).
+* Is every issue in the log's conclusion tagged (`resolved` / `deferred` / `requires user decision` / `requires ADR`), did
+  non-`resolved` issues surface in the feature document ("remaining disputes"/§15), and did QA/Security failure conditions
+  land in §12 or qa/ (risk→test traceability — KICKOFF.md 4.1)?
 * Are there orphan logs not linked from any feature?
 
 ## 3.11 Backlog (TODO)
@@ -134,7 +141,7 @@ Running is recommended if any of the following applies.
 | PLAN completed-Phase rotation needed (exceeds 4) | Can be performed immediately (the KICKOFF.md Section 12 rule — migrate to PLAN-archive.md) |
 | Code violating an ARCHITECTURE contract | Record only; the fix becomes a development task |
 | Neglected Not-applied / Under-review change request | List it in PROGRESS.md's remaining work and state it in the report |
-| Missing review log / nonexistent source / theatrical log | Separate the re-review of that feature into a follow-up task and state it in the report |
+| Missing review log / nonexistent source / theatrical log / parallel claim without evidence | Separate the re-review of that feature into a follow-up task and state it in the report |
 | Post-hoc modification of an Applied original (immutability violation) | Do not revert it arbitrarily; confirm with the user whether to separate the modification into a new request document |
 | Item that cannot be judged | Summarize under "Items requiring user confirmation" |
 
@@ -170,7 +177,7 @@ After completing the audit, report in the following format.
 
 ## Always-Loaded Document Bloat (PLAN completed-Phase count / whether ARCHITECTURE background remains)
 
-## Review Log Spot-Check Result (including whether sources actually exist)
+## Review Log Spot-Check Result (sources actually exist / execution-mode evidence / risk→test traceability)
 
 ## Backlog (TODO) Status (neglected / links / completion not reflected)
 
