@@ -21,7 +21,7 @@ AGENTSPECKIT/
   KICKOFF.md ADOPT.md DEVELOP.md INTEGRATE.md AUDIT.md   # 복사된 프롬프트 (markdown only)
   ARCHITECTURE.md  PLAN.md  PROGRESS.md(호환 스텁)
   team/        <maintainer-handle>.md                    # ★ 최소 1명(초기화 실행자) 등록
-  workitems/   WI-*.md                                   # 초기 작업 분해 (status: proposed)
+  workitems/   WI-*.md    archive/                       # 초기 작업 분해 (status: proposed); archive/ = done 항목, INTEGRATE가 이동 (§9)
   conflicts/                                             # 빈 폴더
   sessions/    archive/                                  # 빈 폴더
   history/                                               # 빈 폴더
@@ -35,7 +35,7 @@ AGENTSPECKIT/
 
 * **고정 INDEX 파일을 만들지 않습니다.** 디렉토리별 목록·상태는 항목 파일의 frontmatter가 SoT이며 에이전트가 직접 읽습니다(§7).
 * solo 킷의 단일 파일(`HISTORY.md`/`ASSUMPTIONS.md`/`NOTES.md`/`TODO.md`)은 **만들지 않습니다.** 각각 `history/`·`assumptions/`·`notes/`·workitem `proposed`로 대체됩니다.
-* git은 빈 디렉토리를 추적하지 않습니다 — 비어 있는 채로 시작하는 디렉토리(`conflicts/`, `sessions/archive/`, `history/`, `notes/`, `discussion/`)에는 `.gitkeep`(빈 파일)을 넣어 commit/clone 후에도 구조가 남게 합니다.
+* git은 빈 디렉토리를 추적하지 않습니다 — 비어 있는 채로 시작하는 디렉토리(`conflicts/`, `sessions/archive/`, `workitems/archive/`, `history/`, `notes/`, `discussion/`)에는 `.gitkeep`(빈 파일)을 넣어 commit/clone 후에도 구조가 남게 합니다.
 
 ---
 

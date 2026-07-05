@@ -40,10 +40,12 @@ plan↔actual, assumption lifetime, spec↔code sample, links/orphans, README, a
 ## 3.3 workitem hygiene
 * workitems long stuck in `claimed`/`in_progress` (e.g. 14 days+) — ask the owner to re-confirm status.
 * Is `owner` a registered active handle in `team/` (unregistered·inactive → flag).
-* workitems that are `done` but have no corresponding `history/` event / workitems with broken `feature`·`source_refs` links.
+* workitems (including `workitems/archive/`) that are `done` but have no corresponding `history/` event / workitems with broken `feature`·`source_refs` links.
+* `done` workitems still sitting in `workitems/` root instead of `workitems/archive/` (INTEGRATE §4's archive move was skipped or interrupted) → move as a mechanical fix once a `history/` event confirms it's really merged (CONVENTIONS §9).
 * Orphan workitems (not linked to any PLAN Phase·source).
 
 ## 3.4 Undetected touches overlap (core)
+* Scope: `workitems/*.md` at the root only — archived `done` items are terminal and excluded by construction (CONVENTIONS §9).
 * After `git fetch` (CONVENTIONS §4.5), read the `touches` of all in-flight (`claimed`/`in_progress`) workitems on the latest shared branch and cross-check pairwise (performed directly by the agent).
   * **contracts overlap with no `conflicts/CF` and no serialization** → report immediately (maintainer serialization needed).
   * **modules overlap with `conflicts/CF` unregistered** → register CF as a follow-up.
@@ -69,6 +71,7 @@ plan↔actual, assumption lifetime, spec↔code sample, links/orphans, README, a
 | undetected contracts overlap | report immediately → maintainer serialization (INTEGRATE §3) |
 | undetected modules overlap | register `conflicts/CF` as a follow-up |
 | neglected workitem / unregistered owner | re-confirm with owner·maintainer, state in the report |
+| `done` workitem left unarchived | move to `workitems/archive/` (verify a `history/` event exists first, CONVENTIONS §9) |
 | single-writer violation (direct ARCHITECTURE edit) | don't revert; record → retroactive ADR or maintainer review |
 | unregistered author commit | request team/ registration, state in the report |
 | neglected unapplied SRC / immutability violation | state in PROGRESS·report; for immutability violations confirm with maintainer whether to split into a new SRC |

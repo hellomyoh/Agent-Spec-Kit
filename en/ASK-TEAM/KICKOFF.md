@@ -21,7 +21,7 @@ AGENTSPECKIT/
   KICKOFF.md ADOPT.md DEVELOP.md INTEGRATE.md AUDIT.md   # copied prompts (markdown only)
   ARCHITECTURE.md  PLAN.md  PROGRESS.md(compat stub)
   team/        <maintainer-handle>.md                    # ★ at least 1 (the initializer) registered
-  workitems/   WI-*.md                                   # initial work breakdown (status: proposed)
+  workitems/   WI-*.md    archive/                       # initial work breakdown (status: proposed); archive/ = done items, moved by INTEGRATE (§9)
   conflicts/                                             # empty folder
   sessions/    archive/                                  # empty folder
   history/                                               # empty folder
@@ -35,7 +35,7 @@ AGENTSPECKIT/
 
 * **Don't create fixed INDEX files.** Each directory's listing·status has the item file's frontmatter as its SoT, and the agent reads it directly (§7).
 * Don't create the solo kit's single files (`HISTORY.md`/`ASSUMPTIONS.md`/`NOTES.md`/`TODO.md`). Each is replaced by `history/`·`assumptions/`·`notes/`·workitem `proposed` respectively.
-* Git does not track empty directories — put a `.gitkeep` (empty file) in directories that start empty (`conflicts/`, `sessions/archive/`, `history/`, `notes/`, `discussion/`) so the structure survives commit/clone.
+* Git does not track empty directories — put a `.gitkeep` (empty file) in directories that start empty (`conflicts/`, `sessions/archive/`, `workitems/archive/`, `history/`, `notes/`, `discussion/`) so the structure survives commit/clone.
 
 ---
 

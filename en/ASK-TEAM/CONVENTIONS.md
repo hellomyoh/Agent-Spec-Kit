@@ -84,6 +84,7 @@ proposed → ready → claimed → in_progress → review → done
 ```
 - `proposed`/`ready` serve as the backlog (absorbing solo ASK's `TODO.md`).
 - `done` is granted only when merge and history recording have completed in INTEGRATE (the status→`done` write is made by the maintainer during INTEGRATE — the sanctioned exception to the WI single-writer rule).
+- Once `done`, INTEGRATE moves the file to `workitems/archive/` in the same commit as the status write (§9) — this bounds claim-time/integrate-time detection (§5.1) to the active backlog instead of the project's lifetime workitem count.
 
 ### 4.2 claim = coordination-layer published (core)
 When you claim a workitem, you **commit `WI-*.md` (including `touches`) on the shared branch first and push immediately** (add-only → low conflict; publishing procedure §4.5). This lets every contributor see in-flight work and its `touches`. Code work then begins on the `feat/WI-*` branch afterward.
@@ -164,6 +165,7 @@ This keeps the "code and its corresponding docs in one commit" principle within 
 
 ## 9. Lifecycle / rotation
 
+- `workitems/`: once a workitem reaches `done`, INTEGRATE moves its file to `workitems/archive/` in the same commit as the status write (§4.1). Only `proposed`/`ready`/`claimed`/`in_progress`/`review`/`blocked` items stay at the root, so the per-session detection scan (§5.1, INTEGRATE §2, AUDIT §3.4) stays bounded by the active backlog rather than the project's lifetime workitem count. Cross-references (`depends_on`/`related_workitems`/`between`) store the `WI-id`, not a path, so archiving never breaks a link — resolve an id by checking `workitems/` then `workitems/archive/`.
 - `sessions/`: move completed sessions to `sessions/archive/`. Keep only active sessions at the root.
 - `history/`: naturally partitioned by `YYYY/MM`, so no separate rotation is needed. Compress-archive old years if needed.
 - `notes/`: when a topic grows, split `notes/<topic>.md` → `notes/<topic>/*.md`.

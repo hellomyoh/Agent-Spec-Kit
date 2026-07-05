@@ -60,7 +60,7 @@ AGENTSPECKIT/
   ARCHITECTURE.md                # single·always-loaded — maintainer-only edits
   PLAN.md                        # stable roadmap — maintainer-only edits
   PROGRESS.md                    # compatibility entry point (static stub — points to item files)
-  workitems/  WI-*.md            # units of work (frontmatter = SoT for status)
+  workitems/  WI-*.md  archive/  # units of work (frontmatter = SoT for status); archive/ = done items, moved by INTEGRATE (CONVENTIONS §9)
   conflicts/  CF-*.md            # semantic-conflict records
 
   # identification
@@ -205,7 +205,7 @@ Each prompt is run by telling your agent to read the file and follow it (e.g., "
 
 1. **Governance ≠ tooling.** Multi-human intent conflicts are solved only by maintainer arbitration. The framework only surfaces conflicts; it can't create consensus.
 2. **Detection ≠ enforcement.** If `touches` is undeclared/misdeclared, detection fails. It relies on the agent following the convention (a prompt is not enforcement — see the "honest residual limits" section of the Agent-Spec-Kit repository's guide README), and INTEGRATE's re-detection is the last net but it's after the fact. If you need real *enforcement*, layer on the git platform tier (protected branch / CI) as an option.
-3. **The cost is an intended trade-off.** It accepts per-session overhead (reading in-flight workitem frontmatter at detection time) and the maintainer's INTEGRATE burden. For solo, solo ASK is cheaper.
+3. **The cost is an intended trade-off.** It accepts per-session overhead (reading in-flight workitem frontmatter at detection time) and the maintainer's INTEGRATE burden. `workitems/archive/` (CONVENTIONS §9) bounds that per-session scan to the active backlog rather than the project's lifetime workitem count, but INTEGRATE's re-detection and the maintainer's burden still scale with concurrent in-flight work. For solo, solo ASK is cheaper.
 4. **Single point of failure.** The maintainer can become a bottleneck → multiple maintainers are possible, but the ARCHITECTURE single-writer discipline is kept by domain partitioning.
 5. **No at-a-glance dashboard.** Since there is no fixed INDEX, you check progress ad hoc via `git`/`grep`/`gh` or by asking the agent.
 

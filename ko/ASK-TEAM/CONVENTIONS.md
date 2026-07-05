@@ -84,6 +84,7 @@ proposed → ready → claimed → in_progress → review → done
 ```
 - `proposed`/`ready`가 백로그 역할을 합니다(solo ASK의 `TODO.md`를 흡수).
 - `done`은 INTEGRATE에서 merge·history 기록이 끝났을 때만 부여합니다 (status→`done` 기록은 INTEGRATE 중 maintainer가 수행 — WI single-writer 규칙의 공인된 예외).
+- `done`이 되면 INTEGRATE가 status 기록과 같은 커밋에서 파일을 `workitems/archive/`로 이동합니다(§9) — 이로써 claim 직후·integrate 직전 검출(§5.1)이 프로젝트 누적 workitem 수가 아니라 활성 백로그로 범위가 제한됩니다.
 
 ### 4.2 claim = 조율층 published (핵심)
 workitem을 claim하면 `WI-*.md`(`touches` 포함)를 **공유 브랜치에 먼저 커밋하고 즉시 push**합니다(파일 추가만 → 저충돌; 발행 절차 §4.5). 이로써 모든 기여자가 in-flight 작업과 그 `touches`를 볼 수 있습니다. 코드 작업은 그 다음 `feat/WI-*` 브랜치에서 시작합니다.
@@ -164,6 +165,7 @@ feature 브랜치의 한 커밋 = **코드 + 그 workitem의 작업층 파일**(
 
 ## 9. 수명 / 회전
 
+- `workitems/`: workitem이 `done`이 되면 INTEGRATE가 status 기록과 같은 커밋에서 파일을 `workitems/archive/`로 옮깁니다(§4.1). 루트에는 `proposed`/`ready`/`claimed`/`in_progress`/`review`/`blocked` 항목만 남으므로, 세션마다 도는 검출 스캔(§5.1, INTEGRATE §2, AUDIT §3.4)이 프로젝트 누적 workitem 수가 아니라 활성 백로그 크기로 제한됩니다. 상호참조(`depends_on`/`related_workitems`/`between`)는 경로가 아니라 `WI-id`를 저장하므로 아카이브해도 링크가 깨지지 않습니다 — id를 찾을 때는 `workitems/`를 먼저, 없으면 `workitems/archive/`를 확인합니다.
 - `sessions/`: 완료된 세션은 `sessions/archive/`로 이동합니다. 활성 세션만 루트에 둡니다.
 - `history/`: `YYYY/MM`로 자연 분할되므로 별도 회전이 불필요합니다. 오래된 연도는 필요 시 압축 아카이브.
 - `notes/`: 주제가 커지면 `notes/<topic>.md` → `notes/<topic>/*.md`로 분할합니다.

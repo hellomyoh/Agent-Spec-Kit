@@ -50,7 +50,7 @@
 
 * git 충돌은 일반 절차로 해소합니다.
 * 고정 INDEX 파일이 없으므로 INDEX merge 충돌은 발생하지 않습니다.
-* merge 후 각 `WI-*.md` status를 `done`으로 바꿉니다 (maintainer가 공유 브랜치에서 커밋 — WI single-writer 규칙의 공인된 예외, CONVENTIONS §4.1).
+* merge 후 각 `WI-*.md` status를 `done`으로 바꾸고, 같은 공유 브랜치 커밋에서 파일을 `workitems/archive/WI-*.md`로 이동합니다 (maintainer가 커밋 — WI single-writer 규칙의 공인된 예외, CONVENTIONS §4.1/§9). 이로써 `workitems/`는 활성 작업만 남아 이후 검출(§2)과 AUDIT §3.4가 지난 workitem을 전부 열어보지 않아도 됩니다.
 
 ---
 

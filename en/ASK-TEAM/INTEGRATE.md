@@ -50,7 +50,7 @@ Merge the PRs in serialization order (contract change → dependent workitems �
 
 * Resolve git conflicts via the normal procedure.
 * Since there are no fixed INDEX files, INDEX merge conflicts don't occur.
-* After merge, change each `WI-*.md` status to `done` (the maintainer commits this on the shared branch — the sanctioned exception to the WI single-writer rule, CONVENTIONS §4.1).
+* After merge, change each `WI-*.md` status to `done` and move the file to `workitems/archive/WI-*.md` in the same shared-branch commit (the maintainer commits this — the sanctioned exception to the WI single-writer rule, CONVENTIONS §4.1/§9). This keeps `workitems/` scoped to active work so future detection scans (§2) and AUDIT §3.4 don't have to open every historical workitem.
 
 ---
 
