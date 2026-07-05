@@ -60,7 +60,7 @@ AGENTSPECKIT/
   ARCHITECTURE.md                # 단일·강제로드 — maintainer만 수정
   PLAN.md                        # 안정 로드맵 — maintainer만 수정
   PROGRESS.md                    # 호환 진입점 (정적 스텁 — 항목 파일로 안내)
-  workitems/  WI-*.md            # 작업 단위 (frontmatter = 상태의 SoT)
+  workitems/  WI-*.md  archive/  # 작업 단위 (frontmatter = 상태의 SoT); archive/ = done 항목, INTEGRATE가 이동 (CONVENTIONS §9)
   conflicts/  CF-*.md            # 의미 충돌 기록
 
   # 식별
@@ -205,7 +205,7 @@ ARCHITECTURE / 전역 계약 변경 =
 
 1. **거버넌스 ≠ 도구.** 다중 인간 의도 충돌은 maintainer 중재로만 풀립니다. 프레임워크는 충돌을 표면화할 뿐 합의를 만들지 못합니다.
 2. **검출 ≠ 강제.** `touches` 미선언/오선언이면 검출이 실패합니다. 에이전트가 규약을 따른다는 보장에 의존하며(프롬프트는 강제가 아님 — Agent-Spec-Kit 저장소 가이드 README의 "정직한 잔여 한계" 절 참조), INTEGRATE 재검출이 마지막 그물이지만 사후입니다. 진짜 *강제*가 필요하면 git 플랫폼 계층(protected branch / CI)을 옵션으로 얹습니다.
-3. **비용은 의도된 대가.** 세션당 오버헤드(검출 시 in-flight workitem frontmatter 읽기)와 maintainer의 INTEGRATE 부담을 수용합니다. 1인이라면 solo ASK가 더 쌉니다.
+3. **비용은 의도된 대가.** 세션당 오버헤드(검출 시 in-flight workitem frontmatter 읽기)와 maintainer의 INTEGRATE 부담을 수용합니다. `workitems/archive/`(CONVENTIONS §9)가 이 세션당 스캔을 프로젝트 누적 workitem 수가 아니라 활성 백로그로 제한해주지만, INTEGRATE 재검출과 maintainer 부담은 여전히 동시 in-flight 작업량에 비례합니다. 1인이라면 solo ASK가 더 쌉니다.
 4. **단일 실패점.** maintainer가 병목이 될 수 있습니다 → maintainer 복수화는 가능하되 ARCHITECTURE single-writer 규율은 영역 분할로 유지합니다.
 5. **한눈 대시보드 없음.** 고정 INDEX를 두지 않으므로 진행 상태는 `git`/`grep`/`gh`나 에이전트 요청으로 그때그때 확인합니다.
 

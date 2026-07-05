@@ -42,6 +42,54 @@ For a single developer, Solo is lighter — use Team only when N people actually
 3. The **maintainer** registers `team/<handle>.md` with `role: maintainer` (copy `templates/team-TEMPLATE.md`); each **contributor** registers their own.
 4. Contributors run the [`DEVELOP.md`](en/ASK-TEAM/DEVELOP.md) prompt; the maintainer runs [`INTEGRATE.md`](en/ASK-TEAM/INTEGRATE.md). Use [`KICKOFF.md`](en/ASK-TEAM/KICKOFF.md) (new) / [`ADOPT.md`](en/ASK-TEAM/ADOPT.md) (existing code) to initialize, and [`AUDIT.md`](en/ASK-TEAM/AUDIT.md) for periodic checks.
 
+## Kit upgrade (applying a new version to an already-initialized team project)
+
+Use this to reflect template-repository updates into a project that already ran KICKOFF/ADOPT. **Don't re-run KICKOFF or ADOPT** — the re-initialization/re-adoption guard blocks them, and bypassing it overwrites coordination-layer content. **Only `role: maintainer` runs this** (it rewrites kit-owned files and the root rule files — both maintainer-only domains).
+
+| Category | Target | Processing |
+|---|---|---|
+| Kit-owned (no project content) | `KICKOFF.md`·`ADOPT.md`·`DEVELOP.md`·`INTEGRATE.md`·`AUDIT.md`·`CONVENTIONS.md`·`SCHEMAS.md`·`README.md`·`templates/`·`reference/` | **Overwrite-copy** from the same-version, same-language kit folder |
+| Coordination/work artifacts (project content) | `ARCHITECTURE.md`, `PLAN.md`, `workitems/`, `conflicts/`, `team/`, `sessions/`, `history/`, `assumptions/`, `notes/`, `SOURCES/` originals, `features/`, `personas/`, `discussion/`, `adr/`, `docs/`, `qa/` | **Preserve content** — do not touch |
+| Root rule files | `AGENTS.md` | **Merge-update** — add only missing team-convention blocks |
+| | `CLAUDE.md` | **Replace** with the new KICKOFF.md template (malfunction-prevention only) — lossless gate |
+| New structure (absent in the old version) | e.g. `workitems/archive/` | **Newly create** (`.gitkeep` if empty) and **migrate qualifying existing data** into it |
+
+**Step 1 (human, maintainer):** pull the template repository and overwrite-copy the kit-owned files above **from the same language folder you originally used** (`en/ASK-TEAM/` or `ko/ASK-TEAM/`) into the project's `AGENTSPECKIT/`. Since these are coordination-layer files, do this directly on the shared branch (or a work branch + PR first if the shared branch is push-protected — merge before any contributor resumes claiming).
+
+**Step 2 (Agent):**
+
+```text
+The ASK-Team kit has been updated and its kit-owned files have been replaced with the new version.
+Upgrade this project's artifact structure to the new-version standard.
+Do not re-run KICKOFF or ADOPT (re-initialization/re-adoption forbidden). Preserve the content of existing coordination/work artifacts.
+Only role: maintainer runs this prompt.
+
+0. Identity check: match git config user.email against team/*.md. If role is not maintainer, stop and delegate to a maintainer.
+   git fetch and read the latest shared branch before comparing structure.
+1. Compare the structure in the new KICKOFF.md §1 against the current AGENTSPECKIT/ and list missing files/folders.
+2. Create missing empty structure (.gitkeep per KICKOFF §1) — e.g. workitems/archive/ if this project predates it.
+3. One-time archive sweep (meaningful only if workitems/archive/ is new): for every workitems/WI-*.md at the root with
+   status: done, confirm a matching history/ event exists, then move it to workitems/archive/ in this same commit
+   (CONVENTIONS §9). List any done item with no matching history/ event instead of moving it — flag it for AUDIT,
+   don't archive it blind.
+4. Merge-update root AGENTS.md against the new KICKOFF.md §4 (team conventions) — preserve existing project-specific
+   content, add only missing principle blocks (identity/shared branch/conflict detection/atomic commit/etc.). If the
+   existing content is in a different language, translate-merge without mixing languages.
+5. Replace root CLAUDE.md with the new KICKOFF.md template (malfunction-prevention only). Lossless gate: before removing
+   a rule, confirm it exists in AGENTS.md (add it there first if not); preserve project-specific custom rules by
+   translating them into the prescribed language.
+6. Do not modify the content of existing artifacts (ARCHITECTURE/PLAN/workitems/features/etc.). Conform format only
+   where a schema changed, preserving content (e.g. a new optional SCHEMAS.md field is not force-added to existing files).
+7. Record history/YYYY/MM/HIST-<YYYYMMDD-hhmm>-kit-upgrade.md as a `chore | Framework upgrade` event — list files
+   updated/created and workitems archived by the sweep.
+8. Commit the whole change as coordination-layer files directly on the shared branch (or the work branch used in Step 1).
+   Do not bundle code changes into this commit.
+9. Report the list of files updated/created/migrated, workitems archived by the sweep, and any conflicts needing manual
+   confirmation.
+```
+
+**Step 3 (verification):** run the `AUDIT.md` prompt right after the upgrade — it catches migration omissions (a stray `done`-but-unarchived workitem, a fixed INDEX file someone committed, broken links) against the new standard.
+
 ## Prompts & reference (in [`en/ASK-TEAM/`](en/ASK-TEAM/))
 
 | File | Role |

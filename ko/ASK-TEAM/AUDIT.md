@@ -40,10 +40,12 @@ solo 킷 AUDIT.md([reference/SOLO-AUDIT.md](reference/SOLO-AUDIT.md))의 일반 
 ## 3.3 workitem 위생
 * `claimed`/`in_progress` 상태로 장기 방치된(예: 14일+) workitem — owner에게 상태 재확인.
 * `owner`가 `team/`에 등록된 active handle인가(미등록·inactive → flag).
-* `done`인데 대응 `history/` 이벤트가 없는 workitem / `feature`·`source_refs` 링크가 끊어진 workitem.
+* (`workitems/archive/` 포함) `done`인데 대응 `history/` 이벤트가 없는 workitem / `feature`·`source_refs` 링크가 끊어진 workitem.
+* `workitems/` 루트에 `done`인데 `workitems/archive/`로 옮겨지지 않은 workitem(INTEGRATE §4의 아카이브 이동이 누락·중단됨) → `history/` 이벤트 존재를 확인한 뒤 기계적으로 이동(CONVENTIONS §9).
 * 고아 workitem(어떤 PLAN Phase·source와도 연결 안 됨).
 
 ## 3.4 미검출 touches 겹침 (핵심)
+* 범위: 루트의 `workitems/*.md`만 대상 — 아카이브된 `done` 항목은 종결 상태이므로 구조적으로 제외됩니다(CONVENTIONS §9).
 * `git fetch` 후(CONVENTIONS §4.5) 최신 공유 브랜치에서 in-flight(`claimed`/`in_progress`) workitem 전체의 `touches`를 읽어 쌍별로 교차합니다(에이전트가 직접 수행).
   * **contracts 겹침인데 `conflicts/CF`도 없고 직렬화도 안 된 쌍** → 즉시 보고(maintainer 직렬화 필요).
   * **modules 겹침인데 `conflicts/CF` 미등재** → CF 등재를 후속 작업으로.
@@ -69,6 +71,7 @@ solo 킷 AUDIT.md([reference/SOLO-AUDIT.md](reference/SOLO-AUDIT.md))의 일반 
 | 미검출 contracts 겹침 | 즉시 보고 → maintainer 직렬화(INTEGRATE §3) |
 | 미검출 modules 겹침 | `conflicts/CF` 등재를 후속 작업으로 |
 | 방치 workitem / 미등록 owner | owner·maintainer에게 재확인, 보고서에 명시 |
+| `done` workitem이 아카이브 안 됨 | `history/` 이벤트 존재 확인 후 `workitems/archive/`로 이동(CONVENTIONS §9) |
 | single-writer 위반(ARCHITECTURE 직접수정) | 되돌리지 말고 기록 → ADR 소급 또는 maintainer 검토 |
 | 미등록 author commit | team/ 등록 요청, 보고서에 명시 |
 | 방치 미반영 SRC / 불변 위반 | PROGRESS·보고서에 명시, 불변 위반은 새 SRC로 분리할지 maintainer 확인 |
