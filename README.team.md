@@ -42,6 +42,58 @@ For a single developer, Solo is lighter — use Team only when N people actually
 3. The **maintainer** registers `team/<handle>.md` with `role: maintainer` (copy `templates/team-TEMPLATE.md`); each **contributor** registers their own.
 4. Contributors run the [`DEVELOP.md`](en/ASK-TEAM/DEVELOP.md) prompt; the maintainer runs [`INTEGRATE.md`](en/ASK-TEAM/INTEGRATE.md). Use [`KICKOFF.md`](en/ASK-TEAM/KICKOFF.md) (new) / [`ADOPT.md`](en/ASK-TEAM/ADOPT.md) (existing code) to initialize, and [`AUDIT.md`](en/ASK-TEAM/AUDIT.md) for periodic checks.
 
+## Development prompt — claim → detect → implement → PR (DEVELOP · contributor)
+
+Once initialization (or adoption) has been committed to the shared branch, each contributor uses this prompt to **perform one workitem**. Before running, your own `team/<handle>.md` must be registered (if not, the prompt registers it first). Only the contributor runs it; the maintainer merges via [`INTEGRATE.md`](en/ASK-TEAM/INTEGRATE.md).
+
+```text
+Read AGENTS.md and AGENTSPECKIT/DEVELOP.md, and following the DEVELOP.md procedure, claim one workitem and develop it.
+Conventions in AGENTSPECKIT/CONVENTIONS.md take precedence. This kit uses markdown + git only.
+
+Proceed strictly in the following order.
+
+0. Identity check: match git config user.email against the emails in team/*.md to confirm my handle·role.
+   If unregistered, register team/<handle>.md first (templates/team-TEMPLATE.md), then proceed.
+   Then git fetch, and read the latest shared branch's workitems/*.md frontmatter to see in-flight (claimed/in_progress) work and its touches.
+1. Always load: AGENTS.md (root), AGENTSPECKIT/ARCHITECTURE.md (cross-cutting contracts), AGENTSPECKIT/PLAN.md, in-flight workitems frontmatter.
+   Read the features/*.md·ADR·qa·notes needed for my work optionally. For common rules always follow ARCHITECTURE.md as the baseline.
+2. Claim a workitem:
+   - Existing item: pick a WI with status: proposed|ready, set owner to my handle, status to claimed, branch to feat/<WI-id>, and
+     commit only this change on the shared branch and push (before code work — publishing).
+   - New item: copy templates/WI-TEMPLATE.md to workitems/WI-<YYYYMMDD>-<slug>.md, fill touches (contracts/modules) without fail, then
+     commit·push on the shared branch.
+3. Conflict detection (mandatory right after claim): git fetch, then read the latest shared branch's workitems/*.md with status ∈ {claimed, in_progress} and cross-check against my touches.
+   - contracts overlap = STOP: do not proceed; ask the maintainer to serialize (see 7 below). If it's a contract change, go via ADR.
+   - modules overlap = WARN: register conflicts/CF-*.md (templates/CF-TEMPLATE.md) and agree on order with the other owner.
+   - independent = OK: proceed.
+4. Development (feature branch): git checkout -b feat/<WI-id>. Create sessions/<handle>--<WI-id>.md and update "Next first command".
+   - Set WI status to in_progress and commit·push on the shared branch (WI files are edited only on the shared branch).
+   - Check the features/*.md spec and ARCHITECTURE.md contracts (if absent, start from the spec; review non-trivial features via personas/+discussion/) and implement.
+   - Write automated tests and actually run them (capture commands·results). Don't claim passing without running.
+   - Handle code↔spec mismatch with an authority diagnosis (decide which side is authoritative first; don't arbitrarily edit the spec to erase the mismatch).
+   - Record autonomous judgments as new assumptions/ASM-*.md files, and facts you learned in notes/<topic>.md (guesses go to assumptions).
+   - If a global contract (ARCHITECTURE.md) must change, don't edit it directly — treat it as a STOP cause and follow step 7.
+5. Atomic commit: bundle code + that workitem's work-layer files (features/qa/assumptions/notes/sessions) only into one commit.
+   Exclude ARCHITECTURE/PLAN (maintainer)·history (INTEGRATE)·workitems/WI-* (coordination layer).
+   Add Session-Id: <YYYY-MM-DDThhmm>-<handle>-<WI-id> and Co-Authored-By: <agent runtime> trailers to the commit message.
+   Do not push code directly to main/master/the shared branch (PR only). But coordination-layer files are pushed directly on the shared branch. No committing .env·secrets.
+6. Submit for review: set WI status to review and commit·push on the shared branch, push feat/<WI-id>, then create a PR.
+   In the PR body state the WI-id, change summary, test results, touches, and unresolved conflicts/. The merge is done by the maintainer in INTEGRATE.
+7. If STOP/serialization is needed: write a dedicated workitem declaring the contract-change intent via touches.contracts + adr/ADR-*.md (Proposed) and
+   ask the maintainer to serialize. After the maintainer merges the contract first and updates ARCHITECTURE, rebase my workitem onto the new contract.
+
+When done, report in the format below.
+# Development result (WI-<id>)
+## Work done / changed files
+## Test results (commands run / pass·fail)
+## touches (contracts / modules) and detection result
+## Registered conflicts / assumptions / notes
+## Git (branch / commit / PR)
+## Next first command (= the update to sessions/<handle>--<WI-id>.md)
+```
+
+> To continue the same workitem in a later session, run the same prompt — the agent reads the "Next first command" in `sessions/<handle>--<WI-id>.md` and resumes from where it left off.
+
 ## Kit upgrade (applying a new version to an already-initialized team project)
 
 Use this to reflect template-repository updates into a project that already ran KICKOFF/ADOPT. **Don't re-run KICKOFF or ADOPT** — the re-initialization/re-adoption guard blocks them, and bypassing it overwrites coordination-layer content. **Only `role: maintainer` runs this** (it rewrites kit-owned files and the root rule files — both maintainer-only domains).
