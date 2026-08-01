@@ -127,20 +127,36 @@ This repository (THROUGHLINE) is composed of the following files.
 
 ```text
 /  (THROUGHLINE repository = template)
-├── README.md               # This guide (how to use the framework). Not copied into projects
-├── README.ko.md            # Korean translation of this guide. Not copied into projects
+├── README.md                            # This guide — the Solo edition. Not copied into projects
+├── README.ko.md                         # Korean translation of this guide
+├── README.team.md                       # Team edition guide (Korean: README.team.ko.md)
+├── LICENSE                              # MIT
 ├── en/
-│   └── THROUGHLINE/        # ★ English kit. Copy this folder to your project root.
-│       ├── KICKOFF.md          # Prompt for new (greenfield) initialization
-│       ├── ADOPT.md            # Prompt for adopting into an existing (brownfield) project
-│       ├── DEVELOPINIT.md      # Prompt for development progress
-│       ├── AUDIT.md            # Prompt for periodic document audit (drift check)
-│       └── SOURCES/
-│           ├── INDEX.md        # Submitted-material index (REQUIREMENTS.md pre-registered)
-│           └── REQUIREMENTS.md # Initial requirements written by the user (formerly AGENTINIT.md)
-└── ko/
-    └── THROUGHLINE/        # Korean kit — identical structure, Korean content. Copy this instead.
-        └── … (same files as en/THROUGHLINE/)
+│   ├── THROUGHLINE/                     # ★ English Solo kit. Copy this folder to your project root.
+│   │   ├── KICKOFF.md                   # Prompt for new (greenfield) initialization
+│   │   ├── ADOPT.md                     # Prompt for adopting into an existing (brownfield) project
+│   │   ├── DEVELOPINIT.md               # Prompt for development progress
+│   │   ├── AUDIT.md                     # Prompt for periodic document audit (drift check)
+│   │   └── SOURCES/
+│   │       ├── INDEX.md                 # Submitted-material index (REQUIREMENTS.md pre-registered)
+│   │       └── REQUIREMENTS.md          # Initial requirements written by the user
+│   └── THROUGHLINE-TEAM/                # ★ English Team kit. Copy this one instead for team development.
+│       ├── KICKOFF.md · ADOPT.md · DEVELOP.md · INTEGRATE.md · AUDIT.md
+│       ├── CONVENTIONS.md · SCHEMAS.md  # Structural conventions · frontmatter schemas
+│       ├── templates/                   # workitem · conflict · assumption · session · team member
+│       └── reference/                   # Solo-kit sections the team prompts cite
+├── ko/
+│   ├── THROUGHLINE/                     # Korean Solo kit — identical structure, Korean content
+│   └── THROUGHLINE-TEAM/                # Korean Team kit — identical structure, Korean content
+├── benchmark/                           # Maintainer-side evaluation harness. Not copied into projects
+│   ├── RESULTS_SUMMARY.md               # Consolidated verdict across every benchmark item
+│   ├── FINAL_REPORT.md                  # B1 · B2 · B3 detailed results
+│   ├── METHODOLOGY.md                   # Design principles and pre-registration criteria
+│   ├── benchmark-solo-pilot/            # Pilot 1 — does memory of an early decision survive?
+│   ├── benchmark-vibe-solo/             # Pilot 2 — does SSOT curb vibe-coding drift?
+│   └── harness/ · results/              # B3 revert-to-origin harness and its run artifacts
+└── tests/
+    └── conformance/                     # One-run pilots checking the prompts behave as specified
 ```
 
 Each language folder is self-contained: every file inside is named canonically (`KICKOFF.md`, `ADOPT.md`, …), so once you copy the `THROUGHLINE/` folder for your language into your project root, all the prompts and their path references resolve regardless of which language you chose. You only ever copy **one** language folder.
