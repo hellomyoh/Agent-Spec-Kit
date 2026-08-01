@@ -52,6 +52,16 @@ For a single developer, Solo is lighter — use Team only when N people actually
 
 ---
 
+## Working without the prompts
+
+You do not have to paste a prompt to get Spec-Driven Development. Initialization writes the standing contract into your project's root `AGENTS.md` — including the team conventions (identity · shared branch · conflict detection · atomic commits) — and your agent loads it **on every run**. So ordinary back-and-forth conversation with Claude Code · Codex · Cursor still reads the cross-cutting contracts in `ARCHITECTURE.md`, still resolves your handle from `git config user.email`, and still records what changed.
+
+Team mode raises the stakes on one of them, though. **Conflict detection only works if `touches` is published to the shared branch at claim time** — and a conversation that jumps straight to code never claims anything, so nothing gets published and the other contributors stay blind. The same applies to the resume case: [D](#d-resume-prompt--continuing-in-a-later-session-develop--contributor) exists to re-detect conflicts that appeared while you were away.
+
+Rule of thumb: **talk freely inside a claimed workitem; use the prompt at the boundaries.** [A](#a-initialization-prompt--new-team-project-kickoff--maintainer)/[B](#b-adoption-prompt--a-project-already-under-development-adopt--maintainer) to set up, [C](#c-contributor-development-prompt--claim--detect--implement--pr-develop--contributor) to claim, [D](#d-resume-prompt--continuing-in-a-later-session-develop--contributor) to resume, [E](#e-integration-prompt--merging-review-complete-work-integrate--maintainer) to merge, [F](#f-document-audit-prompt--drift--coordination-integrity-audit--maintainer) as the periodic net.
+
+---
+
 ## Prompts (paste-ready)
 
 Exactly as in the solo kit ([README.md](README.md) §2 · 5 · 7 · 9.1), paste the prompts below into your Agent (Claude Code · Codex · Cursor). Each is an entry point that makes the agent read the corresponding kit file (`THROUGHLINE/KICKOFF.md`, etc.) and follow its instructions, and each has a **designated runner (maintainer / contributor)**.
