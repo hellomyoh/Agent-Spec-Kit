@@ -127,20 +127,36 @@ THROUGHLINE은 그 충돌을 잡아내 정책을 지키고, 사용자에게 드�
 
 ```text
 /  (THROUGHLINE 저장소 = 템플릿)
-├── README.md               # 이 가이드의 영문판. 프로젝트로 복사하지 않음
-├── README.ko.md            # 이 가이드(프레임워크 사용법). 프로젝트로 복사하지 않음
+├── README.md                            # 이 가이드의 영문판. 프로젝트로 복사하지 않음
+├── README.ko.md                         # 이 가이드(프레임워크 사용법) — Solo 에디션
+├── README.team.md                       # Team 에디션 가이드 (한국어: README.team.ko.md)
+├── LICENSE                              # MIT
+├── ko/
+│   ├── THROUGHLINE/                     # ★ 한국어 Solo 키트. 이 폴더를 프로젝트 루트로 복사.
+│   │   ├── KICKOFF.md                   # 신규(greenfield) 초기화용 프롬프트
+│   │   ├── ADOPT.md                     # 기존(brownfield) 프로젝트 채택용 프롬프트
+│   │   ├── DEVELOPINIT.md               # 개발 진행용 프롬프트
+│   │   ├── AUDIT.md                     # 주기적 문서 감사(표류 점검)용 프롬프트
+│   │   └── SOURCES/
+│   │       ├── INDEX.md                 # 제출 자료 인덱스 (REQUIREMENTS.md 사전 등재)
+│   │       └── REQUIREMENTS.md          # 사용자가 작성하는 초기 요구사항
+│   └── THROUGHLINE-TEAM/                # ★ 한국어 Team 키트. 팀 개발이면 이쪽을 복사.
+│       ├── KICKOFF.md · ADOPT.md · DEVELOP.md · INTEGRATE.md · AUDIT.md
+│       ├── CONVENTIONS.md · SCHEMAS.md  # 구조 규약 · frontmatter 스키마
+│       ├── templates/                   # workitem · conflict · assumption · session · team 멤버
+│       └── reference/                   # 팀 프롬프트가 인용하는 솔로 킷 절 사본
 ├── en/
-│   └── THROUGHLINE/        # 영어 키트 — 구조 동일, 영어 내용
-│       └── … (ko/THROUGHLINE/ 와 동일 구성)
-└── ko/
-    └── THROUGHLINE/        # ★ 한국어 키트. 이 폴더를 프로젝트 루트로 복사.
-        ├── KICKOFF.md          # 신규(greenfield) 초기화용 프롬프트
-        ├── ADOPT.md            # 기존(brownfield) 프로젝트 채택용 프롬프트
-        ├── DEVELOPINIT.md      # 개발 진행용 프롬프트
-        ├── AUDIT.md            # 주기적 문서 감사(표류 점검)용 프롬프트
-        └── SOURCES/
-            ├── INDEX.md        # 제출 자료 인덱스 (REQUIREMENTS.md 사전 등재)
-            └── REQUIREMENTS.md # 사용자가 작성하는 초기 요구사항 (구 AGENTINIT.md)
+│   ├── THROUGHLINE/                     # 영어 Solo 키트 — 구조 동일, 영어 내용
+│   └── THROUGHLINE-TEAM/                # 영어 Team 키트 — 구조 동일, 영어 내용
+├── benchmark/                           # 유지보수자측 평가 하네스. 프로젝트로 복사하지 않음
+│   ├── RESULTS_SUMMARY.ko.md            # 전체 벤치마크 항목의 종합 판정
+│   ├── FINAL_REPORT.ko.md               # B1 · B2 · B3 상세 결과
+│   ├── METHODOLOGY.ko.md                # 설계 원칙과 사전등록 기준
+│   ├── benchmark-solo-pilot/            # 파일럿 1 — 초기 결정의 기억이 살아남는가?
+│   ├── benchmark-vibe-solo/             # 파일럿 2 — SSOT가 바이브 코딩 드리프트를 억제하는가?
+│   └── harness/ · results/              # B3 원점 복귀 하네스와 실행 산출물
+└── tests/
+    └── conformance/                     # 프롬프트가 명세대로 구동되는지 1회 확인하는 파일럿
 ```
 
 각 언어 폴더는 자기완결적입니다: 내부 파일이 모두 정식 이름(`KICKOFF.md`, `ADOPT.md`, …)으로 되어 있어, 여러분 언어의 `THROUGHLINE/` 폴더를 프로젝트 루트로 복사하면 어떤 언어를 골랐든 모든 프롬프트와 경로 참조가 그대로 동작합니다. 복사하는 언어 폴더는 항상 **하나**뿐입니다.
@@ -816,7 +832,7 @@ flowchart TD
 
 ### 파일럿 1 — [`benchmark/benchmark-solo-pilot/`](benchmark/benchmark-solo-pilot/): 초기 결정의 기억은 살아남는가?
 
-7세션짜리 `miniquery` 과제. 원래 기본 페이지 크기(**7**)가 두 번 덮어쓰여(→25→25→40), 세션 6에서 "원래 값으로 복원"을 요청합니다 — 코드 주석에 변경 이력을 남기지 못하게 하는 코딩 규범 아래에서, 원래 값은 **메모리 산출물 안에만** 남습니다. 같은 과제를 네 가지 메모리 체제로 수행:
+7세션짜리 `miniquery` 과제. 원래 기본 페이지 크기(**7**)가 두 번 덮어쓰여(→25→40), 세션 6에서 "원래 값으로 복원"을 요청합니다 — 코드 주석에 변경 이력을 남기지 못하게 하는 코딩 규범 아래에서, 원래 값은 **메모리 산출물 안에만** 남습니다. 같은 과제를 네 가지 메모리 체제로 수행:
 
 | 그룹 | 메모리 체제 | S6 복원 값 | 정답(7)? |
 |---|---|---:|:--:|
