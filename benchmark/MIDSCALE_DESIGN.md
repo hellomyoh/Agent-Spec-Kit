@@ -1,6 +1,6 @@
 # THROUGHLINE-QBench 중규모+ 확장 설계 (B4–B6)
 
-> 방법론: [METHODOLOGY.md](METHODOLOGY.md) · 소규모 결과: [FINAL_REPORT.md](FINAL_REPORT.md)
+> 방법론: [METHODOLOGY.ko.md](METHODOLOGY.ko.md) · 소규모 결과: [FINAL_REPORT.ko.md](FINAL_REPORT.ko.md)
 > 이 문서는 **중급 이상 규모의 프로젝트**에서 THROUGHLINE의 효과성을 *입증하도록* 설계한 벤치마크 항목(B4–B6)과 실행 계획이다.
 
 ---

@@ -1,96 +1,98 @@
-# THROUGHLINE-QBench — 통합 결과 보고서
+# THROUGHLINE-QBench — consolidated results report
 
-> 방법론: [METHODOLOGY.md](METHODOLOGY.md) · 하네스: [harness/](harness/) · B3 실행 산출물: [results/](results/)
-> 개발 모델: Haiku 4.5(약), B1 일부는 Sonnet(강) 병행. 채점은 stdlib/AST 기반 결정적 계산. 모든 에이전트 호출과 산출물을 보존했다.
+🌐 **English** · [한국어](FINAL_REPORT.ko.md)
 
-## 실행 범위
-- **B3(원점 복귀)는 본 하네스에서 직접 실행했다** — 방법론에서 THROUGHLINE 효과가 변별된 항목으로, 끝까지 재현한다.
-- **B1·B2는 동일 프로토콜로 수행한 평가 결과를 수록한다.** 동일 조건의 반복 실행은 결과가 통계적으로 같아 생략했으며, 전체 재실행은 하네스로 가능하다.
-- 한계: 모델 1종(약 모델) 중심, 정성 심사 미실시(객관 지표 only), 일부 항목은 파일럿 규모(아래 각 절·부록).
+> Methodology: [METHODOLOGY.md](METHODOLOGY.md) · Harness: [harness/](harness/) · B3 run artifacts: [results/](results/)
+> Development model: Haiku 4.5 (weak), with Sonnet (strong) run alongside for parts of B1. Scoring is deterministic, computed from stdlib/AST. Every agent call and artifact was preserved.
+
+## Scope of execution
+- **B3 (revert-to-origin) was run directly on this harness** — it is the item where a THROUGHLINE effect discriminated in the methodology, so it is reproduced end to end.
+- **B1 and B2 record evaluation results obtained under the same protocol.** Repeat runs under identical conditions were omitted because the results are statistically the same; a full re-run is possible with the harness.
+- Limits: centred on one model (the weak model), no qualitative judging (objective metrics only), and some items are at pilot scale (see each section and the appendix below).
 
 ---
 
-## B1 — 단발 구현 (5개 그룹, compute-matched)
+## B1 — single-shot implementation (5 arms, compute-matched)
 
-질문: 단발 구현에서 THROUGHLINE 구조가 통제 그룹보다 더 정확·견고한가?
+Question: in a single-shot implementation, is the THROUGHLINE structure more correct and robust than the control arms?
 
-| 그룹 (약 모델, hard 통과율) | 값 |
+| Arm (weak model, hard pass rate) | Value |
 |---|---|
-| A0 직접 구현 | 0.804 |
-| A1 사전 사고(무구조) | 0.877 |
+| A0 implement directly | 0.804 |
+| A1 think first (unstructured) | 0.877 |
 | A2 best-of-N | 0.804 |
 | **THROUGHLINE** (spec-first) | **0.909** |
 
-- 단순한 `THROUGHLINE − A0 = +0.106`을 분해하면 **A1 − A0(사전 사고) = +0.073(약 70%)** + **THROUGHLINE − A1(구조) = +0.032**.
-- **1차 비교 `THROUGHLINE − max(A0, A1, A2) = +0.032`, 95% 신뢰구간 [−0.064, +0.136] → 0을 포함(유의하지 않음).**
-- 강 모델에서는 `THROUGHLINE − A0 = −0.042`(추가 구조가 오히려 과설계로 작용).
-- 비용: 토큰 +16~22%, 코드 +37~39%.
+- Decomposing the naive `THROUGHLINE − A0 = +0.106` gives **A1 − A0 (thinking first) = +0.073 (about 70%)** plus **THROUGHLINE − A1 (structure) = +0.032**.
+- **Primary comparison `THROUGHLINE − max(A0, A1, A2) = +0.032`, 95% CI [−0.064, +0.136] → includes 0 (not significant).**
+- On the strong model, `THROUGHLINE − A0 = −0.042` (the extra structure acts as over-design instead).
+- Cost: +16–22% tokens, +37–39% code.
 
-**판정: 단발 기능 우위 미입증.** 외견상 이득의 대부분은 "사전에 생각하기"로 설명되고, 구조의 순증분은 통계적으로 0과 구분되지 않으며, 강 모델에서는 음(−)이다.
+**Verdict: no single-shot functional advantage shown.** Most of the apparent gain is explained by "thinking beforehand", the net increment from structure is statistically indistinguishable from zero, and on the strong model it is negative.
 
-### 모델 강도 민감도 — 2개 그룹 비교의 착시 (중요)
+### Model-strength sensitivity — the two-arm illusion (important)
 
-같은 과제를 모델 강도와 비교 그룹 수를 달리해 측정하면, "THROUGHLINE이 효과적"이라는 인상이 측정 방식에 의해 만들어질 수 있다.
+Measure the same task while varying model strength and the number of comparison arms, and the impression that "THROUGHLINE is effective" can be manufactured by the measurement design itself.
 
-| 조건 | 비교 방식 | THROUGHLINE 우위 | 해석 |
+| Condition | Comparison | THROUGHLINE advantage | Interpretation |
 |---|---|---|---|
-| 강한 모델 | — | `THROUGHLINE − A0 = −0.042` | 기능이 천장에 근접해 변별 불가, 오히려 음(−) |
-| 약한 모델 | **2개 그룹** (baseline vs THROUGHLINE) | `THROUGHLINE − A0 = +0.106` (hard) | 모델을 약하게 하니 천장이 깨지고 **THROUGHLINE이 앞서 보임** |
-| 약한 모델 | **5개 그룹** (compute-matched) | `THROUGHLINE − max(A0,A1,A2) = +0.032` (유의하지 않음) | 그 이득의 **약 70%가 사전 사고(A1)** 로 설명됨 |
+| Strong model | — | `THROUGHLINE − A0 = −0.042` | function is near the ceiling, cannot discriminate; actually negative |
+| Weak model | **2 arms** (baseline vs THROUGHLINE) | `THROUGHLINE − A0 = +0.106` (hard) | weakening the model breaks the ceiling and **THROUGHLINE appears to lead** |
+| Weak model | **5 arms** (compute-matched) | `THROUGHLINE − max(A0,A1,A2) = +0.032` (not significant) | about **70% of that gain is explained by thinking-first (A1)** |
 
-- 즉 "**약한 모델로 바꾸니 THROUGHLINE이 우위**"라는 결과는 **2개 그룹 비교에서만** 성립하며, 사전 사고·표본 수 통제 그룹을 더한 5개 그룹 비교에서는 THROUGHLINE 구조의 순효과가 유의하지 않게 줄어든다.
-- 이것이 본 방법론이 2개 그룹이 아니라 **compute를 맞춘 여러 그룹(P1)** 을 요구하는 핵심 이유다.
+- In other words, the result "**switch to a weaker model and THROUGHLINE wins**" holds **only in a two-arm comparison**; in a five-arm comparison that adds the thinking-first and sample-count control arms, the net effect of the THROUGHLINE structure shrinks to non-significance.
+- This is the core reason the methodology demands **several compute-matched arms (P1)** rather than two.
 
-## B2 — 누적 기능 추가 (3개 그룹)
+## B2 — cumulative feature addition (3 arms)
 
-질문: 기능을 누적 추가하는 다세션 개발에서 THROUGHLINE의 SSOT가 회귀·침식을 줄이는가?
+Question: in multi-session development that adds features cumulatively, does THROUGHLINE's SSOT reduce regression and erosion?
 
-| 지표 (약 모델) | L0 | L1 | L-SSOT |
+| Metric (weak model) | L0 | L1 | L-SSOT |
 |---|---|---|---|
-| 회귀율(전 단계) | 0.000 | 0.000 | 0.000 |
-| Fix Rate(전 단계) · 완전 해결 | 1.0 · 전부 | 1.0 · 전부 | 1.0 · 전부 |
-| 구조 침식(최종) | 0.72 | 0.82 | 0.73 |
-| 코드 줄 수(최종) | 155 | 162 | 215 |
-| 토큰/체인 | 72.9k | 79.8k (1.09×) | **120.3k (1.65×)** |
+| Regression rate (all steps) | 0.000 | 0.000 | 0.000 |
+| Fix Rate (all steps) · fully resolved | 1.0 · all | 1.0 · all | 1.0 · all |
+| Structural erosion (final) | 0.72 | 0.82 | 0.73 |
+| Lines of code (final) | 155 | 162 | 215 |
+| Tokens / chain | 72.9k | 79.8k (1.09×) | **120.3k (1.65×)** |
 
-**판정: THROUGHLINE 이득 미입증(모든 그룹 회귀 0 — 천장), 비용만 +65%.** 매 단계 작동 코드가 인계되고 규모가 작아 기억이 불필요했고, 따라서 변별할 표면이 없었다.
+**Verdict: no THROUGHLINE gain shown (every arm at zero regressions — a ceiling), cost only, +65%.** Working code was handed over at every step and the scale was small, so memory was unnecessary — leaving no surface to discriminate on.
 
-## B3 — 원점 복귀 사이클 (3개 그룹) — THROUGHLINE 효과가 변별된 항목
+## B3 — revert-to-origin cycle (3 arms) — the item where a THROUGHLINE effect discriminated
 
-질문: 여러 수정 후 **R1으로 되돌릴 때**, 과거 결정의 기억이 충실한 복원을 가능케 하는가?
-흐름: Base → R1(길이 기준 동점 처리) → R2(역알파벳) → **Revert(R1로 복구)**. 되돌리는 시점의 코드는 R2이므로 R1 동작이 코드에 없고, 복원하려면 기억이 필요하다.
+Question: when **reverting to R1** after several modifications, does memory of the past decision enable faithful restoration?
+Flow: Base → R1 (tie-break by length) → R2 (reverse alphabetical) → **Revert (restore R1)**. The code at the moment of reverting is R2, so the R1 behaviour is not present in the code; restoring it requires memory.
 
-### (참고) 격리 없이 실행하면 변별이 사라진다
-파일시스템을 격리하지 않으면 모든 그룹이 복원에 성공(1.00)한다. 무기억 그룹이 변경 요청서(R1 사양이 적힌 파일)나 이전 단계 코드를 직접 읽기 때문이다(무기억 그룹의 도구 호출 횟수가 비정상적으로 많음으로 확인). 이는 THROUGHLINE 무효가 아니라 **측정 누수**이며, 방법론 P8(격리)의 근거다.
+### (Reference) run it without isolation and the discrimination disappears
+Without filesystem isolation, every arm succeeds at restoration (1.00). The no-memory arm simply reads the change request (the file that states the R1 spec) or the earlier step's code directly — confirmed by the abnormally high tool-call count in that arm. This is not a THROUGHLINE null result but **measurement leakage**, and it is the basis for methodology P8 (isolation).
 
-### 격리 실행 (본 하네스) — 변별 성공
+### Isolated run (this harness) — discrimination succeeded
 
-작업공간에 현재 R2 코드와 해당 그룹의 기억만 두고 외부 접근을 차단한 결과(rank 트랙, 2시드):
+With only the current R2 code and that arm's memory in the workspace, and external access blocked (rank track, 2 seeds):
 
-| 그룹 (격리) | R1 복원 | 실제 구현한 정책 | 도구 호출 |
+| Arm (isolated) | R1 restored | Policy actually implemented | Tool calls |
 |---|---|---|---|
-| **L0** 무기억 | **0/2** | 기본값(알파벳)으로 잘못 복구 | 2, 2 |
-| **L1** 자유 노트 | **2/2** | R1(길이) 정확 복원 | 3, 3 |
-| **L-SSOT** 구조적 SSOT/이력 | **2/2** | R1(길이) 정확 복원 | 5, 5 |
+| **L0** no memory | **0/2** | wrongly restored to the default (alphabetical) | 2, 2 |
+| **L1** free notes | **2/2** | R1 (length) restored exactly | 3, 3 |
+| **L-SSOT** structured SSOT / history | **2/2** | R1 (length) restored exactly | 5, 5 |
 
-(산출물·점수: [results/B3_results.json](results/B3_results.json))
+(Artifacts and scores: [results/B3_results.json](results/B3_results.json))
 
-**판정: 기억 효과 입증.** 무기억 그룹은 R1을 알 수 없어 모델의 기본값으로 회귀해 복원에 실패했고, 기록을 가진 두 그룹은 R1을 정확히 복원했다. **다만 THROUGHLINE의 구조적 기억(SSOT/이력)이 단순 노트보다 나은지는 분리되지 않았다** — 단일 되돌리기에서는 두 그룹 모두 R1을 보존해 동률이었다.
+**Verdict: memory effect proven.** The no-memory arm could not know R1, fell back to the model's default, and failed to restore it; the two arms holding a record restored R1 exactly. **Whether THROUGHLINE's structured memory (SSOT/history) beats plain notes was, however, not separated** — in a single revert both arms preserved R1 and tied.
 
 ---
 
-## 종합 결론
+## Overall conclusions
 
-1. **단발·누적 추가 과제에서 THROUGHLINE의 객관적 우위는 입증되지 않았다**(B1은 통제 후 유의하지 않고 강 모델에서는 음, B2는 천장). 일관되게 확인된 것은 **비용 증가**(단발 +16~22%, 장기 +65%)다.
-2. **THROUGHLINE이 변별되는 지점은 "원점 복귀"**, 즉 과거 결정을 잃으면 안 되는 복원 과제다. 여기서 **기억 보유가 복원에 결정적**이었다(무기억은 기본값으로 회귀해 실패). 이는 변경을 거듭한 뒤 이전 상태로 되돌리는 개발 흐름이 THROUGHLINE류 방법론의 핵심 가치(결정의 보존)를 드러내는 적절한 측정 표면임을 보여준다.
-3. **가장 중요한 후속 과제**: THROUGHLINE의 *구조적* 기억이 *단순 노트*보다 나은가. 짧은 단일 되돌리기에서는 둘 다 충분했다. 구조의 우위는 노트가 정보를 잃기 쉬운 조건(아래)에서만 드러날 것이다.
+1. **On single-shot and cumulative-addition tasks, no objective THROUGHLINE advantage was shown** (B1 is non-significant after controls and negative on the strong model; B2 is at a ceiling). What was confirmed consistently is **increased cost** (+16–22% single-shot, +65% long-horizon).
+2. **The point where THROUGHLINE discriminates is "revert to origin"** — a restoration task where a past decision must not be lost. There, **holding the memory was decisive for restoration** (no memory fell back to the default and failed). This shows that a development flow which reverts to an earlier state after repeated change is an appropriate measurement surface for the core value of THROUGHLINE-style methodologies: preservation of decisions.
+3. **The most important follow-up**: is THROUGHLINE's *structured* memory better than *plain notes*? In a short single revert, both were sufficient. The advantage of structure will only appear under conditions where notes readily lose information (below).
 
-## 후속 실험 (구조 효과의 분리)
-1. **긴 변경 이력**: R1 이후 여러 차례 수정을 거쳐 R1으로 복귀 → 자유 노트가 R1을 잃거나 묻히게 만들어, append-only 변경 이력의 구조적 우위를 검정.
-2. **격리를 기본값으로**, **모든 트랙의 R1을 비기본 정책으로**(우연 복구 방지).
-3. **L1·L-SSOT 기록 분량 정합**(구조 vs 분량 분리)과 **인스턴스·시드 확충**(검정력).
+## Follow-up experiments (isolating the structural effect)
+1. **A long change history**: several more modifications after R1, then revert to R1 → make free notes lose or bury R1, testing the structural advantage of an append-only change history.
+2. **Isolation as the default**, and **a non-default R1 policy on every track** (to prevent accidental restoration).
+3. **Match the recorded volume of L1 and L-SSOT** (separating structure from volume) and **expand instances and seeds** (statistical power).
 
-## 부록 — 신뢰성과 한계
-- **검정력**: B3 격리는 1트랙 × 2시드의 파일럿이다. 방향(무기억 0/2 vs 기억 2/2)은 명확하나 통계적 단정은 후속 확충이 필요하다.
-- **트랙 설계**: B3의 R1은 비기본 정책이어야 한다. 예컨대 "알파벳 정렬"은 모델의 기본 추측이라 무기억도 우연히 맞히므로 변별에 부적합하다(rank 트랙의 "길이 기준 동점 처리"가 적합).
-- **재현**: 각 항목의 산출물과 호출 로그를 보존했으며, B3는 `benchmark/results/`와 `harness/`로 자체 재현 가능하다([harness/README.md](harness/README.md)).
+## Appendix — reliability and limits
+- **Statistical power**: the isolated B3 is a pilot of 1 track × 2 seeds. The direction (no memory 0/2 vs. memory 2/2) is clear, but a statistical assertion requires further expansion.
+- **Track design**: B3's R1 must be a non-default policy. "Alphabetical sort", for example, is the model's default guess, so even a no-memory arm hits it by chance — unfit for discrimination (the rank track's "tie-break by length" is fit for purpose).
+- **Reproduction**: the artifacts and call logs of every item were preserved, and B3 is self-reproducible from `benchmark/results/` and `harness/` ([harness/README.md](harness/README.md)).

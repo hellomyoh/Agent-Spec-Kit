@@ -1,46 +1,49 @@
-# THROUGHLINE 효과 측정 — 전체 결과 종합
+# Measuring the THROUGHLINE effect — consolidated results
 
-> 방법론: [METHODOLOGY.md](METHODOLOGY.md) · 단발/누적/복원 상세: [FINAL_REPORT.md](FINAL_REPORT.md) · 중규모 설계: [REALWORLD_DESIGN.md](REALWORLD_DESIGN.md) · 중규모 파일럿(B7 Stage 0) 상세: `benchmark-realapp/`은 후속 벤치마크로 대체되어 저장소에서 제거됨(커밋 f6c8cc9) — 요약은 본 문서 §1 및 [FINAL_REPORT.md](FINAL_REPORT.md) 참조
-> 이 문서는 모든 벤치마크 항목의 결과를 한곳에 모아 **"THROUGHLINE은 효과가 있는가"** 에 대한 정직한(과장·축소 없는) 종합 판정을 제시한다. 원칙: 효과 입증과 "효과 없음"을 동등하게 보고한다.
+🌐 **English** · [한국어](RESULTS_SUMMARY.ko.md)
 
-## 1. 한눈에 보기
+> Methodology: [METHODOLOGY.md](METHODOLOGY.md) · Single-shot / cumulative / restoration detail: [FINAL_REPORT.md](FINAL_REPORT.md) · Mid-scale design: [REALWORLD_DESIGN.md](REALWORLD_DESIGN.md) *(Korean)* · Mid-scale pilot (B7 Stage 0) detail: `benchmark-realapp/` was superseded by a later benchmark and removed from the repository (commit f6c8cc9) — for the summary see §1 below and [FINAL_REPORT.md](FINAL_REPORT.md)
+> This document gathers the results of every benchmark item in one place and gives an honest verdict — neither inflated nor deflated — on **"does THROUGHLINE work?"** Principle: proof of an effect and "no effect" are reported with equal weight.
 
-| 항목 | 무엇을 쟀나 | 결과 | 비용(THROUGHLINE) |
+## 1. At a glance
+
+| Item | What it measured | Result | Cost (THROUGHLINE) |
 |---|---|---|---|
-| **B1** 단발 구현 (5그룹, compute 통제) | 구조가 더 정확/견고한 코드를 만드는가 | **우위 미입증.** `THROUGHLINE − max(A0,A1,A2) = +0.032` (CI가 0 포함). 외견상 이득의 ~70%는 "사전 사고", 강 모델에선 −0.042 | +16~22% 토큰 |
-| **B2** 누적 기능 추가 (3그룹) | SSOT가 회귀/침식을 줄이는가 | **우위 미입증(천장).** 전 그룹 회귀 0 | +65% 토큰 |
-| **B3** 원점 복귀 (3그룹, 격리) | 과거 결정의 기억이 충실한 복원을 가능케 하는가 | **기억 효과 입증.** 무기억 0/2 실패, 기억 보유(노트·SSOT) 2/2 성공. *단, 구조 vs 단순노트는 미분리* | (해당 없음) |
-| **M-pilot** 중규모 합성(exprkit) | 다모듈 증분에서 교차절단 일관성 | **우위 미입증(천장).** 전 그룹 9/9, 회귀 0. 제네릭 디스패치가 계약을 자명화 | +60% 토큰 |
-| **B7 Stage 0** 중규모 실앱(OpsBoard) | 손실적 기억 대비 구조화 SSOT의 일관성 우위 | **변별 실패(천장).** 양 그룹 8개 불변식 전 세션 0 회귀. THROUGHLINE은 단발 코딩버그로 오히려 하락 | +29% 토큰 |
+| **B1** single-shot implementation (5 arms, compute-matched) | does the structure produce more correct/robust code? | **No advantage shown.** `THROUGHLINE − max(A0,A1,A2) = +0.032` (CI includes 0). About 70% of the apparent gain is "thinking beforehand"; on the strong model it is −0.042 | +16–22% tokens |
+| **B2** cumulative feature addition (3 arms) | does the SSOT reduce regression/erosion? | **No advantage shown (ceiling).** Zero regressions in every arm | +65% tokens |
+| **B3** revert-to-origin (3 arms, isolated) | does memory of a past decision enable faithful restoration? | **Memory effect proven.** No-memory 0/2 failed; the memory-bearing arms (notes · SSOT) 2/2 succeeded. *But structure vs. plain notes was not separated* | (n/a) |
+| **M-pilot** mid-scale synthetic (exprkit) | cross-cutting consistency across multi-module increments | **No advantage shown (ceiling).** 9/9 in every arm, zero regressions. Generic dispatch made the contract self-evident | +60% tokens |
+| **B7 Stage 0** mid-scale real app (OpsBoard) | consistency advantage of a structured SSOT over lossy memory | **Failed to discriminate (ceiling).** Both arms held all 8 invariants with zero regressions across every session. THROUGHLINE actually scored lower because of a one-off coding bug | +29% tokens |
 
-## 2. 핵심 판정 — "THROUGHLINE은 효과가 없다"는 결론인가?
+## 2. The core verdict — does this mean "THROUGHLINE does not work"?
 
-**아니다 — 그러나 "효과가 있다"도 아직 입증되지 않았다.** 정확한 현재 상태:
+**No — but "it works" has not been proven either.** The precise current state:
 
-1. **테스트한 규모(소~중하)에서는 일관성·기능 이점이 입증되지 않았고, 비용은 +29~65% 일관되게 확인됐다.** 액면으로는 THROUGHLINE에 불리하다. 정당한 회의적 해석: *"유능한 모델 + 기존 코드 + 간단한 메모면 충분하고, 구조화 SSOT는 순수 오버헤드."*
+1. **At the scales tested (small to lower-mid), no consistency or functional benefit was shown, and a cost of +29–65% was confirmed consistently.** Taken at face value that is unfavourable to THROUGHLINE. The legitimate skeptical reading: *"a capable model + the existing code + a simple memo is enough, and a structured SSOT is pure overhead."*
 
-2. **그러나 THROUGHLINE이 강점을 주장하는 영역에 아직 도달하지 못했다.** 모든 중규모 파일럿이 *식별 가능한 이유로* 천장에 걸렸다 — 코드가 작아 매 세션 전체 재독해 가능, 손실 모사가 약함(롤링 노트가 전체 요약), 단일 시드, 규모 부족. 즉 "목표 영역에서 시험해 졌다"가 아니라 **"목표 영역을 아직 시험하지 못했다"** (absence of evidence ≠ evidence of absence).
+2. **But we have not yet reached the territory where THROUGHLINE claims its strength.** Every mid-scale pilot hit a ceiling *for identifiable reasons* — the code was small enough to re-read in full every session, the lossy-memory simulation was too weak (a rolling note amounted to a full summary), a single seed, insufficient scale. That is not "we tested the target territory and it lost" but **"we have not yet tested the target territory"** (absence of evidence ≠ evidence of absence).
 
-3. **하나의 명확한 긍정 신호가 있다 — B3(원점 복귀).** 과거 결정을 잃으면 복원이 실패했고(무기억 0/2), 기록(이력/결정)을 보존하면 성공했다(2/2). THROUGHLINE의 DECISIONS/HISTORY 메커니즘이 값을 하는, 좁지만 실재하는 사례다.
+3. **There is one clear positive signal — B3 (revert-to-origin).** When the past decision was lost, restoration failed (no-memory 0/2); when the record (history / decisions) was preserved, it succeeded (2/2). A narrow but real case where THROUGHLINE's DECISIONS/HISTORY mechanism earns its keep.
 
-4. **이 벤치마크가 측정하지 않는 것이 많다.** 측정한 것 = *자동화된 증분 코딩의 일관성/정확성*. 측정하지 **않은** 것 = 사람이 사양을 쓰고 검토하며 얻는 가치(요구 명확화·설계 합의·커뮤니케이션·온보딩·의도 정렬). 스펙드리븐 개발 효용의 상당 부분이 여기 있으며 입증도 반증도 되지 않았다. 또한 B7 Stage 0는 **에이전트가 자가 유지하는 SSOT**를 본 것이라 사람-인-루프 THROUGHLINE과 동일시할 수 없다.
+4. **There is a great deal this benchmark does not measure.** What it measured = *the consistency and correctness of automated incremental coding*. What it did **not** measure = the value a human gets from writing and reviewing a spec (requirement clarification, design agreement, communication, onboarding, intent alignment). A substantial part of the value of spec-driven development lives there, and it is neither proven nor refuted. Also, B7 Stage 0 observed an **SSOT that the agent maintains by itself**, which cannot be equated with human-in-the-loop THROUGHLINE.
 
-## 3. 정직한 위험 경고 (골대를 무한정 옮기지 않기)
+## 3. An honest risk warning (not moving the goalposts indefinitely)
 
-천장을 핑계로 조건을 계속 바꾸는 것은 사후 합리화가 될 수 있다. **B7 Stage 1**(손실적 기억이 실제로 한계에 부딪히도록 설계 — 아래 §5)에서도 이점이 나오지 않으면, 그것은 *"THROUGHLINE-as-에이전트-메모리는 자동화 코딩에서 실효가 약하다"* 는 **상당히 강한 누적 증거**가 된다. 그 결과도 동등하게 받아들일 준비가 되어 있어야 한다.
+Continually changing the conditions while blaming the ceiling can become post-hoc rationalisation. If **B7 Stage 1** (designed so that lossy memory actually hits its limit — §5 below) also yields no benefit, that becomes **fairly strong cumulative evidence** for *"THROUGHLINE-as-agent-memory has weak practical effect in automated coding."* We must be prepared to accept that outcome with equal weight.
 
-## 4. 한 줄 결론
+## 4. One-line conclusion
 
-> **소규모~중하규모 자동화 코딩에서 THROUGHLINE은 순수 비용(+29~65%)이며 이점 미입증. 대규모·장기 영역의 이점은 미검증(반증 아님). 메모리/복원에는 입증된 이점(B3) 있음. 사람 중심 스펙 프로세스의 효용은 측정 범위 밖.**
+> **In small to lower-mid-scale automated coding, THROUGHLINE is pure cost (+29–65%) with no benefit shown. Benefits in the large-scale, long-horizon territory are untested (not refuted). For memory/restoration there is a proven benefit (B3). The value of a human-centred spec process is outside the measured scope.**
 
-이는 제작자의 출발 전제(**소규모엔 권하지 않음, 중급 이상 권장**)와 일치한다. 다만 "중급 이상의 이점"을 아직 *데이터로* 보여주지 못했다는 것이 핵심이며, 그것을 결판내는 것이 다음 과제다.
+This is consistent with the author's starting premise (**not recommended at small scale; recommended for intermediate and above**). The crux is that the "benefit at intermediate and above" has not yet been shown *with data*, and settling that is the next task.
 
-## 5. 이점을 결판낼 다음 실험 (B7 Stage 1 — 사전등록된 수정)
+## 5. The next experiment that will settle it (B7 Stage 1 — pre-registered revisions)
 
-B7 Stage 0가 천장에 걸린 원인을 제거해 "구조화 기억이 실제로 필요한" 조건을 만든다:
-1. **손실적 기억이 실제로 작동하게**: B-limited 노트에 K-토큰 캡(2-세션 창만으론 롤링 전체요약이 무력화함) + **규모 확대**(세션·모듈·코드량을 코드 전체 재독해가 비현실적인 수준으로).
-2. **render() 출력 형태를 공유 계약에 명시**(Stage 0의 cross-layer 미부착 원인 제거).
-3. **세션당 한 기능만** 구현 강제(S0 몰아짓기 방지 → 일관성 비용 누적).
-4. **다중 시드(≥3)** 로 단발 코딩 노이즈(예: Stage 0의 slot 버그) 평균화.
+Remove the causes that put B7 Stage 0 on the ceiling, and create the conditions where structured memory is actually needed:
 
-상세 결과·재현은 각 보고서 참조. 통계적 단정은 다중 앱·다중 시드(Stage 3+)에서만.
+1. **Make lossy memory actually lossy**: put a K-token cap on the B-limited notes (a 2-session window alone is defeated by a rolling full summary) and **increase scale** (sessions, modules, and code volume to the point where re-reading the whole codebase is impractical).
+2. **Specify the `render()` output shape in the shared contract** (removes the cause of Stage 0's cross-layer non-attachment).
+3. **Force one feature per session** (prevents cramming everything into S0 → lets consistency cost accumulate).
+4. **Multiple seeds (≥3)** to average out one-off coding noise (e.g. Stage 0's slot bug).
+
+For detailed results and reproduction, see each report. Statistical assertions only at multi-app, multi-seed scale (Stage 3+).

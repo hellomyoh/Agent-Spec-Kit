@@ -9,7 +9,7 @@
 - `ko/THROUGHLINE/ADOPT.md`
 - `ko/THROUGHLINE/AUDIT.md`
 - `README.ko.md`의 기능 추가 검토 프롬프트 3종
-- 기존 벤치마크 문서 `benchmark/RESULTS_SUMMARY.md`, `benchmark-realapp/REPORT_STAGE0.md`
+- 기존 벤치마크 문서 `benchmark/RESULTS_SUMMARY.ko.md`, `benchmark-realapp/REPORT_STAGE0.md`
 
 ## 1. 요약
 

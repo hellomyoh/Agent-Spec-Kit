@@ -1,6 +1,6 @@
 # Realistic Midscale App Benchmark (OpsBoard) — B7
 
-> 방법론: [METHODOLOGY.md](METHODOLOGY.md) · 이 문서는 [MIDSCALE_DESIGN.md](MIDSCALE_DESIGN.md)의 합성 "교차절단 계약(B4)"을 **대체**한다(B4는 좋은 설계로 자명해져 변별 실패 — M-pilot).
+> 방법론: [METHODOLOGY.ko.md](METHODOLOGY.ko.md) · 이 문서는 [MIDSCALE_DESIGN.md](MIDSCALE_DESIGN.md)의 합성 "교차절단 계약(B4)"을 **대체**한다(B4는 좋은 설계로 자명해져 변별 실패 — M-pilot).
 > 출발점: THROUGHLINE이 이기게 만드는 함정이 아니라, **문서 없이 중규모 앱을 오래 개발할 때 실제로 망가지는 지점**(기억·일관성·연동 비용)을 측정한다.
 
 ## 0. 가설

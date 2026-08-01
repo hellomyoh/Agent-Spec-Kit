@@ -53,7 +53,7 @@
 
 중급 수준에서 baseline은 앞선 안전 정책을 깨뜨리는 요청에 조용히 따랐습니다.
 THROUGHLINE은 그 충돌을 잡아내 정책을 지키고, 사용자에게 드러냈습니다.
-→ [전체 결과와 정직한 한계](benchmark/RESULTS_SUMMARY.md)
+→ [전체 결과와 정직한 한계](benchmark/RESULTS_SUMMARY.ko.md)
 · [방법론·파일럿 상세](#부록-벤치마크-상세-드리프트-억제-파일럿)
 
 ## 빠른 시작
@@ -841,7 +841,7 @@ flowchart TD
 
 **발견.** throughline-solo는 모든 레벨에서 baseline 이상이다. (1) **intermediate가 깨끗한 승리**: baseline은 조용히 순응해 안전 정책을 깨뜨렸다(불변식 위반 + 회귀); throughline-solo는 충돌을 감지해 **정책을 유지하고 사용자에게 플래그**했다 → 회귀 0. (2) **advanced는 코드 동률**(양쪽 다 명시적 오버라이드를 올바로 채택) — 여기서 THROUGHLINE의 가치는 가설대로 문서/프로세스 품질로 수렴한다. (3) **문서 품질이 가장 일관된 THROUGHLINE 효과**다 — throughline-solo는 모든 레벨에서 문서 15/15(가시적 supersede 체인)인 반면 baseline은 7–11. (4) **정직한 단서**: *beginner* 레벨에서 throughline-solo는 충돌을 감지했으나 의도된 변경으로 오분류해 드리프트를 채택했다 — 최대 모호성에서는 THROUGHLINE의 효용이 분류 단계에 달려 있고, 그 단계가 불안정했다. (별도의 단일 시드 코딩 사고도 beginner 코드 점수를 깎았다 — 시드 3개 이상이면 평균화될 시드별 노이즈.)
 
-> 전체 설계·원시 트래젝토리·go/no-go 판정: [`benchmark/benchmark-solo-pilot/RESULTS_v2.md`](benchmark/benchmark-solo-pilot/RESULTS_v2.md), [`benchmark/benchmark-vibe-solo/RESULTS_seed1.md`](benchmark/benchmark-vibe-solo/RESULTS_seed1.md). 가장 보수적인 벤치마크 종합 판정 — THROUGHLINE의 이점이 입증되지 않은 중규모 실험까지 포함 — 은 [`benchmark/RESULTS_SUMMARY.md`](benchmark/RESULTS_SUMMARY.md)에 정리되어 있습니다.
+> 전체 설계·원시 트래젝토리·go/no-go 판정: [`benchmark/benchmark-solo-pilot/RESULTS_v2.md`](benchmark/benchmark-solo-pilot/RESULTS_v2.md), [`benchmark/benchmark-vibe-solo/RESULTS_seed1.md`](benchmark/benchmark-vibe-solo/RESULTS_seed1.md). 가장 보수적인 벤치마크 종합 판정 — THROUGHLINE의 이점이 입증되지 않은 중규모 실험까지 포함 — 은 [`benchmark/RESULTS_SUMMARY.ko.md`](benchmark/RESULTS_SUMMARY.ko.md)에 정리되어 있습니다.
 
 ### 이 파일럿이 보여주는 것과 보여주지 못하는 것
 
