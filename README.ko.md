@@ -16,6 +16,8 @@
 
 [빠른 시작](#빠른-시작) · [벤치마크](#벤치마크) · [왜](#왜) · [Team 에디션](README.team.ko.md)
 
+<img src="demo_movie.gif" alt="THROUGHLINE 데모" width="820">
+
 </div>
 
 ---
