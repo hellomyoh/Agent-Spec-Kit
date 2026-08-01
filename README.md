@@ -16,6 +16,8 @@ thread across sessions — so session 7 still remembers session 1's decision.
 
 [Quick Start](#quick-start) · [Benchmarks](#benchmarks) · [Why](#why) · [Team edition](README.team.md)
 
+<img src="demo_movie.gif" alt="THROUGHLINE demo" width="820">
+
 </div>
 
 ---
