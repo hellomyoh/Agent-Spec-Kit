@@ -43,24 +43,19 @@
 
 ## 빠른 시작
 
+**설치할 것 없음** — 마크다운 파일과 git뿐입니다. 런타임·CLI·의존성 없음.
+
 1. 이 저장소를 클론하고 [`ko/THROUGHLINE-TEAM/`](ko/THROUGHLINE-TEAM/)(또는 [`en/THROUGHLINE-TEAM/`](en/THROUGHLINE-TEAM/))의 내용을 프로젝트 루트의 `THROUGHLINE/`로 복사합니다.
 2. **신규 프로젝트**면 `THROUGHLINE/SOURCES/REQUIREMENTS.md`에 초기 요구사항을 작성합니다(솔로 킷의 [REQUIREMENTS 템플릿](ko/THROUGHLINE/SOURCES/REQUIREMENTS.md) 재사용 가능); 기존 코드베이스(ADOPT)면 선택 사항입니다.
 3. **maintainer**가 `role: maintainer`로 자기 `team/<handle>.md`를 먼저 등록하고(`templates/team-TEMPLATE.md` 복사), 각 **contributor**도 자기 것을 등록합니다.
 4. Contributor는 [`DEVELOP.md`](ko/THROUGHLINE-TEAM/DEVELOP.md) 프롬프트로, maintainer는 [`INTEGRATE.md`](ko/THROUGHLINE-TEAM/INTEGRATE.md)로 작업합니다. 초기화는 [`KICKOFF.md`](ko/THROUGHLINE-TEAM/KICKOFF.md)(신규) / [`ADOPT.md`](ko/THROUGHLINE-TEAM/ADOPT.md)(기존 코드), 주기 점검은 [`AUDIT.md`](ko/THROUGHLINE-TEAM/AUDIT.md)를 사용합니다.
 
+초기화가 올라간 뒤에는 `AGENTS.md`가 매 실행마다 로드되므로, claim한 workitem 안에서의 일상 작업은 붙여넣기 없이도 됩니다 → [프롬프트 없이 쓰기](#프롬프트-없이-쓰기).
+
 > 각 단계에서 그대로 붙여넣어 쓸 수 있는 프롬프트는 아래 [프롬프트](#프롬프트-그대로-붙여넣어-사용) 절에 있습니다. 모든 프롬프트는 프로젝트 루트에 복사된 `THROUGHLINE/`를 기준으로 경로를 씁니다(루트 3파일 `README.md`·`AGENTS.md`·`CLAUDE.md` 예외).
 
 ---
 
-## 프롬프트 없이 쓰기
-
-명세 주도 개발을 하려고 프롬프트를 붙여넣어야 하는 것은 아닙니다. 초기화가 프로젝트 루트의 `AGENTS.md`에 상시 규약을 — 팀 규약(식별·공유 브랜치·충돌 검출·원자 커밋)까지 포함해 — 써두고, 에이전트가 **매 실행마다** 그것을 로드합니다. 그래서 Claude Code · Codex · Cursor와 평범하게 대화만 해도 `ARCHITECTURE.md`의 횡단 계약을 읽고, `git config user.email`로 내 handle을 확인하고, 바뀐 것을 기록합니다.
-
-다만 팀 모드에서는 걸린 것이 하나 더 큽니다. **충돌 검출은 claim 시점에 `touches`가 공유 브랜치에 게시되어야만 작동합니다** — 곧바로 코드로 들어가는 대화는 아무것도 claim하지 않으므로 게시되는 것도 없고, 다른 기여자들은 계속 보지 못합니다. 재개도 마찬가지입니다: [D](#d-이어서-개발하는-프롬프트--세션-재개-develop--contributor)가 존재하는 이유가 자리를 비운 사이 생긴 충돌을 재검출하기 위해서입니다.
-
-기준선: **claim한 workitem 안에서는 자유롭게 대화하고, 경계에서 프롬프트를 쓰세요.** 셋업은 [A](#a-초기화-프롬프트--신규-팀-프로젝트-kickoff--maintainer)/[B](#b-채택-프롬프트--이미-개발-중인-프로젝트-adopt--maintainer), claim은 [C](#c-기여자-개발-프롬프트--claim--검출--구현--pr-develop--contributor), 재개는 [D](#d-이어서-개발하는-프롬프트--세션-재개-develop--contributor), 합류는 [E](#e-통합-프롬프트--review-완료분-합류-integrate--maintainer), 주기적 그물은 [F](#f-문서-감사-프롬프트--표류--조율-무결성-audit--maintainer).
-
----
 
 ## 프롬프트 (그대로 붙여넣어 사용)
 
@@ -408,6 +403,16 @@ KICKOFF나 ADOPT를 다시 실행하지 마세요(재초기화/재채택 금지)
 | 킷을 새 버전으로 업그레이드할 때(이미 초기화된 프로젝트) | G. 킷 업그레이드 | maintainer |
 
 > 규칙 세부(파일 등급·식별·충돌·공유 브랜치·커밋)는 [CONVENTIONS.md](ko/THROUGHLINE-TEAM/CONVENTIONS.md), frontmatter 형식은 [SCHEMAS.md](ko/THROUGHLINE-TEAM/SCHEMAS.md)가 정본입니다.
+
+---
+
+## 프롬프트 없이 쓰기
+
+명세 주도 개발을 하려고 프롬프트를 붙여넣어야 하는 것은 아닙니다. 초기화가 프로젝트 루트의 `AGENTS.md`에 상시 규약을 — 팀 규약(식별·공유 브랜치·충돌 검출·원자 커밋)까지 포함해 — 써두고, 에이전트가 **매 실행마다** 그것을 로드합니다. 그래서 Claude Code · Codex · Cursor와 평범하게 대화만 해도 `ARCHITECTURE.md`의 횡단 계약을 읽고, `git config user.email`로 내 handle을 확인하고, 바뀐 것을 기록합니다.
+
+다만 팀 모드에서는 걸린 것이 하나 더 큽니다. **충돌 검출은 claim 시점에 `touches`가 공유 브랜치에 게시되어야만 작동합니다** — 곧바로 코드로 들어가는 대화는 아무것도 claim하지 않으므로 게시되는 것도 없고, 다른 기여자들은 계속 보지 못합니다. 재개도 마찬가지입니다: [D](#d-이어서-개발하는-프롬프트--세션-재개-develop--contributor)가 존재하는 이유가 자리를 비운 사이 생긴 충돌을 재검출하기 위해서입니다.
+
+기준선: **claim한 workitem 안에서는 자유롭게 대화하고, 경계에서 프롬프트를 쓰세요.** 셋업은 [A](#a-초기화-프롬프트--신규-팀-프로젝트-kickoff--maintainer)/[B](#b-채택-프롬프트--이미-개발-중인-프로젝트-adopt--maintainer), claim은 [C](#c-기여자-개발-프롬프트--claim--검출--구현--pr-develop--contributor), 재개는 [D](#d-이어서-개발하는-프롬프트--세션-재개-develop--contributor), 합류는 [E](#e-통합-프롬프트--review-완료분-합류-integrate--maintainer), 주기적 그물은 [F](#f-문서-감사-프롬프트--표류--조율-무결성-audit--maintainer).
 
 ---
 

@@ -43,24 +43,19 @@ For a single developer, Solo is lighter — use Team only when N people actually
 
 ## Quick start
 
+**Nothing to install** — markdown files and git. No runtime, no CLI, no dependencies.
+
 1. Clone this repo and copy the contents of [`en/THROUGHLINE-TEAM/`](en/THROUGHLINE-TEAM/) (or [`ko/THROUGHLINE-TEAM/`](ko/THROUGHLINE-TEAM/)) into your project root's `THROUGHLINE/`.
 2. For a **new project**, write the initial requirements in `THROUGHLINE/SOURCES/REQUIREMENTS.md` (reuse the solo kit's [REQUIREMENTS template](en/THROUGHLINE/SOURCES/REQUIREMENTS.md)); for an existing codebase (ADOPT) it is optional.
 3. The **maintainer** registers `team/<handle>.md` with `role: maintainer` (copy `templates/team-TEMPLATE.md`); each **contributor** registers their own.
 4. Contributors run the [`DEVELOP.md`](en/THROUGHLINE-TEAM/DEVELOP.md) prompt; the maintainer runs [`INTEGRATE.md`](en/THROUGHLINE-TEAM/INTEGRATE.md). Use [`KICKOFF.md`](en/THROUGHLINE-TEAM/KICKOFF.md) (new) / [`ADOPT.md`](en/THROUGHLINE-TEAM/ADOPT.md) (existing code) to initialize, and [`AUDIT.md`](en/THROUGHLINE-TEAM/AUDIT.md) for periodic checks.
 
+Once initialization lands, `AGENTS.md` is loaded on every run, so day-to-day work inside a claimed workitem needs no pasting → [Working without the prompts](#working-without-the-prompts).
+
 > Paste-ready prompts for each step are in the [Prompts](#prompts-paste-ready) section below. Every prompt writes paths relative to the `THROUGHLINE/` folder copied into your project root (the three root files `README.md` · `AGENTS.md` · `CLAUDE.md` excepted).
 
 ---
 
-## Working without the prompts
-
-You do not have to paste a prompt to get Spec-Driven Development. Initialization writes the standing contract into your project's root `AGENTS.md` — including the team conventions (identity · shared branch · conflict detection · atomic commits) — and your agent loads it **on every run**. So ordinary back-and-forth conversation with Claude Code · Codex · Cursor still reads the cross-cutting contracts in `ARCHITECTURE.md`, still resolves your handle from `git config user.email`, and still records what changed.
-
-Team mode raises the stakes on one of them, though. **Conflict detection only works if `touches` is published to the shared branch at claim time** — and a conversation that jumps straight to code never claims anything, so nothing gets published and the other contributors stay blind. The same applies to the resume case: [D](#d-resume-prompt--continuing-in-a-later-session-develop--contributor) exists to re-detect conflicts that appeared while you were away.
-
-Rule of thumb: **talk freely inside a claimed workitem; use the prompt at the boundaries.** [A](#a-initialization-prompt--new-team-project-kickoff--maintainer)/[B](#b-adoption-prompt--a-project-already-under-development-adopt--maintainer) to set up, [C](#c-contributor-development-prompt--claim--detect--implement--pr-develop--contributor) to claim, [D](#d-resume-prompt--continuing-in-a-later-session-develop--contributor) to resume, [E](#e-integration-prompt--merging-review-complete-work-integrate--maintainer) to merge, [F](#f-document-audit-prompt--drift--coordination-integrity-audit--maintainer) as the periodic net.
-
----
 
 ## Prompts (paste-ready)
 
@@ -425,6 +420,16 @@ When done, report in the format below.
 | Upgrading the kit to a new version (already-initialized project) | G. Kit upgrade | maintainer |
 
 > The authoritative sources for the rule details (file grades · identity · conflicts · shared branch · commits) and the frontmatter formats are [CONVENTIONS.md](en/THROUGHLINE-TEAM/CONVENTIONS.md) and [SCHEMAS.md](en/THROUGHLINE-TEAM/SCHEMAS.md) respectively.
+
+---
+
+## Working without the prompts
+
+You do not have to paste a prompt to get Spec-Driven Development. Initialization writes the standing contract into your project's root `AGENTS.md` — including the team conventions (identity · shared branch · conflict detection · atomic commits) — and your agent loads it **on every run**. So ordinary back-and-forth conversation with Claude Code · Codex · Cursor still reads the cross-cutting contracts in `ARCHITECTURE.md`, still resolves your handle from `git config user.email`, and still records what changed.
+
+Team mode raises the stakes on one of them, though. **Conflict detection only works if `touches` is published to the shared branch at claim time** — and a conversation that jumps straight to code never claims anything, so nothing gets published and the other contributors stay blind. The same applies to the resume case: [D](#d-resume-prompt--continuing-in-a-later-session-develop--contributor) exists to re-detect conflicts that appeared while you were away.
+
+Rule of thumb: **talk freely inside a claimed workitem; use the prompt at the boundaries.** [A](#a-initialization-prompt--new-team-project-kickoff--maintainer)/[B](#b-adoption-prompt--a-project-already-under-development-adopt--maintainer) to set up, [C](#c-contributor-development-prompt--claim--detect--implement--pr-develop--contributor) to claim, [D](#d-resume-prompt--continuing-in-a-later-session-develop--contributor) to resume, [E](#e-integration-prompt--merging-review-complete-work-integrate--maintainer) to merge, [F](#f-document-audit-prompt--drift--coordination-integrity-audit--maintainer) as the periodic net.
 
 ---
 

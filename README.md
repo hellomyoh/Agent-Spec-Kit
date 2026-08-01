@@ -47,6 +47,10 @@ Two runnable pilots in [`benchmark/`](benchmark/). Single-seed go/no-go checks �
 | **intermediate** | 66.0 | **90.0** | **+24.0** |
 | advanced | 84.3 | 90.0 | +5.7 |
 
+**No prompt was pasted in either arm.** Each session the dev agent got a standing
+instruction and a plain user request — so the +24.0 is what the standing contract
+alone produces, not what a diligent user produces.
+
 At the intermediate level the baseline silently complied with a request that
 broke an earlier safety policy. THROUGHLINE caught the conflict, held the
 policy, and surfaced it. → [full results & honest caveats](benchmark/RESULTS_SUMMARY.md)
@@ -54,27 +58,16 @@ policy, and surfaced it. → [full results & honest caveats](benchmark/RESULTS_S
 
 ## Quick Start
 
-This document is a **framework user manual** that explains how to use the `THROUGHLINE/` folder (four prompts — `KICKOFF.md` · `ADOPT.md` · `DEVELOPINIT.md` · `AUDIT.md` + the input channel `SOURCES/`) with Codex · Claude Code · Cursor Agent, and the like.
+**Nothing to install** — markdown files and git. No runtime, no CLI, no dependencies.
 
 1. `git clone` this repository.
-2. Copy the `THROUGHLINE/` folder **for your language** — `en/THROUGHLINE/` (English) or `ko/THROUGHLINE/` (Korean) — to your project root. (Do not copy this guide `README.md`.)
-3. For a **new project**, write your requirements in `THROUGHLINE/SOURCES/REQUIREMENTS.md`. For a project that **already has code**, skip this step.
-4. In your project folder, open the Agent (Claude Code · Codex · Cursor, etc.) and paste **[the initialization prompt in Section 2](#2-one-time-only-project-initialization-prompt)** (for existing projects, **[the adoption prompt in Section 2.1](#21-applying-to-a-project-already-under-development-adoption-prompt)**).
-5. Once initialization is complete, start actual development with **[the development prompt in Section 5](#5-prompt-to-start-actual-development)**.
+2. Copy the `THROUGHLINE/` folder **for your language** — `en/THROUGHLINE/` or `ko/THROUGHLINE/` — into your project root. (Not this guide.)
+3. **New project:** write your requirements in `THROUGHLINE/SOURCES/REQUIREMENTS.md`. **Existing code:** skip this step.
+4. Open your Agent in the project and paste **[the initialization prompt](#2-one-time-only-project-initialization-prompt)** — existing code uses **[the adoption prompt](#21-applying-to-a-project-already-under-development-adoption-prompt)** — then **[the development prompt](#5-prompt-to-start-actual-development)** to start building.
 
-> **All artifacts are generated inside `THROUGHLINE/`**, so they do not conflict with your existing project folders (docs/, etc.). At the project root, only `AGENTS.md` · `CLAUDE.md` (a tool auto-recognition convention — moving them breaks auto-load) and the project `README.md` are generated/merged — these are **artifacts** the Agent creates, and they are different documents from this guide `README.md`.
->
-> **You must write the project overview, rough requirements, core features, and constraints in `REQUIREMENTS.md`.** The Agent uses these as the basis for generating feature specifications, cross-cutting contracts, and a development plan, and if the purpose, target users, MVP, data, external integrations, authentication/authorization, QA criteria, etc. are ambiguous, it will ask rather than guess arbitrarily (Section 3).
+> All artifacts are generated inside `THROUGHLINE/`, so they never collide with your existing folders (docs/, etc.). Only `AGENTS.md` · `CLAUDE.md` and the project `README.md` are created or merged at the root.
 
----
-
-## Working without the prompts
-
-You do not have to paste a prompt to get Spec-Driven Development. Initialization writes the standing contract into your project's root `AGENTS.md` (with `CLAUDE.md` as a safety net), and your agent loads it **on every run** — so ordinary back-and-forth conversation with Claude Code · Codex · Cursor still reads the SSOT (`ARCHITECTURE.md` · `PLAN.md` · `PROGRESS.md`), still checks a new request against the recorded decisions, and still records what changed. [Section 5.1.1](#511-making-changes-by-talking-to-the-agent-live-chat) covers how a chat instruction routes by impact.
-
-That conversational mode is in fact what the [benchmarks](#benchmarks) measured: each session the dev agent received a standing instruction plus a plain user request — **no THROUGHLINE prompt was pasted**.
-
-Pasting a prompt buys a *guarantee* rather than a default. Two things lean on the agent's judgment when you only talk to it, and are worth an explicit prompt when they matter: the **persona review before a non-trivial spec** ([Section 5.3](#53-feature-addition-reviewdesign-prompt-choose-the-review-intensity)) and the **end-of-session handoff record** in `PROGRESS.md` ([Section 7](#7-prompt-to-continue-work-the-next-day-or-after-a-session-is-interrupted)). [`AUDIT.md`](#91-periodic-document-audit-auditmd) is the periodic net for whatever slipped through.
+After setup, `AGENTS.md` is loaded on every run, so you can keep working in plain conversation without pasting anything further → [Working without the prompts](#working-without-the-prompts).
 
 ---
 
@@ -88,6 +81,7 @@ This guide (README) is the **Solo edition** — one developer, sequential. For *
 
 **The limits of LLMs, and what this framework does about them.**
 
+This guide is the user manual for the `THROUGHLINE/` folder — four prompts (`KICKOFF.md` · `ADOPT.md` · `DEVELOPINIT.md` · `AUDIT.md`) plus the input channel `SOURCES/` — used with Codex · Claude Code · Cursor Agent and the like.
 This framework is an adaptation of Karpathy's LLM wiki proposal to a development workflow,
 a design that **works around four intrinsic limits of LLMs (Agents) using a markdown file system**.
 Before using it, start by understanding "what gets solved, and what does not."
@@ -116,6 +110,14 @@ Before using it, start by understanding "what gets solved, and what does not."
 - Therefore this framework is designed so that the benefit exceeds the cost on **medium-or-larger projects spanning multiple sessions**. For a one-off task of one or two sessions, it is reasonable not to adopt it.
 
 > The **per-session token-usage baseline** you need to gauge adoption is summarized at the end of this document in [Appendix: Context cost](#appendix-context-cost-token-usage-baseline).
+
+---
+
+## Working without the prompts
+
+You do not have to paste a prompt to get Spec-Driven Development. Initialization writes the standing contract into your project's root `AGENTS.md` (with `CLAUDE.md` as a safety net), and your agent loads it **on every run** — so ordinary back-and-forth conversation with Claude Code · Codex · Cursor still reads the SSOT (`ARCHITECTURE.md` · `PLAN.md` · `PROGRESS.md`), still checks a new request against the recorded decisions, and still records what changed. [Section 5.1.1](#511-making-changes-by-talking-to-the-agent-live-chat) covers how a chat instruction routes by impact. This is the mode the [benchmarks](#benchmarks) were run in.
+
+Pasting a prompt buys a *guarantee* rather than a default. Two things lean on the agent's judgment when you only talk to it, and are worth an explicit prompt when they matter: the **persona review before a non-trivial spec** ([Section 5.3](#53-feature-addition-reviewdesign-prompt-choose-the-review-intensity)) and the **end-of-session handoff record** in `PROGRESS.md` ([Section 7](#7-prompt-to-continue-work-the-next-day-or-after-a-session-is-interrupted)). [`AUDIT.md`](#91-periodic-document-audit-auditmd) is the periodic net for whatever slipped through.
 
 ---
 
