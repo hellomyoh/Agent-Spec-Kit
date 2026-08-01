@@ -1,50 +1,82 @@
 <div align="center">
 
-# Agent-Spec-Kit
+# THROUGHLINE
+
+**Spec-Driven Development for AI coding agents**
+
+Personas debate every spec before code. A markdown + git memory keeps the
+thread across sessions — so session 7 still remembers session 1's decision.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-black.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/hellomyoh/throughline)](../../releases)
+[![Stars](https://img.shields.io/github/stars/hellomyoh/throughline?style=flat)](../../stargazers)
+[![Claude Code · Codex · Cursor](https://img.shields.io/badge/agents-Claude%20Code%20%C2%B7%20Codex%20%C2%B7%20Cursor-blue)](#quick-start)
 
 🌐 **English** · [한국어](README.ko.md)
 
-**Agent-Spec-Kit is a Spec-Driven Development framework for AI coding agents — a panel of expert personas debate and agree on every non-trivial spec *before* a line of code is written.**
-
-Requirements compile into specs and a plan; decisions, facts, and deliberations accumulate in a plain **markdown + git** memory that the next session picks up exactly where the last one stopped — so the work stays consistent across sessions instead of drifting. No lock-in — the same kit runs in **Claude Code, Codex, and Cursor**.
-
-[Quick Start](#quick-start) •
-[Why this structure?](#why-this-structure--the-limits-of-llms-and-the-benefits-of-this-framework) •
-[File composition](#1-basic-file-composition) •
-[Getting started](#2-one-time-only-project-initialization-prompt) •
-[Development progress](#5-prompt-to-start-actual-development) •
-[Usage flow](#10-usage-flow-summary) •
-[Benchmarks](#appendix-benchmark-evidence-drift-suppression-pilots)
-
-Codex · Claude Code · Cursor Agent
+[Quick Start](#quick-start) · [Benchmarks](#benchmarks) · [Why](#why) · [Team edition](README.team.md)
 
 </div>
 
 ---
 
-## Team development? → ASK-Team
+## The problem
 
-This guide (README) is the **Solo** edition — one developer, sequential. For **multiple developers and AI agents building the same codebase concurrently**, use the Team edition: **[README.team.md](README.team.md)** ([한국어](README.team.ko.md)).
+Your agent forgets. Session 3 overwrites a decision from session 1, session 6
+"restores the original" to a value that was never the original, and nothing in
+the code comments says otherwise. The specs and the code quietly diverge.
 
----
+## Benchmarks
 
-This document is a **framework user manual** that explains how to use the `AGENTSPECKIT/` folder (four prompts — `KICKOFF.md` · `ADOPT.md` · `DEVELOPINIT.md` · `AUDIT.md` + the input channel `SOURCES/`) with Codex · Claude Code · Cursor Agent, and the like.
+Two runnable pilots in [`benchmark/`](benchmark/). Single-seed go/no-go checks — direction, not magnitude.
+
+**Does memory of an early decision survive 7 sessions?** (original value: `7`)
+
+| Memory regime | Restored | |
+|---|---|---|
+| **THROUGHLINE** (append-only SSOT) | **7** | ✅ |
+| Free notes (~2600 char cap) | 7 | ✅ |
+| Last-2-sessions notes (600 char) | 25 | ❌ *confidently wrong* |
+| No memory | 10 | ❌ |
+
+**Does SSOT curb vibe-coding drift?** (42 dev-agent sessions, composite /90)
+
+| Prompt level | Baseline | THROUGHLINE | Δ |
+|---|---|---|---|
+| beginner | 70.4 | 76.0 | +5.6 |
+| **intermediate** | 66.0 | **90.0** | **+24.0** |
+| advanced | 84.3 | 90.0 | +5.7 |
+
+At the intermediate level the baseline silently complied with a request that
+broke an earlier safety policy. THROUGHLINE caught the conflict, held the
+policy, and surfaced it. → [full results & honest caveats](benchmark/RESULTS_SUMMARY.md)
+· [method & per-pilot detail](#appendix-benchmark-detail-drift-suppression-pilots)
 
 ## Quick Start
 
+This document is a **framework user manual** that explains how to use the `THROUGHLINE/` folder (four prompts — `KICKOFF.md` · `ADOPT.md` · `DEVELOPINIT.md` · `AUDIT.md` + the input channel `SOURCES/`) with Codex · Claude Code · Cursor Agent, and the like.
+
 1. `git clone` this repository.
-2. Copy the `AGENTSPECKIT/` folder **for your language** — `en/AGENTSPECKIT/` (English) or `ko/AGENTSPECKIT/` (Korean) — to your project root. (Do not copy this guide `README.md`.)
-3. For a **new project**, write your requirements in `AGENTSPECKIT/SOURCES/REQUIREMENTS.md`. For a project that **already has code**, skip this step.
+2. Copy the `THROUGHLINE/` folder **for your language** — `en/THROUGHLINE/` (English) or `ko/THROUGHLINE/` (Korean) — to your project root. (Do not copy this guide `README.md`.)
+3. For a **new project**, write your requirements in `THROUGHLINE/SOURCES/REQUIREMENTS.md`. For a project that **already has code**, skip this step.
 4. In your project folder, open the Agent (Claude Code · Codex · Cursor, etc.) and paste **[the initialization prompt in Section 2](#2-one-time-only-project-initialization-prompt)** (for existing projects, **[the adoption prompt in Section 2.1](#21-applying-to-a-project-already-under-development-adoption-prompt)**).
 5. Once initialization is complete, start actual development with **[the development prompt in Section 5](#5-prompt-to-start-actual-development)**.
 
-> **All artifacts are generated inside `AGENTSPECKIT/`**, so they do not conflict with your existing project folders (docs/, etc.). At the project root, only `AGENTS.md` · `CLAUDE.md` (a tool auto-recognition convention — moving them breaks auto-load) and the project `README.md` are generated/merged — these are **artifacts** the Agent creates, and they are different documents from this guide `README.md`.
+> **All artifacts are generated inside `THROUGHLINE/`**, so they do not conflict with your existing project folders (docs/, etc.). At the project root, only `AGENTS.md` · `CLAUDE.md` (a tool auto-recognition convention — moving them breaks auto-load) and the project `README.md` are generated/merged — these are **artifacts** the Agent creates, and they are different documents from this guide `README.md`.
 >
 > **You must write the project overview, rough requirements, core features, and constraints in `REQUIREMENTS.md`.** The Agent uses these as the basis for generating feature specifications, cross-cutting contracts, and a development plan, and if the purpose, target users, MVP, data, external integrations, authentication/authorization, QA criteria, etc. are ambiguous, it will ask rather than guess arbitrarily (Section 3).
 
 ---
 
-## Why this structure — the limits of LLMs and the benefits of this framework
+## Team development? → THROUGHLINE Team
+
+This guide (README) is the **Solo edition** — one developer, sequential. For **multiple developers and AI agents building the same codebase concurrently**, use the Team edition: **[README.team.md](README.team.md)** ([한국어](README.team.ko.md)).
+
+---
+
+## Why
+
+**The limits of LLMs, and what this framework does about them.**
 
 This framework is an adaptation of Karpathy's LLM wiki proposal to a development workflow,
 a design that **works around four intrinsic limits of LLMs (Agents) using a markdown file system**.
@@ -62,7 +94,7 @@ Before using it, start by understanding "what gets solved, and what does not."
 ### Benefits
 
 1. **Knowledge accrues compound.** In ordinary LLM work, context scatters as sessions pile up, but in this structure artifacts, notes, and decisions accumulate, so work gets cheaper the further you go.
-2. **Traceability.** From the immutable originals in `AGENTSPECKIT/SOURCES/` → the source links in artifacts → the fixed-prefix history in `HISTORY.md`, you can always trace back "why did it become this way."
+2. **Traceability.** From the immutable originals in `THROUGHLINE/SOURCES/` → the source links in artifacts → the fixed-prefix history in `HISTORY.md`, you can always trace back "why did it become this way."
 3. **Consistency.** Because the cross-cutting contract (`ARCHITECTURE.md`) is force-loaded every session, even if you build 10 features across 10 sessions, naming, error formats, and the authentication model do not waver.
 4. **Interruption tolerance.** No matter where a session breaks off (whether during initialization or during development), the provisional PROGRESS record lets you resume at the exact point.
 5. **Tool independence.** Since everything is markdown + git, memory is preserved no matter which Agent you switch to — Claude Code, Codex, or Cursor.
@@ -79,14 +111,14 @@ Before using it, start by understanding "what gets solved, and what does not."
 
 ## 1. Basic file composition
 
-This repository (Agent-Spec-Kit) is composed of the following files.
+This repository (THROUGHLINE) is composed of the following files.
 
 ```text
-/  (Agent-Spec-Kit repository = template)
+/  (THROUGHLINE repository = template)
 ├── README.md               # This guide (how to use the framework). Not copied into projects
 ├── README.ko.md            # Korean translation of this guide. Not copied into projects
 ├── en/
-│   └── AGENTSPECKIT/       # ★ English kit. Copy this folder to your project root.
+│   └── THROUGHLINE/        # ★ English kit. Copy this folder to your project root.
 │       ├── KICKOFF.md          # Prompt for new (greenfield) initialization
 │       ├── ADOPT.md            # Prompt for adopting into an existing (brownfield) project
 │       ├── DEVELOPINIT.md      # Prompt for development progress
@@ -95,20 +127,20 @@ This repository (Agent-Spec-Kit) is composed of the following files.
 │           ├── INDEX.md        # Submitted-material index (REQUIREMENTS.md pre-registered)
 │           └── REQUIREMENTS.md # Initial requirements written by the user (formerly AGENTINIT.md)
 └── ko/
-    └── AGENTSPECKIT/       # Korean kit — identical structure, Korean content. Copy this instead.
-        └── … (same files as en/AGENTSPECKIT/)
+    └── THROUGHLINE/        # Korean kit — identical structure, Korean content. Copy this instead.
+        └── … (same files as en/THROUGHLINE/)
 ```
 
-Each language folder is self-contained: every file inside is named canonically (`KICKOFF.md`, `ADOPT.md`, …), so once you copy the `AGENTSPECKIT/` folder for your language into your project root, all the prompts and their path references resolve regardless of which language you chose. You only ever copy **one** language folder.
+Each language folder is self-contained: every file inside is named canonically (`KICKOFF.md`, `ADOPT.md`, …), so once you copy the `THROUGHLINE/` folder for your language into your project root, all the prompts and their path references resolve regardless of which language you chose. You only ever copy **one** language folder.
 
-When starting a project, clone this repository, then **copy the `AGENTSPECKIT/` folder for your language — `en/AGENTSPECKIT/` or `ko/AGENTSPECKIT/` — to your project root**. This guide (`README.md` / `README.ko.md`) is not copied.
+When starting a project, clone this repository, then **copy the `THROUGHLINE/` folder for your language — `en/THROUGHLINE/` or `ko/THROUGHLINE/` — to your project root**. This guide (`README.md` / `README.ko.md`) is not copied.
 
-- **New project (greenfield):** after copying, write the project requirements in `AGENTSPECKIT/SOURCES/REQUIREMENTS.md`
+- **New project (greenfield):** after copying, write the project requirements in `THROUGHLINE/SOURCES/REQUIREMENTS.md`
 - **Project already under development (brownfield):** copy the folder the same way (writing REQUIREMENTS.md is optional, for when you want to record future goals)
 
-Because the folder is named `AGENTSPECKIT`, it does not conflict with any folder in an existing project,
+Because the folder is named `THROUGHLINE`, it does not conflict with any folder in an existing project,
 and all artifacts the Agent generates afterward (specifications, plans, QA, ADRs, etc.) are also created inside this folder.
-If you have reference material such as external API specs or policy documents, place them together in `AGENTSPECKIT/SOURCES/` — they are read together during initialization.
+If you have reference material such as external API specs or policy documents, place them together in `THROUGHLINE/SOURCES/` — they are read together during initialization.
 
 Write the following to the extent possible.
 
@@ -130,45 +162,45 @@ The role of each file is as follows.
 | File | Role |
 |---|---|
 | `README.md` | The framework user manual (this document). For human reference; not copied into projects |
-| `AGENTSPECKIT/SOURCES/REQUIREMENTS.md` | The initial-requirements input document written by the user (optional for brownfield). Frozen to `Applied` after initialization |
-| `AGENTSPECKIT/SOURCES/INDEX.md` | Submitted-material index. REQUIREMENTS.md is pre-registered with type `Initial requirements` |
-| `AGENTSPECKIT/KICKOFF.md` | Prompt for new-project initialization (greenfield) |
-| `AGENTSPECKIT/ADOPT.md` | Prompt for adopting into a project already under development (brownfield). Generates documents in reverse from the code |
-| `AGENTSPECKIT/DEVELOPINIT.md` | Prompt for actual development progress after initialization/adoption |
-| `AGENTSPECKIT/AUDIT.md` | Periodic document-audit prompt. Checks document-code drift at Phase completion / before release / on long-term accumulation |
+| `THROUGHLINE/SOURCES/REQUIREMENTS.md` | The initial-requirements input document written by the user (optional for brownfield). Frozen to `Applied` after initialization |
+| `THROUGHLINE/SOURCES/INDEX.md` | Submitted-material index. REQUIREMENTS.md is pre-registered with type `Initial requirements` |
+| `THROUGHLINE/KICKOFF.md` | Prompt for new-project initialization (greenfield) |
+| `THROUGHLINE/ADOPT.md` | Prompt for adopting into a project already under development (brownfield). Generates documents in reverse from the code |
+| `THROUGHLINE/DEVELOPINIT.md` | Prompt for actual development progress after initialization/adoption |
+| `THROUGHLINE/AUDIT.md` | Periodic document-audit prompt. Checks document-code drift at Phase completion / before release / on long-term accumulation |
 
 ---
 
 ## 2. One-time only: project initialization prompt
 
-After you finish writing `AGENTSPECKIT/SOURCES/REQUIREMENTS.md`, enter the following prompt into the Agent.
+After you finish writing `THROUGHLINE/SOURCES/REQUIREMENTS.md`, enter the following prompt into the Agent.
 
 ```text
-Read AGENTSPECKIT/SOURCES/REQUIREMENTS.md and AGENTSPECKIT/KICKOFF.md, and carry out the project's initial setup following the instructions in KICKOFF.md.
+Read THROUGHLINE/SOURCES/REQUIREMENTS.md and THROUGHLINE/KICKOFF.md, and carry out the project's initial setup following the instructions in KICKOFF.md.
 
 REQUIREMENTS.md is the initial requirements written by the user, and KICKOFF.md is the initialization work instructions.
-Generate all artifacts under AGENTSPECKIT/, except for AGENTS.md, CLAUDE.md, and the project README.md (the three root files).
+Generate all artifacts under THROUGHLINE/, except for AGENTS.md, CLAUDE.md, and the project README.md (the three root files).
 
 Be sure to do the following.
 
-1. Analyze AGENTSPECKIT/SOURCES/REQUIREMENTS.md and update its INDEX status to 'Under review'.
-   If there is other submitted material (reference material, etc.) in AGENTSPECKIT/SOURCES/, read it together and register it in the INDEX.
+1. Analyze THROUGHLINE/SOURCES/REQUIREMENTS.md and update its INDEX status to 'Under review'.
+   If there is other submitted material (reference material, etc.) in THROUGHLINE/SOURCES/, read it together and register it in the INDEX.
 2. Confirm whether the core requirements needed for project initialization are sufficient.
 3. If the project purpose, target users, MVP features, user scenarios, data, external integrations, authentication/authorization, or QA criteria are ambiguous, ask the user before proceeding with initialization.
 4. When questions are needed, write only the core questions, at most 5 at a time.
-5. Organize the contracts common to multiple features (data model/naming/API/authentication) and generate AGENTSPECKIT/ARCHITECTURE.md.
+5. Organize the contracts common to multiple features (data model/naming/API/authentication) and generate THROUGHLINE/ARCHITECTURE.md.
 6. Following the procedure in KICKOFF.md, generate the project structure and documents.
-7. Generate the features/, docs/, qa/, personas/, adr/ documents under AGENTSPECKIT/. Include adr/INDEX.md, and
+7. Generate the features/, docs/, qa/, personas/, adr/ documents under THROUGHLINE/. Include adr/INDEX.md, and
    write features/README.md and docs/README.md in the index (table of contents) format of KICKOFF.md Sections 6.2 and 7.2.
-8. Generate ARCHITECTURE.md, PLAN.md, PROGRESS.md, HISTORY.md, ASSUMPTIONS.md, and NOTES.md under AGENTSPECKIT/, and
-   generate AGENTS.md and CLAUDE.md at the project root (auto-recognition convention — paths inside are stated with the AGENTSPECKIT/ prefix).
+8. Generate ARCHITECTURE.md, PLAN.md, PROGRESS.md, HISTORY.md, ASSUMPTIONS.md, and NOTES.md under THROUGHLINE/, and
+   generate AGENTS.md and CLAUDE.md at the project root (auto-recognition convention — paths inside are stated with the THROUGHLINE/ prefix).
 8-1. Generate the project README.md (introduction/installation/run/structure/document links) at the root. Do not include sensitive information.
 9. Write the feature documents based on the Multi-Agent review results, but write them not as a per-Agent transcript but as the final agreed feature specification, summarize the participating Agents and the key issues/conclusions in 3–4 lines, and link to the review log.
 10. For QA, split the writing into per-feature test scenarios and the regression/manual/release checklists in the qa/ folder. Include the criterion that "test passing" is recognized only when the test is actually executed.
-11. Before finishing initialization, change the status of REQUIREMENTS.md in AGENTSPECKIT/SOURCES/INDEX.md to 'Applied' and
+11. Before finishing initialization, change the status of REQUIREMENTS.md in THROUGHLINE/SOURCES/INDEX.md to 'Applied' and
     record the links to the applied artifacts. Afterward the REQUIREMENTS.md original is immutable, and
     additional requirements are received as new change-request documents.
-11-1. Commit the initialization artifacts per KICKOFF.md Section 3.1 (one commit bundling the three root files + AGENTSPECKIT/;
+11-1. Commit the initialization artifacts per KICKOFF.md Section 3.1 (one commit bundling the three root files + THROUGHLINE/;
     interim milestone commits are allowed if initialization spans multiple sessions).
 12. When initialization is complete, report the list of generated files, the ARCHITECTURE summary, the list of feature specifications, the list of QA documents, the list of ADRs, the development Phase summary, and the command to start the next development session.
 ```
@@ -185,31 +217,31 @@ If this is not a new project but **a project that already has code**, use `ADOPT
 and since the artifact structure is identical to `KICKOFF.md`, once adoption is complete you continue development directly with `DEVELOPINIT.md`.
 
 ```text
-Read AGENTSPECKIT/ADOPT.md and, following its instructions, adopt (apply) the framework into this project that is already under development.
+Read THROUGHLINE/ADOPT.md and, following its instructions, adopt (apply) the framework into this project that is already under development.
 
-Generate all artifacts under AGENTSPECKIT/, except for AGENTS.md, CLAUDE.md, and the project README.md (the three root files).
+Generate all artifacts under THROUGHLINE/, except for AGENTS.md, CLAUDE.md, and the project README.md (the three root files).
 Do not touch same-named folders in the existing project such as docs/.
 
 Be sure to keep the following.
 
 1. At this step, do not modify code. This is the step of documenting the current state and making a development plan.
-2. First, check whether there are existing artifacts in AGENTSPECKIT/ (if there are, the project is already adopted — do not re-adopt; report instead).
+2. First, check whether there are existing artifacts in THROUGHLINE/ (if there are, the project is already adopted — do not re-adopt; report instead).
    Next, inventory whether README/AGENTS/CLAUDE/.gitignore exist at the root.
    Do not overwrite files that already exist — merge them, or if you must overwrite, get confirmation.
 3. First, scan the codebase to identify the stack, build/run/test commands, structure, entry points, dependencies, and environment-variable names.
    (Do not collect or record environment-variable values/secrets.)
 4. Then, starting from the entry points, directly read the actual implementation and core paths of the major features and trace the behavior.
    Do not guess the behavior from file names/structure alone, and do not stop at a metadata scan.
-   State the ranges you read and the ranges you did not read, and leave the unread areas in AGENTSPECKIT/PROGRESS.md.
-5. Reverse-extract the actual conventions (naming/API contract/error format/authentication/data model) from the code you read and create AGENTSPECKIT/ARCHITECTURE.md.
-   Do not invent items that cannot be determined from the code; leave them in AGENTSPECKIT/ASSUMPTIONS.md (active, needs verification).
-6. Write the implemented features as as-built specifications in AGENTSPECKIT/features/*.md.
+   State the ranges you read and the ranges you did not read, and leave the unread areas in THROUGHLINE/PROGRESS.md.
+5. Reverse-extract the actual conventions (naming/API contract/error format/authentication/data model) from the code you read and create THROUGHLINE/ARCHITECTURE.md.
+   Do not invent items that cannot be determined from the code; leave them in THROUGHLINE/ASSUMPTIONS.md (active, needs verification).
+6. Write the implemented features as as-built specifications in THROUGHLINE/features/*.md.
    Each behavioral claim must be backed by a source code location (file/function), and for behavior you did not read directly, do not assert it; mark it "estimated (needs verification)".
    Mark separately the points where code and intent diverge.
-7. Actually run the existing tests and record the baseline (pass/fail/absent) in AGENTSPECKIT/HISTORY.md.
-8. Make AGENTSPECKIT/PLAN.md reflect the current state as done/in progress/remaining, and write the first command of the next session in AGENTSPECKIT/PROGRESS.md.
-9. If AGENTSPECKIT/SOURCES/REQUIREMENTS.md exists, use it as future goals/unimplemented requirements, and if it conflicts with as-built, ask.
-   When adoption is complete, register it in AGENTSPECKIT/SOURCES/INDEX.md with type 'Initial requirements' and freeze it to 'Applied'.
+7. Actually run the existing tests and record the baseline (pass/fail/absent) in THROUGHLINE/HISTORY.md.
+8. Make THROUGHLINE/PLAN.md reflect the current state as done/in progress/remaining, and write the first command of the next session in THROUGHLINE/PROGRESS.md.
+9. If THROUGHLINE/SOURCES/REQUIREMENTS.md exists, use it as future goals/unimplemented requirements, and if it conflicts with as-built, ask.
+   When adoption is complete, register it in THROUGHLINE/SOURCES/INDEX.md with type 'Initial requirements' and freeze it to 'Applied'.
 9-1. Commit the adoption artifacts on a work branch per ADOPT.md work-order step 18 (documentation-only commit — no code changes).
 10. When adoption is complete, report the results in the format of ADOPT.md Section 7 (including the ranges read, the list of code↔intent divergences, and the test baseline).
 ```
@@ -218,30 +250,30 @@ Be sure to keep the following.
 
 ### 2.2 Kit upgrade (applying a new version to an already-applied project)
 
-Use this when reflecting template updates into a project that has already applied AGENTSPECKIT.
+Use this when reflecting template updates into a project that has already applied THROUGHLINE.
 **Do not re-run KICKOFF/ADOPT** — the re-initialization/re-adoption guard blocks them, and bypassing it overwrites artifacts.
 
 Processing principles:
 
 | Category | Target | Processing |
 |---|---|---|
-| Kit-owned (no project content) | The four prompts in `AGENTSPECKIT/` | **Overwrite-copy** with the new version |
+| Kit-owned (no project content) | The four prompts in `THROUGHLINE/` | **Overwrite-copy** with the new version |
 | Generated artifacts (with project content) | features/, PLAN, PROGRESS, HISTORY, ASSUMPTIONS, SOURCES originals | **Preserve content** — do not touch |
 | Rule files (generated by old-version rules) | root `AGENTS.md`, `CLAUDE.md` | **Merge-update** — add only missing blocks |
 | New structure (absent in old version) | TODO.md, NOTES.md, personas/, discussion/, etc. | **Newly create/augment** |
 
 **Step 1 (human):** Pull the template repository and overwrite-copy the four prompts (KICKOFF/ADOPT/DEVELOPINIT/AUDIT)
-**from the same language folder you originally used** (`en/AGENTSPECKIT/` or `ko/AGENTSPECKIT/`) into the project's `AGENTSPECKIT/`.
-(If the old version had a flat root structure, first make a commit that `git mv`s the artifacts — excluding the three root files — under `AGENTSPECKIT/`.)
+**from the same language folder you originally used** (`en/THROUGHLINE/` or `ko/THROUGHLINE/`) into the project's `THROUGHLINE/`.
+(If the old version had a flat root structure, first make a commit that `git mv`s the artifacts — excluding the three root files — under `THROUGHLINE/`.)
 
 **Step 2 (Agent):** Run the prompt below.
 
 ```text
-The Agent-Spec-Kit template has been updated and the four prompts have been replaced with the new version.
+The THROUGHLINE template has been updated and the four prompts have been replaced with the new version.
 Upgrade this project's artifact structure to the new-version standard.
 Do not re-run KICKOFF or ADOPT (re-initialization/re-adoption forbidden). Preserve the content of existing artifacts.
 
-1. Compare the structure in Section 1 of the new AGENTSPECKIT/KICKOFF.md against the current AGENTSPECKIT/ and identify missing files/folders.
+1. Compare the structure in Section 1 of the new THROUGHLINE/KICKOFF.md against the current THROUGHLINE/ and identify missing files/folders.
 2. Generate the missing items.
    - NOTES.md / TODO.md: empty skeletons (KICKOFF.md Sections 15.1·15.3 format)
    - SOURCES/INDEX.md: create it if absent, and if present, augment the type/status columns to the 15.2 format.
@@ -291,7 +323,7 @@ Example question:
 ```text
 Confirmation is needed for project initialization.
 
-After analyzing AGENTSPECKIT/SOURCES/REQUIREMENTS.md, the following must be confirmed before creating the initial feature specifications and development plan.
+After analyzing THROUGHLINE/SOURCES/REQUIREMENTS.md, the following must be confirmed before creating the initial feature specifications and development plan.
 
 1. What are the three features that must be included in this project's MVP?
 2. Among general users, administrators, and operators, who are the primary users?
@@ -311,7 +343,7 @@ However, two things cannot be delegated. **If you leave or delegate both the pro
 
 The same applies in the development step. If you delegate in a prompt with "just handle this for me," the autonomous-decision scope for that item widens, but core items are decided conservatively and left in `ASSUMPTIONS.md` and the completion report.
 
-> 📝 **Writing the requirements:** the [`REQUIREMENTS.md` template](en/AGENTSPECKIT/SOURCES/REQUIREMENTS.md) carries its own in-file guide — which items to fill in first, the `[AI-delegated]` marker, and a **tip on attaching reference material** (capture a target design or API doc into `SOURCES/` and reference it from the document, instead of describing it in prose). Skim it before you start writing.
+> 📝 **Writing the requirements:** the [`REQUIREMENTS.md` template](en/THROUGHLINE/SOURCES/REQUIREMENTS.md) carries its own in-file guide — which items to fill in first, the `[AI-delegated]` marker, and a **tip on attaching reference material** (capture a target design or API doc into `SOURCES/` and reference it from the document, instead of describing it in prose). Skim it before you start writing.
 
 ---
 
@@ -324,7 +356,7 @@ When initialization is complete, the following structure is generally generated.
 ├── README.md                # Project README — fixed at root (artifact)
 ├── AGENTS.md                # Agent work instructions — fixed at root (tool auto-recognition convention)
 ├── CLAUDE.md                # Claude Code auto-load — fixed at root
-├── AGENTSPECKIT/            # ★ Everything the framework owns and manages
+├── THROUGHLINE/             # ★ Everything the framework owns and manages
 │   ├── KICKOFF.md / ADOPT.md / DEVELOPINIT.md / AUDIT.md
 │   ├── ARCHITECTURE.md
 │   ├── PLAN.md
@@ -359,7 +391,7 @@ When initialization is complete, the following structure is generally generated.
 └── (project code — existing folders are not touched)
 ```
 
-The role of each document is as follows. (The paths in the table are all relative to `AGENTSPECKIT/`, except the three root files.)
+The role of each document is as follows. (The paths in the table are all relative to `THROUGHLINE/`, except the three root files.)
 
 | File / folder | Role |
 |---|---|
@@ -373,8 +405,8 @@ The role of each document is as follows. (The paths in the table are all relativ
 | `ASSUMPTIONS.md` | Content the Agent decided autonomously (including status/conflict management) |
 | `NOTES.md` | Topical accumulation of non-trivial **facts** learned during development (guesses go to ASSUMPTIONS) |
 | `TODO.md` | **Backlog** — a collection box for items not yet decided to start (category/priority/status/promotion-target links). Selectively loaded; the truth of progress state is the PLAN · features index |
-| `AGENTSPECKIT/SOURCES/INDEX.md` | User-submitted-material index (type/submission date/status/summary/applied artifacts) |
-| `AGENTSPECKIT/SOURCES/*` | User-submitted originals — reference material/change requests (immutable after Applied; changes are added as new documents) |
+| `THROUGHLINE/SOURCES/INDEX.md` | User-submitted-material index (type/submission date/status/summary/applied artifacts) |
+| `THROUGHLINE/SOURCES/*` | User-submitted originals — reference material/change requests (immutable after Applied; changes are added as new documents) |
 | `features/README.md` | Feature index (status/Phase/related ADR table) |
 | `features/*.md` | The final per-feature feature specification (includes a review summary) |
 | `docs/README.md` | User-documentation index |
@@ -393,35 +425,35 @@ The role of each document is as follows. (The paths in the table are all relativ
 When starting actual development after initialization is complete, enter the following prompt.
 
 ```text
-Read AGENTS.md and AGENTSPECKIT/DEVELOPINIT.md, and start actual development based on the current project documents.
+Read AGENTS.md and THROUGHLINE/DEVELOPINIT.md, and start actual development based on the current project documents.
 
-The framework documents are all inside AGENTSPECKIT/, except the root AGENTS.md/CLAUDE.md/README.md.
+The framework documents are all inside THROUGHLINE/, except the root AGENTS.md/CLAUDE.md/README.md.
 
 Be sure to proceed in the following order.
 
 1. Read AGENTS.md (root).
-2. Read AGENTSPECKIT/ARCHITECTURE.md. (cross-cutting contract — always loaded)
-3. Read AGENTSPECKIT/PLAN.md.
-4. Read AGENTSPECKIT/PROGRESS.md and check the "first command of the next session."
-4-1. Check AGENTSPECKIT/SOURCES/INDEX.md (always checked): if there are Not-applied / Under-review change requests, report them.
-5. To the extent needed, check AGENTSPECKIT/HISTORY.md for whether something has been implemented redundantly.
-6. Check AGENTSPECKIT/features/README.md and AGENTSPECKIT/adr/INDEX.md.
+2. Read THROUGHLINE/ARCHITECTURE.md. (cross-cutting contract — always loaded)
+3. Read THROUGHLINE/PLAN.md.
+4. Read THROUGHLINE/PROGRESS.md and check the "first command of the next session."
+4-1. Check THROUGHLINE/SOURCES/INDEX.md (always checked): if there are Not-applied / Under-review change requests, report them.
+5. To the extent needed, check THROUGHLINE/HISTORY.md for whether something has been implemented redundantly.
+6. Check THROUGHLINE/features/README.md and THROUGHLINE/adr/INDEX.md.
 7. Selectively read only the feature documents related to the current Phase and the related ADRs.
-8. Read AGENTSPECKIT/qa/README.md, and selectively check only the QA documents needed for the current work.
-9. If AGENTSPECKIT/NOTES.md has items related to the current work topic, check them.
+8. Read THROUGHLINE/qa/README.md, and selectively check only the QA documents needed for the current work.
+9. If THROUGHLINE/NOTES.md has items related to the current work topic, check them.
 10. Following the procedure in DEVELOPINIT.md, implement the current Phase.
 
 Cautions:
 
-- Do not re-initialize the project based on AGENTSPECKIT/SOURCES/REQUIREMENTS.md (Applied).
-  Receive new requirements as change-request documents in AGENTSPECKIT/SOURCES/ and process them per DEVELOPINIT.md 4.2.
-- AGENTSPECKIT/'s ARCHITECTURE.md, PLAN.md, PROGRESS.md, and the SOURCES/INDEX.md status check are always performed. Read only the feature/QA documents needed for the current Phase.
+- Do not re-initialize the project based on THROUGHLINE/SOURCES/REQUIREMENTS.md (Applied).
+  Receive new requirements as change-request documents in THROUGHLINE/SOURCES/ and process them per DEVELOPINIT.md 4.2.
+- THROUGHLINE/'s ARCHITECTURE.md, PLAN.md, PROGRESS.md, and the SOURCES/INDEX.md status check are always performed. Read only the feature/QA documents needed for the current Phase.
 - Follow common decisions (data model/naming/API/authentication) according to ARCHITECTURE.md.
 - Do not implement by guessing without a specification.
 - If code and specification differ, first diagnose which side is authoritative, then handle it. Do not disguise an implementation mistake as the specification.
 - Actually run the tests and record the results in HISTORY.md. Do not claim a pass without running.
 - Record non-trivial facts learned during development in NOTES.md. Record guesses in ASSUMPTIONS.md.
-- If AGENTSPECKIT/SOURCES/INDEX.md has Not-applied/Under-review change requests, report them and confirm whether to process them first.
+- If THROUGHLINE/SOURCES/INDEX.md has Not-applied/Under-review change requests, report them and confirm whether to process them first.
 - Write document cross-references as relative-path links, and when changing feature/docs/ADR, update the corresponding index in the same commit.
 - When starting work, provisionally record the progress state and the first command of the next session in PROGRESS.md.
 - When a meaningful unit of work is complete, bundle code + documents into a single commit and commit. Push follows the project's push policy (default: commit only, no automatic push).
@@ -432,23 +464,23 @@ Cautions:
 
 This prompt is **for starting actual development**.
 
-### 5.1 Requesting feature additions / feature modifications during development (how to use AGENTSPECKIT/SOURCES/)
+### 5.1 Requesting feature additions / feature modifications during development (how to use THROUGHLINE/SOURCES/)
 
 If, after initialization, you need to add a new feature or modify an existing feature/architecture, do not explain it in conversation alone;
-write the request as a document (md recommended, pdf/txt/html allowed) and place it in the project's `AGENTSPECKIT/SOURCES/` folder.
+write the request as a document (md recommended, pdf/txt/html allowed) and place it in the project's `THROUGHLINE/SOURCES/` folder.
 Because the original is preserved, you can later trace "why was it changed this way."
 
-**Summary of AGENTSPECKIT/SOURCES/ folder rules** (details: KICKOFF.md 15.2; application procedure: DEVELOPINIT.md 4.2):
+**Summary of THROUGHLINE/SOURCES/ folder rules** (details: KICKOFF.md 15.2; application procedure: DEVELOPINIT.md 4.2):
 
 - There are two document types. **Reference material** (a record of facts: API specs, policy documents) and
   **change requests** (a record of intent: feature additions/modifications, architecture changes).
 - A submitted original is **immutable**. Do not edit a document once it is applied; if the content changes, **add a new document**.
-  The previous document is marked `Superseded` in `AGENTSPECKIT/SOURCES/INDEX.md` (immutable, append-only).
-- Every document is registered in `AGENTSPECKIT/SOURCES/INDEX.md` and managed by status (`Not applied`/`Under review`/`Applied`/`Rejected`/`Superseded`).
+  The previous document is marked `Superseded` in `THROUGHLINE/SOURCES/INDEX.md` (immutable, append-only).
+- Every document is registered in `THROUGHLINE/SOURCES/INDEX.md` and managed by status (`Not applied`/`Under review`/`Applied`/`Rejected`/`Superseded`).
 - A change request **is not authoritative until it is Applied.** Once a request is reviewed and applied, it is not read again,
   and from then on the applied ARCHITECTURE/features/ADR carry the truth.
 
-**Change-request document template** (partially reusing the corresponding section of AGENTSPECKIT/SOURCES/REQUIREMENTS.md):
+**Change-request document template** (partially reusing the corresponding section of THROUGHLINE/SOURCES/REQUIREMENTS.md):
 
 ```md
 # Change request: <title>
@@ -467,18 +499,18 @@ Because the original is preserved, you can later trace "why was it changed this 
 **Feature-addition / feature-modification instruction prompt:**
 
 ```text
-I have submitted AGENTSPECKIT/SOURCES/<file-name> as a change request.
+I have submitted THROUGHLINE/SOURCES/<file-name> as a change request.
 
-Read AGENTS.md and AGENTSPECKIT/DEVELOPINIT.md, and process this submitted material following the DEVELOPINIT.md 4.2 procedure.
+Read AGENTS.md and THROUGHLINE/DEVELOPINIT.md, and process this submitted material following the DEVELOPINIT.md 4.2 procedure.
 
 Be sure to keep the following.
 
-1. Register it in AGENTSPECKIT/SOURCES/INDEX.md (type: Change request, status: Not applied → Under review).
+1. Register it in THROUGHLINE/SOURCES/INDEX.md (type: Change request, status: Not applied → Under review).
 2. Read the document and perform a summary and impact analysis (ARCHITECTURE conflicts, affected features, whether an ADR is needed).
 3. If a change to MVP scope, data model, authentication/authorization, or cross-cutting contract is needed, confirm with the user before applying.
 4. If the feature scope changes, perform a Multi-Agent re-review, and write an ADR for cross-cutting contract changes.
 5. When applying, update the features/ARCHITECTURE/PLAN documents (and docs/qa if needed), and
-   leave the source (AGENTSPECKIT/SOURCES/<file-name>) as a relative-path link in each artifact.
+   leave the source (THROUGHLINE/SOURCES/<file-name>) as a relative-path link in each artifact.
 6. Change the INDEX status to 'Applied' only when all items have been reflected in the documents.
    If only partially applied, leave it 'Under review' and record the remaining items in PROGRESS.md.
 7. This work is an incremental application. Do not re-initialize the project.
@@ -490,9 +522,9 @@ Be sure to keep the following.
 **Reference-material submission prompt** (registration/summary only, with no change work):
 
 ```text
-I have submitted AGENTSPECKIT/SOURCES/<file-name> as reference material.
+I have submitted THROUGHLINE/SOURCES/<file-name> as reference material.
 
-Following the AGENTSPECKIT/DEVELOPINIT.md 4.2 procedure, register it in AGENTSPECKIT/SOURCES/INDEX.md (type: Reference material),
+Following the THROUGHLINE/DEVELOPINIT.md 4.2 procedure, register it in THROUGHLINE/SOURCES/INDEX.md (type: Reference material),
 read the document, and record a summary in the INDEX.
 At this step, do not do any feature-change work.
 If there is a place in a related feature/ARCHITECTURE document that should reference this material as evidence, add only a link.
@@ -516,11 +548,11 @@ For ideas at the "would be nice to do later" level during development, instead o
 Register this feature in the TODO: <one-line description>
 ```
 
-- The Agent classifies it by category (feature/improvement/bug/tech debt) and registers it in `AGENTSPECKIT/TODO.md`
+- The Agent classifies it by category (feature/improvement/bug/tech debt) and registers it in `THROUGHLINE/TODO.md`
   as a single line (content · priority · status `Pending` · registration date) and commits.
 - **Registration is not starting.** To implement it, instruct "start the <item> in the TODO" —
   trivial items go straight to a feature document, and items with cross-cutting impact are promoted to a SOURCES/ change request
-  for processing (AGENTSPECKIT/DEVELOPINIT.md 4.3). On promotion, the promotion target is linked in the TODO.
+  for processing (THROUGHLINE/DEVELOPINIT.md 4.3). On promotion, the promotion target is linked in the TODO.
 - The TODO is a **backlog (collection box), not a status board.** The truth of progress state is PLAN.md and
   features/README.md, and the specification is written in features/, not in the TODO.
 - Items decided not to do are not deleted; they are left as `On hold`/`Dropped` (with a reason). AUDIT checks neglected items.
@@ -542,10 +574,10 @@ When starting the design review of a new feature, even a one-line instruction li
 ```text
 Review and design the addition of the OOO feature. Do not start implementation.
 
-1. Follow AGENTS.md and AGENTSPECKIT/DEVELOPINIT.md Section 6 (Multi-Agent review).
-2. From AGENTSPECKIT/personas/INDEX.md, pick and inject the persona instances related to this feature, and
+1. Follow AGENTS.md and THROUGHLINE/DEVELOPINIT.md Section 6 (Multi-Agent review).
+2. From THROUGHLINE/personas/INDEX.md, pick and inject the persona instances related to this feature, and
    if a needed perspective is missing, create a new instance per the KICKOFF.md 5.2 standard.
-3. Record the deliberation process in AGENTSPECKIT/discussion/review-<feature-slug>-YYYYMMDD.md.
+3. Record the deliberation process in THROUGHLINE/discussion/review-<feature-slug>-YYYYMMDD.md.
    Leave each persona's risks/evidence, and the Research Agent must always record its sources as full URLs (verbatim) or SOURCES/ paths.
 4. As the agreed proposal, write a draft feature document (KICKOFF.md 6.1 template).
    If there is impact on MVP scope/data model/authentication/cross-cutting contract, request confirmation before applying.
@@ -558,13 +590,13 @@ Review and design the addition of the OOO feature. Do not start implementation.
 Review and design the addition of the OOO feature. Do not start implementation.
 Run the persona deliberation as actual subagents in parallel, not as role-play.
 
-1. Select 3–5 related personas from AGENTSPECKIT/personas/INDEX.md.
+1. Select 3–5 related personas from THROUGHLINE/personas/INDEX.md.
 2. Using each persona-instance file as the role definition, spin up one subagent at a time, and
    have each review independently without seeing one another's output
    (each: discovered risks / evidence·sources / proposal. The Research role performs actual research and states its sources).
 3. Aggregate the results, organize the issues and conflicts, and derive an agreed proposal.
    For issues that cannot be reasonably agreed, attach the options and a recommendation and confirm with the user.
-4. Record the entire deliberation process in AGENTSPECKIT/discussion/review-<feature-slug>-YYYYMMDD.md
+4. Record the entire deliberation process in THROUGHLINE/discussion/review-<feature-slug>-YYYYMMDD.md
    (with instance-file links in the participating-personas item, execution mode `parallel-subagents`, and
    per-subagent evidence — identifier·input scope·output summary), write a draft feature document, and report.
 ```
@@ -574,7 +606,7 @@ Run the persona deliberation as actual subagents in parallel, not as role-play.
 > But an identical format does not mean you may report role-play as actual parallel — **state the actual execution mode in the log with the 4.1 enum** (`role-play` / `parallel-subagents` / `parallel-external`), and for `parallel-*` record the per-subagent evidence (KICKOFF 4.1).
 > If subagent tools are unavailable, do not imitate Method 2; fall back to Method 1 (role-play), and do not report independent parallel review you did not perform.
 
-**Method 3 — combine with a formal change request**: after submitting a change-request document to `AGENTSPECKIT/SOURCES/` as in Section 5.1,
+**Method 3 — combine with a formal change request**: after submitting a change-request document to `THROUGHLINE/SOURCES/` as in Section 5.1,
 add `This review is the application process of the SOURCES/<file-name> change request.` as the first line of the Method 1 or 2 prompt.
 The entire process of impact analysis → confirmation → review → application is left with source tracing.
 
@@ -593,10 +625,10 @@ It asks **only when a decision completely different from the existing planning i
 ## 7. Prompt to continue work the next day or after a session is interrupted
 
 ```text
-Read AGENTS.md and AGENTSPECKIT/DEVELOPINIT.md, and continue the previous work based on the "first command of the next session" in AGENTSPECKIT/PROGRESS.md.
+Read AGENTS.md and THROUGHLINE/DEVELOPINIT.md, and continue the previous work based on the "first command of the next session" in THROUGHLINE/PROGRESS.md.
 
-Read AGENTSPECKIT/'s ARCHITECTURE.md and PLAN.md together to re-align the cross-cutting contract.
-Do not redo work that is already complete. Check AGENTSPECKIT/HISTORY.md (and the archive) to prevent redundant implementation.
+Read THROUGHLINE/'s ARCHITECTURE.md and PLAN.md together to re-align the cross-cutting contract.
+Do not redo work that is already complete. Check THROUGHLINE/HISTORY.md (and the archive) to prevent redundant implementation.
 Read only the feature documents related to the current Phase and the related ADRs, and continue development.
 Check only the QA documents needed for the current work.
 
@@ -616,7 +648,7 @@ During development, the Agent checks the current feature's test scenarios to wri
 
 ### 8.1 Updating the project README.md (per push)
 
-The project `README.md` is an artifact that holds "what this project is and how to install/run it" (a separate document in a different repository from the guide `README.md` of the Agent-Spec-Kit repository).
+The project `README.md` is an artifact that holds "what this project is and how to install/run it" (a separate document in a different repository from the guide `README.md` of the THROUGHLINE repository).
 
 - **Creation**: at initialization, KICKOFF creates a draft based on `ARCHITECTURE.md` / `features/` / `PLAN.md`.
 - **Update timing**: not on every commit, but **the need for an update is checked per push**. If the following have changed, the README change is included in the same atomic commit.
@@ -642,7 +674,7 @@ atomic commit      → code and documents always remain in the same state.
 authority-diagnosis rule → does not arbitrarily erase a code-specification mismatch. Drift prevention.
 HISTORY rotation   → manages the context burden without losing history.
 NOTES.md          → compound accumulation of learned facts. Does not rediscover the same fact.
-AGENTSPECKIT/SOURCES/INDEX.md  → lifecycle tracking of submitted material (Not applied → Applied/Rejected/Superseded). Original immutable, append-only,
+THROUGHLINE/SOURCES/INDEX.md  → lifecycle tracking of submitted material (Not applied → Applied/Rejected/Superseded). Original immutable, append-only,
                     once a change request is applied, the artifacts carry the truth.
 AUDIT (periodic audit)   → periodically recovers the gradual drift that the recording-time checks missed.
 ```
@@ -655,8 +687,8 @@ Recording-time conflict checks alone cannot catch the drift that arises as sessi
 Run the prompt below at the points of **right after a Phase completes / before a release / on a long-delayed resumption / about 10 sessions of accumulation**.
 
 ```text
-Read AGENTSPECKIT/AUDIT.md and, following its instructions, audit the drift between the project documents and the code.
-The framework documents are all inside AGENTSPECKIT/, except the three root files (README/AGENTS/CLAUDE).
+Read THROUGHLINE/AUDIT.md and, following its instructions, audit the drift between the project documents and the code.
+The framework documents are all inside THROUGHLINE/, except the three root files (README/AGENTS/CLAUDE).
 
 Be sure to keep the following.
 
@@ -712,11 +744,11 @@ New (greenfield) and existing (brownfield) **differ only in the initialization p
 
 ```mermaid
 flowchart TD
-    Start(["Clone the Agent-Spec-Kit repository"]) --> Type{"Project type"}
+    Start(["Clone the THROUGHLINE repository"]) --> Type{"Project type"}
 
     %% ── New project path ──
-    Type -->|"New (greenfield)"| G1["Copy your language's AGENTSPECKIT/ folder (en/ or ko/) to the project root"]
-    G1 --> G2["Write AGENTSPECKIT/SOURCES/REQUIREMENTS.md — including the cross-cutting baseline<br/>If there is reference material, place it together in AGENTSPECKIT/SOURCES/"]
+    Type -->|"New (greenfield)"| G1["Copy your language's THROUGHLINE/ folder (en/ or ko/) to the project root"]
+    G1 --> G2["Write THROUGHLINE/SOURCES/REQUIREMENTS.md — including the cross-cutting baseline<br/>If there is reference material, place it together in THROUGHLINE/SOURCES/"]
     G2 --> G3["Run the KICKOFF.md initialization prompt (Section 2)"]
     G3 --> G4{"Are the requirements<br/>ambiguous?"}
     G4 -->|"Yes"| G5["The Agent asks the user (Section 3)"]
@@ -725,7 +757,7 @@ flowchart TD
     G6 --> G7["Freeze REQUIREMENTS.md to 'Applied'<br/>(later requirement changes via new change-request documents)"]
 
     %% ── Existing project path ──
-    Type -->|"Existing (brownfield)"| B1["Copy your language's AGENTSPECKIT/ folder (en/ or ko/) to the project root<br/>(writing REQUIREMENTS.md is optional)"]
+    Type -->|"Existing (brownfield)"| B1["Copy your language's THROUGHLINE/ folder (en/ or ko/) to the project root<br/>(writing REQUIREMENTS.md is optional)"]
     B1 --> B2["Run the ADOPT.md adoption prompt (Section 2.1)"]
     B2 --> B3["Analyze the existing code<br/>reverse-extract ARCHITECTURE · as-built feature specs ·<br/>test baseline · list of code↔intent divergences"]
     B3 --> B4["Merge without overwriting existing artifacts<br/>Generate PLAN · PROGRESS · HISTORY · ASSUMPTIONS"]
@@ -739,7 +771,7 @@ flowchart TD
 
     G7 --> D1
     B4 --> D1
-    CR["Feature-addition·modification request<br/>Submit as a document to AGENTSPECKIT/SOURCES/ (Section 5.1)"] -.->|"Change-request prompt"| D1
+    CR["Feature-addition·modification request<br/>Submit as a document to THROUGHLINE/SOURCES/ (Section 5.1)"] -.->|"Change-request prompt"| D1
     D2 --> AQ{"Phase complete / before release /<br/>about 10 sessions accumulated?"}
     AQ -->|"Yes"| AU["AUDIT.md document audit (Section 9.1)"]
     AU --> D1
@@ -755,52 +787,54 @@ flowchart TD
 | Applying to a project already under development | Adoption prompt (Section 2.1, ADOPT.md) |
 | Starting development after generating feature specifications and documents | Prompt to start actual development (Section 5) |
 | Continuing previous work | Prompt to continue work (Section 7) |
-| Requesting, as a document, a new feature addition or an existing feature modification during development | Change-request processing prompt (Section 5.1, AGENTSPECKIT/SOURCES/) |
-| Registering reference material such as external specs/policy documents | Reference-material submission prompt (Section 5.1, AGENTSPECKIT/SOURCES/) |
-| Lightly jotting down an idea / managing and starting the backlog | TODO registration·promotion (Section 5.2, AGENTSPECKIT/TODO.md) |
+| Requesting, as a document, a new feature addition or an existing feature modification during development | Change-request processing prompt (Section 5.1, THROUGHLINE/SOURCES/) |
+| Registering reference material such as external specs/policy documents | Reference-material submission prompt (Section 5.1, THROUGHLINE/SOURCES/) |
+| Lightly jotting down an idea / managing and starting the backlog | TODO registration·promotion (Section 5.2, THROUGHLINE/TODO.md) |
 | Starting the design review of a new feature (choose the review intensity) | Feature-addition review·design prompt (Section 5.3 — standard/subagent/change-request combination) |
 | Upgrading the kit to a new version (an already-applied project) | Upgrade prompt (Section 2.2) |
 | Phase completion / before release / when document-code drift is suspected | Document-audit prompt (Section 9.1, AUDIT.md) |
 
 ---
 
-## Appendix: Benchmark evidence (drift-suppression pilots)
+## Appendix: Benchmark detail (drift-suppression pilots)
+
+The headline numbers are in [Benchmarks](#benchmarks) at the top. This appendix holds the method, the per-pilot detail, and — deliberately kept — what these pilots do **not** establish.
 
 The framework's central claim — that an external, structured memory (SSOT) curbs the **silent intent-drift** that plain LLM sessions suffer — is testable. Two runnable pilots in this repository measure it. Both are **single-seed go/no-go discrimination checks, not statistically powered results** (a powered claim needs ≥3 seeds across multiple tasks); they show *direction*, not magnitude. Each is fully reproducible (sandboxed dev-agents, a hidden oracle the agent never sees, an automated harness self-test gate).
 
-### Pilot 1 — `benchmark/benchmark-solo-pilot/`: does memory of an early decision survive?
+### Pilot 1 — [`benchmark/benchmark-solo-pilot/`](benchmark/benchmark-solo-pilot/): does memory of an early decision survive?
 
 A 7-session `miniquery` task where the original default page size (**7**) is overwritten twice (→25→40), then session 6 asks to "restore the original" — under a coding norm that forbids change-history in code comments, so the original survives **only in a memory artifact**. Four memory regimes build the same task:
 
 | Group | Memory regime | S6 restored value | Correct (7)? |
 |---|---|---:|:--:|
-| **ASK-solo** | structured SSOT (append-only DECISIONS) | **7** | ✅ |
+| **throughline-solo** | structured SSOT (append-only DECISIONS) | **7** | ✅ |
 | P-notes | free notes, ~2600-char cap | 7 | ✅ |
 | B-limited | last 2 sessions' notes, 600-char cap | 25 | ❌ |
 | B-code | no memory (code + ticket only) | 10 | ❌ |
 
-**Findings.** (1) Memory of the original decision is *necessary* — the two memoryless/lossy groups failed, the two memory-bearing groups passed. (2) **Lossy memory is not merely weaker, it is actively misleading**: B-limited didn't admit ignorance — it *confidently restored a plausible wrong value* (25, the value just outside its window), a silent drift harder to catch than B-code's honest "this is a guess." (3) At this small scale, structured SSOT and disciplined free-notes did **not** separate — both kept the lineage. So this pilot demonstrates the **memory-retention** effect, not yet the ASK *structural* advantage over good ad-hoc notes.
+**Findings.** (1) Memory of the original decision is *necessary* — the two memoryless/lossy groups failed, the two memory-bearing groups passed. (2) **Lossy memory is not merely weaker, it is actively misleading**: B-limited didn't admit ignorance — it *confidently restored a plausible wrong value* (25, the value just outside its window), a silent drift harder to catch than B-code's honest "this is a guess." (3) At this small scale, structured SSOT and disciplined free-notes did **not** separate — both kept the lineage. So this pilot demonstrates the **memory-retention** effect, not yet the THROUGHLINE *structural* advantage over good ad-hoc notes.
 
-### Pilot 2 — `benchmark/benchmark-vibe-ask-solo/`: does SSOT curb vibe-coding drift?
+### Pilot 2 — [`benchmark/benchmark-vibe-solo/`](benchmark/benchmark-vibe-solo/): does SSOT curb vibe-coding drift?
 
-The vibe-coding scenario: users give incomplete instructions and forget their own past intent. A `catalog` task is run at **3 prompt-explicitness levels** (beginner / intermediate / advanced) × **2 modes** — `baseline-general` (just build the request) vs `ask-solo` (maintain SSOT + run a conflict check) — over 7 sessions each (42 dev-agent sessions). The discriminator is session 6: the user asks to "show everything when the search box is empty," which conflicts with an earlier safety policy (blank → `[]`). Level-aware correct answer: beginner/intermediate should **preserve** the policy (the user forgot — silent compliance = drift); advanced should **adopt** (an explicit, knowing override).
+The vibe-coding scenario: users give incomplete instructions and forget their own past intent. A `catalog` task is run at **3 prompt-explicitness levels** (beginner / intermediate / advanced) × **2 modes** — `baseline-general` (just build the request) vs `throughline-solo` (maintain SSOT + run a conflict check) — over 7 sessions each (42 dev-agent sessions). The discriminator is session 6: the user asks to "show everything when the search box is empty," which conflicts with an earlier safety policy (blank → `[]`). Level-aware correct answer: beginner/intermediate should **preserve** the policy (the user forgot — silent compliance = drift); advanced should **adopt** (an explicit, knowing override).
 
 Composite score (out of 90; cost axis pending):
 
-| Level | baseline-general | ask-solo | Δ |
+| Level | baseline-general | throughline-solo | Δ |
 |---|---:|---:|---:|
 | beginner | 70.4 | **76.0** | +5.6 |
 | intermediate | 66.0 | **90.0** | **+24.0** |
 | advanced | 84.3 | **90.0** | +5.7 |
 
-**Findings.** ask-solo ≥ baseline at every level. (1) **Intermediate is the clean win**: baseline silently complied and broke the safety policy (invariant violation + regression); ask-solo detected the conflict, **held the policy, and flagged it for the user** → zero regression. (2) **Advanced shows code-parity** (both correctly adopt the explicit override) — here ASK's value reduces to doc/process quality, as hypothesized. (3) **Doc quality is the most consistent ASK effect** — ask-solo scored 15/15 on documentation at every level (a visible supersede chain) vs baseline's 7–11. (4) **Honest caveat**: at the *beginner* level ask-solo detected the conflict but mis-classified it as intentional and adopted the drift — under maximum ambiguity, ASK's payoff hinges on the classification step, which was unreliable. (A separate single-seed coding accident also depressed the beginner code score — per-seed noise that ≥3 seeds would average out.)
+**Findings.** throughline-solo ≥ baseline at every level. (1) **Intermediate is the clean win**: baseline silently complied and broke the safety policy (invariant violation + regression); throughline-solo detected the conflict, **held the policy, and flagged it for the user** → zero regression. (2) **Advanced shows code-parity** (both correctly adopt the explicit override) — here THROUGHLINE's value reduces to doc/process quality, as hypothesized. (3) **Doc quality is the most consistent THROUGHLINE effect** — throughline-solo scored 15/15 on documentation at every level (a visible supersede chain) vs baseline's 7–11. (4) **Honest caveat**: at the *beginner* level throughline-solo detected the conflict but mis-classified it as intentional and adopted the drift — under maximum ambiguity, THROUGHLINE's payoff hinges on the classification step, which was unreliable. (A separate single-seed coding accident also depressed the beginner code score — per-seed noise that ≥3 seeds would average out.)
+
+> Full design, raw trajectories, and go/no-go verdicts: [`benchmark/benchmark-solo-pilot/RESULTS_v2.md`](benchmark/benchmark-solo-pilot/RESULTS_v2.md) and [`benchmark/benchmark-vibe-solo/RESULTS_seed1.md`](benchmark/benchmark-vibe-solo/RESULTS_seed1.md). The most conservative cross-benchmark verdict — including the mid-scale experiments where no THROUGHLINE advantage was shown — is consolidated in [`benchmark/RESULTS_SUMMARY.md`](benchmark/RESULTS_SUMMARY.md).
 
 ### What these pilots do and do not establish
 
 - **Do**: the task harnesses discriminate (no ceiling/floor); external memory demonstrably curbs the wrong-value and policy-drift failures that memoryless/baseline agents commit; structured docs yield a consistent authority/completeness advantage.
-- **Do not**: prove ASK wins on all tasks, isolate the structural advantage of SSOT over disciplined free-notes at small scale, cover Team/multi-agent effects, or constitute a powered statistical result. Next steps (recorded in each `RESULTS*.md`): scale to ≥3 seeds, capture the cost axis, and design a longer horizon where free-notes lose the decision but an append-only SSOT keeps it.
-
-> Full design, raw trajectories, and go/no-go verdicts: `benchmark/benchmark-solo-pilot/RESULTS_v2.md` and `benchmark/benchmark-vibe-ask-solo/RESULTS_seed1.md`. The most conservative cross-benchmark verdict — including the mid-scale experiments where no ASK advantage was shown — is consolidated in `benchmark/RESULTS_SUMMARY.md`.
+- **Do not**: prove THROUGHLINE wins on all tasks, isolate the structural advantage of SSOT over disciplined free-notes at small scale, cover Team/multi-agent effects, or constitute a powered statistical result. Next steps (recorded in each `RESULTS*.md`): scale to ≥3 seeds, capture the cost axis, and design a longer horizon where free-notes lose the decision but an append-only SSOT keeps it.
 
 ---
 
@@ -810,7 +844,7 @@ An estimate based on Korean + markdown at about 2 characters/token, for a medium
 
 | Category | Tokens (≈) |
 |---|---|
-| Development-session **fixed load** (DEVELOPINIT.md + AGENTS/ARCHITECTURE/PLAN/PROGRESS/CLAUDE + AGENTSPECKIT/SOURCES/INDEX + session prompt) | about 13K |
+| Development-session **fixed load** (DEVELOPINIT.md + AGENTS/ARCHITECTURE/PLAN/PROGRESS/CLAUDE + THROUGHLINE/SOURCES/INDEX + session prompt) | about 13K |
 | Typical development-session total (selective load: 1–2 features · ADR · part of qa · recent part of HISTORY · NOTES included) | about 18–21K |
 | Initialization session (one-time, KICKOFF.md + REQUIREMENTS.md) | about 13K |
 | Audit session (AUDIT.md additional load) | fixed portion + about 1.7K |

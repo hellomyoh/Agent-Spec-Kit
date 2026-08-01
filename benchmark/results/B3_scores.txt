@@ -3,12 +3,12 @@
   L0/s2: R1_restore=1/2  impl=base(alpha)  r2_residue=False  core=4/4  tools=2
   L1/s1: R1_restore=2/2  impl=R1(length)  r2_residue=False  core=4/4  tools=3
   L1/s2: R1_restore=2/2  impl=R1(length)  r2_residue=False  core=4/4  tools=3
-  LASK/s1: R1_restore=2/2  impl=R1(length)  r2_residue=False  core=4/4  tools=5
-  LASK/s2: R1_restore=2/2  impl=R1(length)  r2_residue=False  core=4/4  tools=5
+  L-SSOT/s1: R1_restore=2/2  impl=R1(length)  r2_residue=False  core=4/4  tools=5
+  L-SSOT/s2: R1_restore=2/2  impl=R1(length)  r2_residue=False  core=4/4  tools=5
 
 === per-arm (isolated) ===
   L0: mean_R1_restore=0.50  fully_restored=0/2  (tool_uses [2, 2])
   L1: mean_R1_restore=1.00  fully_restored=2/2  (tool_uses [3, 3])
-  LASK: mean_R1_restore=1.00  fully_restored=2/2  (tool_uses [5, 5])
+  L-SSOT: mean_R1_restore=1.00  fully_restored=2/2  (tool_uses [5, 5])
 
 wrote results/B3_results.json

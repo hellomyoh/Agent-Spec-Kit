@@ -1,4 +1,4 @@
-"""ASK-solo DriftBench — Stage-1 M-only pilot driver (compact `miniquery` task).
+"""throughline-solo DriftBench — Stage-1 M-only pilot driver (compact `miniquery` task).
 
 Orchestrator model (same as benchmark-realapp): the ORCHESTRATOR (Claude) calls a
 fresh dev-agent per session; this script does the deterministic plumbing:
@@ -12,8 +12,8 @@ fresh dev-agent per session; this script does the deterministic plumbing:
 Groups (review §6.2 / §6.2.1):
   B-code      : fresh agent, current code + ticket ONLY (no memory).  [floor / B-code pre-check]
   B-limited   : last N=2 sessions' NOTES, each capped to K_B chars (lossy memory).
-  P-notes     : ALL prior NOTES concatenated, capped to K_P chars (~ASK SSOT budget) (record control).
-  ASK-solo    : SSOT docs in work/ssot/, carried + updated every session (structured SSOT).
+  P-notes     : ALL prior NOTES concatenated, capped to K_P chars (~THROUGHLINE SSOT budget) (record control).
+  throughline-solo    : SSOT docs in work/ssot/, carried + updated every session (structured SSOT).
 
 Single manipulated variable = the memory regime. SEED via env SEED (default seed1).
 """
@@ -27,7 +27,7 @@ from tests import run_all, active_in, INVARIANT_CHECKS  # noqa: E402
 SEED = os.environ.get("SEED", "seed1")
 N_LIMITED = 2
 K_B = 600     # B-limited: hard char cap per carried session note (lossy)
-K_P = 2600    # P-notes: total carried-notes char cap (~matched to ASK SSOT size; logged each session)
+K_P = 2600    # P-notes: total carried-notes char cap (~matched to THROUGHLINE SSOT size; logged each session)
 SSOT_DOCS = ["PRODUCT.md", "DECISIONS.md", "DATA_MODEL.md", "PROGRESS.md"]
 MODULE = "miniquery.py"
 NSESSIONS = 7  # s0..s6
@@ -56,8 +56,8 @@ def _copy_code(src, dst):
 
 
 def _ssot_chars(group, n):
-    """total chars of ASK SSOT at the previous snapshot (for P-notes budget matching/logging)."""
-    d = os.path.join(_snap("ASK-solo", n - 1), "ssot") if n > 0 else None
+    """total chars of THROUGHLINE SSOT at the previous snapshot (for P-notes budget matching/logging)."""
+    d = os.path.join(_snap("throughline-solo", n - 1), "ssot") if n > 0 else None
     if not d or not os.path.isdir(d):
         return None
     return sum(len(open(os.path.join(d, f), encoding="utf-8").read())
@@ -76,7 +76,7 @@ def prepare(group, n):
     shutil.copy2(os.path.join(ROOT, "tickets", f"s{n:02d}.md"), os.path.join(work, "TICKET.md"))
 
     memory, budget_note = "", ""
-    if group == "ASK-solo":
+    if group == "throughline-solo":
         ssot = os.path.join(work, "ssot")
         os.makedirs(ssot, exist_ok=True)
         for d in SSOT_DOCS:
@@ -103,7 +103,7 @@ def prepare(group, n):
         full = "\n\n".join(chunks)
         capped = full[-K_P:] if len(full) > K_P else full   # keep most recent within budget
         ask_chars = _ssot_chars(group, n)
-        budget_note = f"[budget] P-notes carried chars={len(capped)} (cap {K_P}); ASK SSOT chars(prev)={ask_chars}"
+        budget_note = f"[budget] P-notes carried chars={len(capped)} (cap {K_P}); THROUGHLINE SSOT chars(prev)={ask_chars}"
         memory = (capped if capped else "(this is the first session)")
         memory += f"\n\n(Maintain a free-form NOTES.md; carried notes are capped to ~{K_P} chars.)"
     # B-code: no memory

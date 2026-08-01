@@ -1,4 +1,4 @@
-# ASK-solo DriftBench — Stage-1 pilot RESULTS v2 (seed1, `miniquery`, value-restoration)
+# throughline-solo DriftBench — Stage-1 pilot RESULTS v2 (seed1, `miniquery`, value-restoration)
 
 Run date: 2026-06-29 · dev-agent: orchestrated Claude sub-agents · Orchestrator: Claude Code
 Scope: **1 task · 4 groups · seed1 · 7 sessions (s0–s6) = 28 dev-agent sessions.**
@@ -14,7 +14,7 @@ memory artifact**. Result at S6:
 
 | Group | memory regime | S6 default set | target 7? |
 |---|---|---|---|
-| **ASK-solo** | structured SSOT (DECISIONS append-only) | **7** | ✅ restored |
+| **throughline-solo** | structured SSOT (DECISIONS append-only) | **7** | ✅ restored |
 | **P-notes** | free notes, ~2600-char cap | **7** | ✅ restored |
 | **B-limited** | last 2 sessions' notes, 600-char cap | **25** | ❌ wrong value |
 | **B-code** | no memory | **10** | ❌ guessed |
@@ -23,7 +23,7 @@ Trajectory (`default_ok` = default page size correct for that session):
 
 ```
             S0  S1  S2  S3  S4  S5  S6
-ASK-solo    --  OK  OK  OK  OK  OK  OK     (6/6 at S6, inv_viol 0)
+throughline-solo    --  OK  OK  OK  OK  OK  OK     (6/6 at S6, inv_viol 0)
 P-notes     --  OK  OK  OK  OK  OK  OK     (6/6 at S6, inv_viol 0)
 B-code      --  OK  OK  OK  OK  OK  XX     (5/6 at S6, inv_viol 1)
 B-limited   --  OK  OK  OK  OK  OK  XX     (5/6 at S6, inv_viol 1)
@@ -39,7 +39,7 @@ B-limited   --  OK  OK  OK  OK  OK  XX     (5/6 at S6, inv_viol 1)
   believe the *pre-S5* value (25) was the original. The true original (7) was 5 sessions back, outside
   the cap. **This is the dangerous failure mode: a silent, confident restoration to the WRONG value.**
 - **P-notes** set `7`, tracing its free-form note lineage "7 → 25 → 40".
-- **ASK-solo** set `7`, tracing the DECISIONS lineage D5(7)→D7(25)→D9(40), then recording D10 (restore).
+- **throughline-solo** set `7`, tracing the DECISIONS lineage D5(7)→D7(25)→D9(40), then recording D10 (restore).
 
 ## Why v2 discriminates where v1 did not
 
@@ -53,13 +53,13 @@ B-limited   --  OK  OK  OK  OK  OK  XX     (5/6 at S6, inv_viol 1)
 ## Interpretation (honest)
 
 1. **Memory of the original decision is necessary** — the two groups without it (B-code, B-limited)
-   failed; the two with it (P-notes, ASK-solo) succeeded. The benchmark now measures the intended thing.
+   failed; the two with it (P-notes, throughline-solo) succeeded. The benchmark now measures the intended thing.
 2. **Lossy memory is not just weaker — it can be actively misleading.** B-limited didn't fail to answer;
    it restored a *plausible wrong value* (25) with confidence. A bounded window that drops the original
    produces silent drift, which is harder to catch than an admitted "I don't know" (B-code).
-3. **Structure (ASK-solo) vs disciplined free notes (P-notes) did NOT separate here** — both retained the
+3. **Structure (throughline-solo) vs disciplined free notes (P-notes) did NOT separate here** — both retained the
    lineage and restored 7. This mirrors the prior B3 finding (memory effect clear; structure-vs-notes not
-   separated at small scale). **This pilot demonstrates the memory-retention effect, not yet the ASK
+   separated at small scale). **This pilot demonstrates the memory-retention effect, not yet the THROUGHLINE
    structural effect.**
 
 ## Go / no-go verdict (review §6.6)
@@ -67,7 +67,7 @@ B-limited   --  OK  OK  OK  OK  OK  XX     (5/6 at S6, inv_viol 1)
 **GO** (the task discriminates): B-code/B-limited fail the late invariant while memory-bearing groups
 pass — no ceiling, no floor. The harness + task are ready to scale on the **memory dimension**.
 
-To additionally isolate the **structural** advantage of ASK-solo over P-notes (the actual ASK claim),
+To additionally isolate the **structural** advantage of throughline-solo over P-notes (the actual THROUGHLINE claim),
 the next iteration must create conditions where *free notes lose the decision but structured SSOT keeps
 it* — e.g., many competing decisions saturating P-notes' capped budget, or a longer horizon where
 free-form notes get re-summarized lossily while an append-only DECISIONS doc does not. As designed, at
@@ -80,7 +80,7 @@ this scale a disciplined note-taker matches SSOT.
 - The decisive metric is a single value-restoration event; a fuller run would include several such
   events plus cross-cutting invariants.
 - P-notes retained the original partly because the agent kept a compact lineage; a noisier or longer
-  task could push it out of the cap — that is exactly the ASK-vs-P-notes test deferred above.
+  task could push it out of the cap — that is exactly the THROUGHLINE-vs-P-notes test deferred above.
 
 ## Harness validity
 

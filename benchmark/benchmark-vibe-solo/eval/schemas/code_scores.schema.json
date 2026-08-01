@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "code_scores row (one per mode/level/seed/session) — written by driver.py score (automated)",
+  "type": "object",
+  "required": ["mode", "level", "seed", "session", "chain_dead"],
+  "properties": {
+    "mode": {"enum": ["baseline-general", "throughline-solo"]},
+    "level": {"enum": ["beginner", "intermediate", "advanced"]},
+    "seed": {"type": "string"},
+    "session": {"type": "integer", "minimum": 0},
+    "chain_dead": {"type": "boolean", "description": "true if no catalog.py / unrunnable"},
+    "import_error": {"type": ["string", "null"], "description": "exception TYPE name only (no oracle leak)"},
+    "n_active": {"type": "integer"},
+    "n_active_pass": {"type": "integer"},
+    "functional": {"type": "number", "minimum": 0, "maximum": 1, "description": "active-check pass rate"},
+    "invariant_violations": {"type": "integer", "minimum": 0, "description": "failing hidden-invariant checks"},
+    "checks": {"type": "object", "additionalProperties": {"type": "boolean"}},
+    "public_qa": {"type": "object", "description": "safe-to-surface QA: failing check NAMES only",
+      "properties": {"import_error": {"type": "boolean"}, "failing": {"type": "array", "items": {"type": "string"}}}}
+  }
+}
