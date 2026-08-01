@@ -8,7 +8,7 @@ THROUGHLINE Team 프롬프트가 명세대로 구동되는지 1회 확인합니�
 ## 0. 환경 준비 (2 identity + 레지스트리)
 
 ```bash
-mkdir -p /tmp/ask-team && cd /tmp/ask-team && git init -q
+mkdir -p /tmp/throughline-team && cd /tmp/throughline-team && git init -q
 git config user.email alice@example.com && git config user.name alice
 cp -r "<REPO>/ko/THROUGHLINE-TEAM" ./THROUGHLINE
 cp "<REPO>/tests/conformance/seeds/REQUIREMENTS.md" THROUGHLINE/SOURCES/REQUIREMENTS.md
@@ -36,7 +36,7 @@ joined: 2026-06-21
 ---
 EOF
 git add -A && git commit -qm "chore: seed THROUGHLINE Team kit + team registry + requirements"
-git rev-parse HEAD > /tmp/ask-team-base
+git rev-parse HEAD > /tmp/throughline-team-base
 ```
 
 > bob이 작업하는 커밋은 `git -c user.email=bob@example.com -c user.name=bob commit ...` 로 작성자만 bob으로 둡니다(별도 머신 불필요).
@@ -49,7 +49,7 @@ git rev-parse HEAD > /tmp/ask-team-base
 THROUGHLINE Team `KICKOFF.md`로 팀 초기화를 수행하게 합니다(초기 workitem을 `touches` 포함해 분해).
 
 ```bash
-cd /tmp/ask-team
+cd /tmp/throughline-team
 # C1 팀 구조 디렉토리
 for d in workitems conflicts team sessions history assumptions notes SOURCES; do
   test -d "THROUGHLINE/$d" && echo "C1 ok $d" || echo "C1 FAIL $d"
@@ -91,7 +91,7 @@ grep -rl "$(git config user.email)" THROUGHLINE/team/ && echo "C5 ok" || echo "C
 | **WI-redirect-cache** | modules: [redirect] | → **6c 진행 기대** |
 
 ```bash
-cd /tmp/ask-team
+cd /tmp/throughline-team
 # 6a contracts 겹침 → STOP: WI-admin-revoke claim 시도가 STOP 되어야 함
 #   객관 증거: 전역 계약(ARCHITECTURE.md)이 두 작업으로 동시 편집되지 않음
 git log --all --oneline -- THROUGHLINE/ARCHITECTURE.md
@@ -114,7 +114,7 @@ git branch --all | grep -E 'feat/.*redirect' && echo "6c ok" || echo "6c FAIL"
 bob이 비겹침 workitem 하나(예: WI-redirect-cache)를 `feat/...` 브랜치에서 구현(작성자 bob), PR. 이후 alice가 `INTEGRATE.md`로 통합.
 
 ```bash
-cd /tmp/ask-team
+cd /tmp/throughline-team
 BR=$(git branch --all | grep -m1 -E 'feat/.*redirect' | tr -d ' *')
 # C7 owner == author: 구현(feat) 커밋 작성자가 owner(bob)이고 team/에 등록돼 있는가.
 #   주의: merge/베이스 커밋이 섞이지 않도록 --no-merges + feat 커밋만 추린다
@@ -145,7 +145,7 @@ echo "ARCHITECTURE 작성자:"; git log --format='%ae' -- THROUGHLINE/ARCHITECTU
 ## 4. single-writer 위반 주입 → AUDIT
 
 ```bash
-cd /tmp/ask-team
+cd /tmp/throughline-team
 # 주입: contributor(bob)가 전역 계약을 직접 수정
 printf '\n<!-- pilot: contributor 직접 수정 (위반) -->\n' >> THROUGHLINE/ARCHITECTURE.md
 git -c user.email=bob@example.com -c user.name=bob commit -aqm "test: contributor edits ARCHITECTURE (pilot violation)"
@@ -154,7 +154,7 @@ git -c user.email=bob@example.com -c user.name=bob commit -aqm "test: contributo
 THROUGHLINE Team `AUDIT.md`를 실행하게 합니다. 이후:
 
 ```bash
-cd /tmp/ask-team
+cd /tmp/throughline-team
 # C13 AUDIT가 audit 이력 이벤트 기록
 ls THROUGHLINE/history/**/HIST-*audit*.md >/dev/null 2>&1 \
   || grep -rlE 'audit' THROUGHLINE/history/ >/dev/null 2>&1 && echo "C13 ok" || echo "C13 FAIL"
@@ -180,5 +180,5 @@ ls THROUGHLINE/history/**/HIST-*audit*.md >/dev/null 2>&1 \
 모든 MUST PASS → **team 적합**. 특히 **C6a(STOP)·C7(owner==author)·C9(INDEX 미커밋)·C11(single-writer)** 이 THROUGHLINE Team의 핵심 차별 메커니즘이므로 우선 확인합니다.
 
 ```bash
-rm -rf /tmp/ask-team   # 정리
+rm -rf /tmp/throughline-team   # 정리
 ```
