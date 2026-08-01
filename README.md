@@ -68,6 +68,16 @@ This document is a **framework user manual** that explains how to use the `THROU
 
 ---
 
+## Working without the prompts
+
+You do not have to paste a prompt to get Spec-Driven Development. Initialization writes the standing contract into your project's root `AGENTS.md` (with `CLAUDE.md` as a safety net), and your agent loads it **on every run** — so ordinary back-and-forth conversation with Claude Code · Codex · Cursor still reads the SSOT (`ARCHITECTURE.md` · `PLAN.md` · `PROGRESS.md`), still checks a new request against the recorded decisions, and still records what changed. [Section 5.1.1](#511-making-changes-by-talking-to-the-agent-live-chat) covers how a chat instruction routes by impact.
+
+That conversational mode is in fact what the [benchmarks](#benchmarks) measured: each session the dev agent received a standing instruction plus a plain user request — **no THROUGHLINE prompt was pasted**.
+
+Pasting a prompt buys a *guarantee* rather than a default. Two things lean on the agent's judgment when you only talk to it, and are worth an explicit prompt when they matter: the **persona review before a non-trivial spec** ([Section 5.3](#53-feature-addition-reviewdesign-prompt-choose-the-review-intensity)) and the **end-of-session handoff record** in `PROGRESS.md` ([Section 7](#7-prompt-to-continue-work-the-next-day-or-after-a-session-is-interrupted)). [`AUDIT.md`](#91-periodic-document-audit-auditmd) is the periodic net for whatever slipped through.
+
+---
+
 ## Team development? → THROUGHLINE Team
 
 This guide (README) is the **Solo edition** — one developer, sequential. For **multiple developers and AI agents building the same codebase concurrently**, use the Team edition: **[README.team.md](README.team.md)** ([한국어](README.team.ko.md)).
