@@ -12,7 +12,7 @@ time — so Git, semantic, and intent conflicts surface early instead of at merg
 
 🌐 **English** · [한국어](README.team.ko.md)
 
-[Quick start](#quick-start) · [Solo edition](README.md) · [Full team guide & prompts](en/THROUGHLINE-TEAM/) · [한국어 키트](ko/THROUGHLINE-TEAM/)
+[Quick start](#quick-start) · [Benchmarks](benchmark/RESULTS_SUMMARY.md) · [Solo edition](README.md) · [Full team guide & prompts](en/THROUGHLINE-TEAM/) · [한국어 키트](ko/THROUGHLINE-TEAM/)
 
 </div>
 
@@ -32,6 +32,8 @@ time — so Git, semantic, and intent conflicts surface early instead of at merg
 | Kit folder | `en/THROUGHLINE/` · `ko/THROUGHLINE/` | `en/THROUGHLINE-TEAM/` · `ko/THROUGHLINE-TEAM/` |
 
 For a single developer, Solo is lighter — use Team only when N people actually develop concurrently.
+
+> **On the numbers:** the [benchmark results](benchmark/RESULTS_SUMMARY.md) measured the **Solo edition**. Team/multi-agent effects are explicitly outside what those pilots establish — the coordination claims on this page are design arguments, not measured ones.
 
 ## Core ideas
 

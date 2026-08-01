@@ -1,99 +1,101 @@
-# THROUGHLINE-QBench — 벤치마크 방법론 (v1.0)
+# THROUGHLINE-QBench — benchmark methodology (v1.0)
 
-> **목적**: spec-driven 개발 방법론(THROUGHLINE)이 baseline 대비 **정량적으로 얼마나 효과적인가**를 인과적으로 타당하게 측정한다.
-> **성격**: 이 문서와 `benchmark/` 하위는 **유지보수자측 평가 도구(evaluation harness)** 다. THROUGHLINE 런타임 키트(`en/`, `ko/`)는 프롬프트 전용(markdown + git)이며, 벤치마크는 그와 분리된 측정 인프라다.
-> **원칙**: 효과의 입증과 "효과 없음"을 동등하게 보고한다. 근거 없는 긍정적 결론을 내리지 않는다.
+🌐 **English** · [한국어](METHODOLOGY.ko.md)
+
+> **Purpose**: to measure, with causal validity, **how much more effective the spec-driven development methodology (THROUGHLINE) is quantitatively** than a baseline.
+> **Nature**: this document and everything under `benchmark/` are a **maintainer-side evaluation harness**. The THROUGHLINE runtime kit (`en/`, `ko/`) is prompts only (markdown + git); the benchmark is measurement infrastructure kept separate from it.
+> **Principle**: proof of an effect and "no effect" are reported with equal weight. No positive conclusion is drawn without evidence.
 
 ---
 
-## 1. 측정의 어려움과 설계 근거
+## 1. Why this is hard to measure, and the rationale for the design
 
-코딩 에이전트의 방법론 효과를 측정할 때 흔히 다음 함정에 빠진다. 본 방법론의 원칙은 각 함정에 대한 통제다.
+Measuring the effect of a methodology on coding agents commonly falls into the following traps. Each principle below is a control for one of them.
 
-- **기능 천장**: 유능한 모델은 잘 정의된 과제의 기능 테스트를 거의 100% 통과해, 기능 지표가 방법론 간 차이를 변별하지 못한다.
-- **귀속 오류**: "방법론 vs 무처치" 2개 그룹 비교는, 향상이 그 방법론의 *구조* 때문인지 단지 *사전 계획·추가 추론·표본 수* 때문인지 구분하지 못한다. 스캐폴드의 외견상 이득은 추론 예산(compute)을 맞추면 줄거나 사라지는 경우가 많다.
-- **길이 교란**: LLM 심사위원과 일부 지표는 더 길고 장황한 산출물을 과대평가한다.
-- **비독립 데이터**: 시드가 인스턴스에 중첩된 데이터를 단순 t-검정하면 거짓 양성이 급증한다.
-- **기록 누수**: 메모리/복원을 측정할 때 에이전트가 이전 버전 코드나 사양 파일에 접근할 수 있으면, 무기억 그룹도 정답을 직접 읽어 변별이 사라진다.
+- **Functional ceiling**: a capable model passes nearly 100% of the functional tests on a well-defined task, so functional metrics cannot discriminate between methodologies.
+- **Attribution error**: a two-arm "methodology vs. nothing" comparison cannot distinguish whether an improvement came from that methodology's *structure* or merely from *planning ahead, extra reasoning, or sample count*. The apparent gain from a scaffold often shrinks or vanishes once the reasoning budget (compute) is matched.
+- **Length confound**: LLM judges and some metrics over-reward longer, more verbose output.
+- **Non-independent data**: running a plain t-test on data where seeds are nested within instances causes false positives to spike.
+- **Record leakage**: when measuring memory/restoration, if the agent can reach earlier-version code or spec files, even the no-memory arm reads the answer directly and the discrimination disappears.
 
-## 2. 설계 원칙 (8)
+## 2. Design principles (8)
 
-| | 원칙 | 통제하는 함정 |
+| | Principle | Trap it controls |
 |---|---|---|
-| P1 | **인과 격리** — 2개 그룹이 아니라 compute/메모리를 맞춘 여러 그룹으로, "구조"를 "사전 계획·표본 수·기억 유무"와 분리 | 귀속 오류 |
-| P2 | **compute 회계** — 토큰·LLM 호출·LLOC 기록, 1차 비교는 정합 또는 파레토로 보고 | 귀속 오류 |
-| P3 | **객관 지표 우선** — 코드 품질 심사위원은 신뢰도가 낮으므로 기능·회귀·복원·침식은 결정적 자동 지표로 측정, 심사위원은 정성 차원 보조 | 심사 편향 |
-| P4 | **천장 회피** — baseline 통과율을 0.3~0.8 밴드로 보정, 강·약 모델 병행, **파일럿으로 변별 분산을 먼저 확인** | 기능 천장 |
-| P5 | **길이 통제** — 심사 루브릭에 분량 보상 금지 + LLOC 정규화/회귀 보정 | 길이 교란 |
-| P6 | **계층 통계** — 혼합효과모형 + cluster bootstrap, 장기 과제는 단계 반복측정 | 비독립 데이터 |
-| P7 | **사전등록·반증** — 1차 지표·비교·실패 조건을 데이터 수집 전에 고정 | 사후 선택 편향 |
-| P8 | **파일시스템 격리** — 메모리/복원 측정 시 에이전트 작업공간에 현재 코드와 해당 그룹의 기억 산출물만 두고, 이전 버전 코드·타 사양 접근을 차단 | 기록 누수 |
+| P1 | **Causal isolation** — several arms matched on compute/memory rather than two, separating "structure" from "planning ahead, sample count, presence of memory" | attribution error |
+| P2 | **Compute accounting** — record tokens, LLM calls, and LLOC; report the primary comparison as matched or Pareto | attribution error |
+| P3 | **Objective metrics first** — code-quality judges are unreliable, so function, regression, restoration, and erosion are measured with deterministic automated metrics; judges are auxiliary, for qualitative dimensions | judging bias |
+| P4 | **Ceiling avoidance** — calibrate the baseline pass rate into the 0.3–0.8 band, run strong and weak models in parallel, and **confirm discriminating variance with a pilot first** | functional ceiling |
+| P5 | **Length control** — forbid rewarding volume in the judging rubric, plus LLOC normalisation / regression adjustment | length confound |
+| P6 | **Hierarchical statistics** — mixed-effects models + cluster bootstrap; repeated measures by step for long-horizon tasks | non-independent data |
+| P7 | **Pre-registration and refutation** — fix the primary metric, comparison, and failure conditions before collecting data | post-hoc selection bias |
+| P8 | **Filesystem isolation** — when measuring memory/restoration, place only the current code and that arm's memory artifacts in the agent's workspace, and block access to earlier-version code and other specs | record leakage |
 
-## 3. 벤치마크 항목 (3)
+## 3. Benchmark items (3)
 
-### B1 — 단발 구현 (Single-shot, 5개 그룹)
-- **질문**: 같은 요구·모델·compute에서 spec-first 구조가 통제 그룹보다 더 정확하고 견고한 코드를 만드는가?
-- **과제**: 공개 표준 스펙 기반 소형 라이브러리(파서·비교기 등), 고정 공개 API, 은닉 테스트(예시 + 속성 + 레퍼런스 대조).
-- **5개 그룹**: A0 직접 구현 / A1 사전 사고(무구조) / A2 best-of-N / **THROUGHLINE**(spec-first) / (THROUGHLINE⁻ — 사양 작성 후 폐기, 후속).
-- **1차 비교**: `THROUGHLINE − max(A0, A1, A2)`. 강·약 모델 2조건.
+### B1 — single-shot implementation (5 arms)
+- **Question**: given the same requirements, model, and compute, does a spec-first structure produce more correct and robust code than the control arms?
+- **Task**: a small library based on a public standard spec (parser, comparator, etc.), a fixed public API, hidden tests (examples + properties + reference comparison).
+- **5 arms**: A0 implement directly / A1 think first (unstructured) / A2 best-of-N / **THROUGHLINE** (spec-first) / (THROUGHLINE⁻ — write the spec then discard it; follow-up).
+- **Primary comparison**: `THROUGHLINE − max(A0, A1, A2)`. Two conditions: strong and weak model.
 
-### B2 — 누적 기능 추가 (Cumulative-Additive, 3개 그룹)
-- **질문**: 여러 세션에 걸쳐 기능을 누적 추가하는 개발에서, THROUGHLINE의 단일 정보원(SSOT)이 회귀와 구조 침식을 줄이는가?
-- **흐름**: 단계마다 기능을 추가. 단계 N의 은닉 테스트 = 신규 기능(F2P) + 이전 단계 누적(P2P).
-- **3개 그룹**: L0 무기억 / L1 비구조 노트 / **L-SSOT** 구조적 SSOT.
-- **주의**: 매 단계 작동 코드가 인계되고 규모가 작으면 기억이 불필요해 천장이 생긴다. 변별하려면 충분히 큰 코드베이스가 필요하다.
+### B2 — cumulative feature addition (3 arms)
+- **Question**: in development that adds features cumulatively across multiple sessions, does THROUGHLINE's single source of truth (SSOT) reduce regression and structural erosion?
+- **Flow**: add a feature at each step. Hidden tests at step N = the new feature (F2P) + everything accumulated from earlier steps (P2P).
+- **3 arms**: L0 no memory / L1 unstructured notes / **L-SSOT** structured SSOT.
+- **Caution**: if working code is handed over at every step and the scale is small, memory is unnecessary and a ceiling appears. Discriminating requires a sufficiently large codebase.
 
-### B3 — 원점 복귀 사이클 (Revert-to-Origin, 3개 그룹)
-- **질문**: 여러 차례 수정한 뒤 **1차 수정안(R1)으로 되돌릴 때**, 과거 결정을 보존한 기억(특히 구조적 SSOT/변경 이력)이 충실한 복원을 가능케 하는가?
-- **흐름**: 개발(Base) → **R1**(정책 수정) → **R2**(정책 재수정) → **Revert(R1로 복구)** → R1 복원 검증.
-- **핵심 설계**: 각 수정은 정책을 *덮어쓰는* 행동 변경이다. 되돌리는 시점의 현재 코드는 R2 상태이므로 **R1의 동작이 코드에 남아 있지 않다.** 따라서 복원하려면 과거 결정의 *기억*이 필요하다. (B2가 만들지 못한 "기억이 필수인" 조건을 만든다.)
-- **3개 그룹**: L0 무기억 / L1 자유 노트 / **L-SSOT**(사양 + 변경 이력(append-only) + 진행 기록).
-- **필수 통제**:
-  1. **파일시스템 격리(P8)**: 되돌리기 작업공간에 현재 R2 코드와 해당 그룹의 기억 파일만 둔다. 이전 단계 코드·변경 요청서(특히 R1 사양)에 접근 불가.
-  2. **R1은 비기본(non-default) 정책**이어야 한다. 모델의 자연스러운 추측과 달라야 무기억 그룹이 우연히 맞히지 않는다.
-  3. 되돌리기 요청은 R2만 명시하고 **R1 내용은 서술하지 않는다**("기록을 참고하라").
-- **1차 비교**: 복원 충실도(R1 정책 통과율)에서 `{L1, L-SSOT} − L0`(기억 효과)와 `L-SSOT − L1`(구조 효과).
+### B3 — revert-to-origin cycle (3 arms)
+- **Question**: after modifying several times, when **reverting to the first revision (R1)**, does memory that preserved the past decision (particularly a structured SSOT / change history) enable faithful restoration?
+- **Flow**: develop (Base) → **R1** (policy change) → **R2** (policy changed again) → **Revert (restore R1)** → verify R1 restoration.
+- **Key design**: each modification is a behavioural change that *overwrites* the policy. The current code at the moment of reverting is in the R2 state, so **the R1 behaviour is no longer present in the code.** Restoring it therefore requires *memory* of the past decision. (This creates the "memory is mandatory" condition that B2 failed to create.)
+- **3 arms**: L0 no memory / L1 free notes / **L-SSOT** (spec + append-only change history + progress record).
+- **Mandatory controls**:
+  1. **Filesystem isolation (P8)**: put only the current R2 code and that arm's memory files in the revert workspace. Earlier-step code and change requests (especially the R1 spec) must be unreachable.
+  2. **R1 must be a non-default policy.** It has to differ from the model's natural guess, otherwise the no-memory arm hits it by chance.
+  3. The revert request states only R2 and **does not describe the content of R1** ("consult your records").
+- **Primary comparison**: on restoration fidelity (R1 policy pass rate), `{L1, L-SSOT} − L0` (memory effect) and `L-SSOT − L1` (structure effect).
 
-### B4–B6 — 중규모+ 확장 (별도 설계)
-소규모(B1·B2)에서 THROUGHLINE이 효과 없음은 확정된 전제이며, 제작자 권장은 **중급 이상** 프로젝트다. 다모듈 진화(B4)·결정 충돌 함정(B5)·비용-규모 임계점 곡선(B6)으로 그 규모에서 THROUGHLINE 효과를 *입증/반증*하도록 설계한다. 상세: [MIDSCALE_DESIGN.md](MIDSCALE_DESIGN.md).
+### B4–B6 — mid-scale and beyond (separate design)
+That THROUGHLINE has no effect at small scale (B1, B2) is a settled premise, and the author's recommendation is for **intermediate and larger** projects. Multi-module evolution (B4), decision-conflict traps (B5), and the cost-vs-scale threshold curve (B6) are designed to *prove or refute* a THROUGHLINE effect at that scale. Detail: [MIDSCALE_DESIGN.md](MIDSCALE_DESIGN.md) *(Korean)*.
 
-> **B7 (권장 — 현실 재현)**: B4의 합성 "교차절단 계약"은 좋은 설계(제네릭 디스패치)로 자명해져 변별에 실패했다(M-pilot). 이를 **다계층(DB·캐시·백엔드·프론트) 통합 정합성**이 규모와 함께 자연히 무너지는 실세계 앱으로 대체한다. THROUGHLINE을 위해 규칙을 발명하지 않고, *앱의 실제 E2E 동작*으로만 채점한다. 상세: [REALWORLD_DESIGN.md](REALWORLD_DESIGN.md).
+> **B7 (recommended — reproducing reality)**: B4's synthetic "cross-cutting contract" became self-evident under a good design (generic dispatch) and failed to discriminate (M-pilot). Replace it with a real-world app where **multi-layer (DB · cache · backend · frontend) integration consistency** naturally breaks down as scale grows. Do not invent rules for THROUGHLINE's benefit; score only on the *app's actual end-to-end behaviour*. Detail: [REALWORLD_DESIGN.md](REALWORLD_DESIGN.md) *(Korean)*.
 
-## 4. 지표 (객관 지표 우선)
+## 4. Metrics (objective metrics first)
 
-| 항목 | 지표 | 정의 |
+| Area | Metric | Definition |
 |---|---|---|
-| 기능 | Fix Rate | 신규 기능(F2P) 통과율, 단 이전 누적(P2P)을 모두 통과한 경우에만; 아니면 0 |
-| 회귀 | 회귀율 / 무회귀율 | 이전 통과 테스트 중 깨진 비율 / 회귀 0인 비율 |
-| 복원(B3) | 복원 충실도 | 되돌린 뒤 R1 정책 통과율 + R2 잔존(R2 동작이 남아 있으면 미복원) |
-| 구조 | 침식·최대 복잡도·LLOC 증가 | 고복잡도 함수에 집중된 복잡도 질량 비율(AST) |
-| 변경 | churn · API 파손 | 단계 간 추가+삭제 줄 수 / 이전 공개 함수 시그니처 변경 수(AST) |
-| 비용 | 토큰 · 호출 수 · 시간 | 에이전트 텔레메트리 |
-| 정성(옵션) | 설계 품질 | 서로 다른 계열의 심사위원 3인, 위치 교차, 길이 통제, 일치도(κ) 보고; κ<0.40이면 비공개 |
+| Function | Fix Rate | pass rate of the new feature (F2P), but only when everything accumulated earlier (P2P) also passes; otherwise 0 |
+| Regression | regression rate / regression-free rate | share of previously passing tests that broke / share of runs with zero regressions |
+| Restoration (B3) | restoration fidelity | R1 policy pass rate after reverting + R2 residue (if R2 behaviour remains, it is not restored) |
+| Structure | erosion · max complexity · LLOC growth | share of complexity mass concentrated in high-complexity functions (AST) |
+| Change | churn · API breakage | lines added + deleted between steps / number of changed signatures among previously public functions (AST) |
+| Cost | tokens · call count · time | agent telemetry |
+| Qualitative (optional) | design quality | 3 judges from different families, position counterbalancing, length control, agreement (κ) reported; withheld if κ < 0.40 |
 
-## 5. 통계
-혼합효과모형 `metric ~ arm (+ step) + (1 | instance)`, cluster bootstrap, 표준화 효과크기. 장기 과제는 단계에 따른 **궤적(기울기)** 을 그룹 간 비교한다. 인스턴스(클러스터) 수가 적으면 효과크기와 방향만 보고하고 통계적 단정을 피한다(파일럿으로 명시).
+## 5. Statistics
+Mixed-effects model `metric ~ arm (+ step) + (1 | instance)`, cluster bootstrap, standardised effect sizes. For long-horizon tasks, compare the **trajectory (slope)** across steps between arms. When the number of instances (clusters) is small, report only effect size and direction and avoid statistical assertions (explicitly labelled a pilot).
 
-## 6. 사전등록·해석 기준
-- **효과 입증**: 1차 비교가 통제 그룹 대비 유의하고, compute/길이 통제 후에도 유지되며, 단일 과제에 집중되지 않고, (정성 사용 시) 심사 일치도 κ≥0.60.
-- **효과 미주장**: 통제 그룹(A1/L1)이 THROUGHLINE과 통계적으로 같음(귀속 실패), 통제 후 차이 소멸, 단일 과제 집중, 심사 신뢰도 미달, 천장으로 변별 불가 중 하나라도 해당.
+## 6. Pre-registration and interpretation criteria
+- **Effect proven**: the primary comparison is significant against the control arms, holds after compute and length controls, is not concentrated in a single task, and (if qualitative judging is used) judge agreement κ ≥ 0.60.
+- **No effect claimed**: any one of — a control arm (A1/L1) is statistically equal to THROUGHLINE (attribution failure), the difference disappears after controls, the result is concentrated in a single task, judge reliability falls short, or a ceiling prevents discrimination.
 
-## 7. 실행 프로토콜
-1. 레퍼런스가 은닉 테스트를 100% 통과하는지, 그리고 의도적으로 틀린 해법이 테스트에 걸리는지(음성 대조) 확인한다.
-2. **파일럿으로 변별 분산을 확인한다.** 1차 지표의 분산이 0(천장)이면 난도·격리를 조정한 뒤 본실행한다.
-3. 본실행: 그룹 × 인스턴스 × 시드 (× 단계). 인계물은 디스크 파일로 전달하며, **B3는 격리된 작업공간**에서 수행한다.
-4. 객관 지표를 자동 산출하고 혼합효과/부트스트랩으로 분석한 뒤 사전등록 기준으로 판정한다.
-5. 모든 에이전트 호출(과제·그룹·시드·단계·토큰·호출 수)과 산출물을 보존해 재현성을 확보한다.
+## 7. Execution protocol
+1. Confirm that the reference passes 100% of the hidden tests, and that a deliberately wrong solution is caught by them (negative control).
+2. **Confirm discriminating variance with a pilot.** If the variance of the primary metric is 0 (ceiling), adjust difficulty and isolation before the main run.
+3. Main run: arm × instance × seed (× step). Handoffs are passed as files on disk, and **B3 is performed in an isolated workspace**.
+4. Compute the objective metrics automatically, analyse with mixed effects / bootstrap, and judge against the pre-registered criteria.
+5. Preserve every agent call (task, arm, seed, step, tokens, call count) and artifact to secure reproducibility.
 
-## 8. 폴더 구조
+## 8. Folder structure
 ```
 benchmark/
-  METHODOLOGY.md     # (이 문서)
-  FINAL_REPORT.md    # B1·B2·B3 통합 결과와 결론
+  METHODOLOGY.md     # (this document)
+  FINAL_REPORT.md    # consolidated B1 · B2 · B3 results and conclusions
   harness/
-    tracks/rank/     # B3 검증 트랙(비기본 R1 정책): 레퍼런스·테스트·변경 요청서
-    tracks/clean_tags/  # 참고 트랙(R1이 기본 정책이라 B3 변별에는 부적합)
-    score.py         # 누적/복원 채점기
-    README.md        # 실행법
-  results/           # B3 실행 산출물과 점수
+    tracks/rank/     # B3 verification track (non-default R1 policy): reference, tests, change requests
+    tracks/clean_tags/  # reference track (R1 is the default policy, so unfit for B3 discrimination)
+    score.py         # cumulative / restoration scorer
+    README.md        # how to run
+  results/           # B3 run artifacts and scores
 ```

@@ -12,7 +12,7 @@
 
 🌐 [English](README.team.md) · **한국어**
 
-[빠른 시작](#빠른-시작) · [Solo 에디션](README.ko.md) · [팀 전체 가이드·프롬프트](ko/THROUGHLINE-TEAM/) · [English kit](en/THROUGHLINE-TEAM/)
+[빠른 시작](#빠른-시작) · [벤치마크](benchmark/RESULTS_SUMMARY.ko.md) · [Solo 에디션](README.ko.md) · [팀 전체 가이드·프롬프트](ko/THROUGHLINE-TEAM/) · [English kit](en/THROUGHLINE-TEAM/)
 
 </div>
 
@@ -32,6 +32,8 @@
 | 키트 폴더 | `ko/THROUGHLINE/` · `en/THROUGHLINE/` | `ko/THROUGHLINE-TEAM/` · `en/THROUGHLINE-TEAM/` |
 
 1인 개발이면 Solo가 더 가볍습니다 — 실제로 N명이 동시에 개발할 때만 Team을 쓰세요.
+
+> **수치에 관하여:** [벤치마크 결과](benchmark/RESULTS_SUMMARY.ko.md)가 측정한 것은 **Solo 에디션**입니다. Team/멀티에이전트 효과는 그 파일럿이 보여주는 범위 밖이라고 명시돼 있습니다 — 이 문서의 조율 관련 주장은 측정된 것이 아니라 설계 논거입니다.
 
 ## 핵심 아이디어
 
