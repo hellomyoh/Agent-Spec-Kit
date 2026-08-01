@@ -28,7 +28,7 @@
 7. `SOURCES/REQUIREMENTS.md`가 있으면 미래 목표/미구현 요구로 사용. as-built와 충돌하면 질문. 채택 완료 시 `SOURCES/REQUIREMENTS.meta.md`(`id: REQUIREMENTS` — SCHEMAS §source)에 등록하고 `applied`로 동결.
 8. `PLAN.md`(안정 로드맵)에 현재 상태를 done/in-progress/remaining으로 반영. `PROGRESS.md` 호환 스텁 작성([KICKOFF.md](KICKOFF.md) 5절).
 9. `AGENTS.md`(팀 규약 — KICKOFF 4절)·`CLAUDE.md` 작성/merge. (고정 INDEX 파일·추가 런타임 없음.)
-10. **채택 산출물 commit.** maintainer가 공유 브랜치에 push할 수 있으면(CONVENTIONS §4.5) 공유 브랜치에서 직접 채택을 수행하고, 아니면 작업 브랜치(`docs/agentspeckit-adopt`)에서 수행한 뒤 **기여자들이 claim을 시작하기 전에** PR로 merge합니다(claim은 조율층이 공유 브랜치에 있어야 가능). 문서만 포함 — 코드 변경 없음; 중간 지점 commit 허용. 비어 있는 디렉토리에는 `.gitkeep`을 넣습니다.
+10. **채택 산출물 commit.** maintainer가 공유 브랜치에 push할 수 있으면(CONVENTIONS §4.5) 공유 브랜치에서 직접 채택을 수행하고, 아니면 작업 브랜치(`docs/throughline-adopt`)에서 수행한 뒤 **기여자들이 claim을 시작하기 전에** PR로 merge합니다(claim은 조율층이 공유 브랜치에 있어야 가능). 문서만 포함 — 코드 변경 없음; 중간 지점 commit 허용. 비어 있는 디렉토리에는 `.gitkeep`을 넣습니다.
 11. 채택 완료 보고(아래).
 
 ---

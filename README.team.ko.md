@@ -166,7 +166,7 @@ THROUGHLINE/ADOPT.md 를 읽고, 그 지시에 따라 이미 개발 중인 이 �
 10. PLAN.md 에 현재 상태를 done/in-progress/remaining 으로 반영하고, PROGRESS.md 호환 스텁을 작성하세요.
 11. AGENTS.md(팀 규약 — KICKOFF 4절 항목)·CLAUDE.md 를 작성/병합하세요. (고정 INDEX 파일·추가 런타임 없음.)
 12. 채택 산출물을 commit하세요(문서 전용 — 코드 변경 없음). maintainer가 공유 브랜치에 push할 수 있으면 공유 브랜치에서 직접 수행하고,
-    아니면 docs/agentspeckit-adopt 브랜치에서 수행한 뒤 기여자가 claim을 시작하기 전에 PR로 merge하세요.
+    아니면 docs/throughline-adopt 브랜치에서 수행한 뒤 기여자가 claim을 시작하기 전에 PR로 merge하세요.
     빈 디렉토리에는 .gitkeep 을 넣으세요.
 13. 채택이 끝나면 아래 형식으로 보고하세요.
 # 팀 채택 결과

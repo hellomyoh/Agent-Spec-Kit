@@ -53,7 +53,7 @@ At session start the agent confirms identity **on its own** (the user enters no 
 - commit trailers:
   ```text
   Session-Id: <YYYY-MM-DDThhmm>-<handle>-<WI-id>
-  Co-Authored-By: Claude Code <runtime@ask-team>
+  Co-Authored-By: Claude Code <runtime@throughline-team>
   ```
 
 ### 2.5 Validation points

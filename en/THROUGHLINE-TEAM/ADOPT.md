@@ -28,7 +28,7 @@ The artifact structure is identical to [KICKOFF.md](KICKOFF.md), so once adoptio
 7. If `SOURCES/REQUIREMENTS.md` exists, use it as future goals/unimplemented requirements. If it conflicts with as-built, ask. On adoption completion, register it in `SOURCES/REQUIREMENTS.meta.md` (`id: REQUIREMENTS` — SCHEMAS §source) and freeze as `applied`.
 8. Reflect the current state in `PLAN.md` (stable roadmap) as done/in-progress/remaining. Write the `PROGRESS.md` compat stub ([KICKOFF.md](KICKOFF.md) §5).
 9. Write/merge `AGENTS.md` (team conventions — KICKOFF §4)·`CLAUDE.md`. (No fixed INDEX files·additional runtime.)
-10. **Commit the adoption artifacts.** If the maintainer can push to the shared branch (CONVENTIONS §4.5), adopt directly on it; otherwise use a work branch (`docs/agentspeckit-adopt`) and merge via PR **before contributors start claiming** (claims require the coordination layer to be on the shared branch). Documents only — no code changes; interim milestone commits allowed. Add `.gitkeep` to directories that start empty.
+10. **Commit the adoption artifacts.** If the maintainer can push to the shared branch (CONVENTIONS §4.5), adopt directly on it; otherwise use a work branch (`docs/throughline-adopt`) and merge via PR **before contributors start claiming** (claims require the coordination layer to be on the shared branch). Documents only — no code changes; interim milestone commits allowed. Add `.gitkeep` to directories that start empty.
 11. Report adoption completion (below).
 
 ---
