@@ -1,4 +1,4 @@
-# ASK-solo DriftBench — Stage-1 pilot (compact `miniquery` task)
+# throughline-solo DriftBench — Stage-1 pilot (compact `miniquery` task)
 
 > **STATUS / VERSION.** The task was iterated:
 > - **v1** (restoration of a *policy*) hit a ceiling — the decision leaked into code docstrings, so even the
@@ -10,12 +10,12 @@
 > The detailed table just below describes the original **v1** design (kept for context). The live harness
 > files (`tickets/`, `eval/tests.py`, `provided/contract.py`, `driver.py`) and `runs/` are **v2**.
 
-This folder runs the **ASK-solo** benchmark described in
-[ASK_PROMPT_AND_BENCHMARK_REVIEW.md](ASK_PROMPT_AND_BENCHMARK_REVIEW.md) §6 (Solo-only revision), with the 4 review
+This folder runs the **throughline-solo** benchmark described in
+[PROMPT_AND_BENCHMARK_REVIEW.md](PROMPT_AND_BENCHMARK_REVIEW.md) §6 (Solo-only revision), with the 4 review
 recommendations baked in. It is a **compact, runnable pilot** — not the full M-scale OpsBoard
 program — built to be executable in one sitting while still answering the core question:
 
-> Does a **self-maintained structured SSOT** (`ASK-solo`) preserve an early decision that a
+> Does a **self-maintained structured SSOT** (`throughline-solo`) preserve an early decision that a
 > **memoryless** agent (`B-code`) loses, and beat **lossy memory** (`B-limited`) / **free notes**
 > (`P-notes`) on drift/regression?
 
@@ -42,10 +42,10 @@ This is what separates the groups.
 
 - **B-code** — fresh agent, current code + ticket only (no memory). *Floor / B-code pre-check (review rec 1).*
 - **B-limited** — last N=2 sessions' `NOTES.md`, each capped to `K_B=600` chars (lossy).
-- **P-notes** — all prior `NOTES.md` concatenated, capped to `K_P=2600` chars (~ASK SSOT budget; logged each session) (record-effect control).
-- **ASK-solo** — 4 SSOT docs (PRODUCT/DECISIONS/DATA_MODEL/PROGRESS) carried + updated every session.
+- **P-notes** — all prior `NOTES.md` concatenated, capped to `K_P=2600` chars (~THROUGHLINE SSOT budget; logged each session) (record-effect control).
+- **throughline-solo** — 4 SSOT docs (PRODUCT/DECISIONS/DATA_MODEL/PROGRESS) carried + updated every session.
 
-Token-budget parity between P-notes and ASK-solo is logged by `driver.py prepare` (review rec 2).
+Token-budget parity between P-notes and throughline-solo is logged by `driver.py prepare` (review rec 2).
 
 ## Metrics
 
@@ -57,7 +57,7 @@ Token-budget parity between P-notes and ASK-solo is logged by `driver.py prepare
 
 For each (group, session): `python driver.py prepare <group> <s>` → a **fresh dev-agent** edits
 only `runs/<group>/<seed>/work/` (reads TICKET.md + carried code + `_MEMORY_FOR_PROMPT.txt`,
-and for ASK the `ssot/`) → `python driver.py score <group> <s>` snapshots + runs the hidden
+and for THROUGHLINE the `ssot/`) → `python driver.py score <group> <s>` snapshots + runs the hidden
 battery. Agents never see `eval/` (oracle isolation). Then `python driver.py aggregate`.
 
 ## Files

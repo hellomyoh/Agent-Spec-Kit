@@ -1,12 +1,18 @@
 <div align="center">
 
-# ASK-Team — 팀 개발용 Agent-Spec-Kit
+# THROUGHLINE — Team 에디션
+
+**여러 개발자와 AI 에이전트가 한 코드베이스를 공유할 때의 명세 주도 개발**
+
+모든 워크아이템이 자기가 건드리는 범위를 claim 시점에 공유 브랜치로 게시합니다 —
+그래서 Git 충돌·의미 충돌·의도 충돌이 머지 때가 아니라 조기에 드러납니다.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-black.svg)](LICENSE)
+[![Claude Code · Codex · Cursor](https://img.shields.io/badge/agents-Claude%20Code%20%C2%B7%20Codex%20%C2%B7%20Cursor-blue)](#빠른-시작)
 
 🌐 [English](README.team.md) · **한국어**
 
-**[Agent-Spec-Kit](README.ko.md)의 Team 버전.** 여러 개발자와 AI 에이전트가 *같은* 코드베이스를 **동시에** 개발할 때, ASK-Team은 **markdown + git만으로** 단일 `PROGRESS.md` / `HISTORY.md`가 가려버리는 Git 충돌·의미(semantic) 충돌·의도(intent) 충돌을 드러냅니다.
-
-Solo 가이드: [README.ko.md](README.ko.md) · 팀 전체 가이드·프롬프트: [ko/ASK-TEAM/](ko/ASK-TEAM/) · [English kit](en/ASK-TEAM/)
+[빠른 시작](#빠른-시작) · [Solo 에디션](README.ko.md) · [팀 전체 가이드·프롬프트](ko/THROUGHLINE-TEAM/) · [English kit](en/THROUGHLINE-TEAM/)
 
 </div>
 
@@ -14,7 +20,7 @@ Solo 가이드: [README.ko.md](README.ko.md) · 팀 전체 가이드·프롬프�
 
 ## Solo와 Team 중 무엇을?
 
-| | **Solo (ASK)** — [README.ko.md](README.ko.md) | **Team (ASK-Team)** — 이 문서 |
+| | **Solo (THROUGHLINE)** — [README.ko.md](README.ko.md) | **Team (THROUGHLINE Team)** — 이 문서 |
 |---|---|---|
 | 대상 | 1인 / 순차·자율 개발 | 다수 개발자·AI 에이전트 **동시** 개발 |
 | 진행 상태 | 단일 `PROGRESS.md` 커서 | `workitems/` + `sessions/<handle>--<WI>` |
@@ -23,7 +29,7 @@ Solo 가이드: [README.ko.md](README.ko.md) · 팀 전체 가이드·프롬프�
 | 충돌 | 해당 없음 | `touches` + `conflicts/` (에이전트가 교차 점검) |
 | 식별 | 불필요 | `team/` + git identity (`git config user.email`) |
 | 런타임 | 없음 | 없음 (markdown + git만) |
-| 키트 폴더 | `ko/AGENTSPECKIT/` · `en/AGENTSPECKIT/` | `ko/ASK-TEAM/` · `en/ASK-TEAM/` |
+| 키트 폴더 | `ko/THROUGHLINE/` · `en/THROUGHLINE/` | `ko/THROUGHLINE-TEAM/` · `en/THROUGHLINE-TEAM/` |
 
 1인 개발이면 Solo가 더 가볍습니다 — 실제로 N명이 동시에 개발할 때만 Team을 쓰세요.
 
@@ -37,34 +43,34 @@ Solo 가이드: [README.ko.md](README.ko.md) · 팀 전체 가이드·프롬프�
 
 ## 빠른 시작
 
-1. 이 저장소를 클론하고 [`ko/ASK-TEAM/`](ko/ASK-TEAM/)(또는 [`en/ASK-TEAM/`](en/ASK-TEAM/))의 내용을 프로젝트 루트의 `AGENTSPECKIT/`로 복사합니다.
-2. **신규 프로젝트**면 `AGENTSPECKIT/SOURCES/REQUIREMENTS.md`에 초기 요구사항을 작성합니다(솔로 킷의 [REQUIREMENTS 템플릿](ko/AGENTSPECKIT/SOURCES/REQUIREMENTS.md) 재사용 가능); 기존 코드베이스(ADOPT)면 선택 사항입니다.
+1. 이 저장소를 클론하고 [`ko/THROUGHLINE-TEAM/`](ko/THROUGHLINE-TEAM/)(또는 [`en/THROUGHLINE-TEAM/`](en/THROUGHLINE-TEAM/))의 내용을 프로젝트 루트의 `THROUGHLINE/`로 복사합니다.
+2. **신규 프로젝트**면 `THROUGHLINE/SOURCES/REQUIREMENTS.md`에 초기 요구사항을 작성합니다(솔로 킷의 [REQUIREMENTS 템플릿](ko/THROUGHLINE/SOURCES/REQUIREMENTS.md) 재사용 가능); 기존 코드베이스(ADOPT)면 선택 사항입니다.
 3. **maintainer**가 `role: maintainer`로 자기 `team/<handle>.md`를 먼저 등록하고(`templates/team-TEMPLATE.md` 복사), 각 **contributor**도 자기 것을 등록합니다.
-4. Contributor는 [`DEVELOP.md`](ko/ASK-TEAM/DEVELOP.md) 프롬프트로, maintainer는 [`INTEGRATE.md`](ko/ASK-TEAM/INTEGRATE.md)로 작업합니다. 초기화는 [`KICKOFF.md`](ko/ASK-TEAM/KICKOFF.md)(신규) / [`ADOPT.md`](ko/ASK-TEAM/ADOPT.md)(기존 코드), 주기 점검은 [`AUDIT.md`](ko/ASK-TEAM/AUDIT.md)를 사용합니다.
+4. Contributor는 [`DEVELOP.md`](ko/THROUGHLINE-TEAM/DEVELOP.md) 프롬프트로, maintainer는 [`INTEGRATE.md`](ko/THROUGHLINE-TEAM/INTEGRATE.md)로 작업합니다. 초기화는 [`KICKOFF.md`](ko/THROUGHLINE-TEAM/KICKOFF.md)(신규) / [`ADOPT.md`](ko/THROUGHLINE-TEAM/ADOPT.md)(기존 코드), 주기 점검은 [`AUDIT.md`](ko/THROUGHLINE-TEAM/AUDIT.md)를 사용합니다.
 
-> 각 단계에서 그대로 붙여넣어 쓸 수 있는 프롬프트는 아래 [프롬프트](#프롬프트-그대로-붙여넣어-사용) 절에 있습니다. 모든 프롬프트는 프로젝트 루트에 복사된 `AGENTSPECKIT/`를 기준으로 경로를 씁니다(루트 3파일 `README.md`·`AGENTS.md`·`CLAUDE.md` 예외).
+> 각 단계에서 그대로 붙여넣어 쓸 수 있는 프롬프트는 아래 [프롬프트](#프롬프트-그대로-붙여넣어-사용) 절에 있습니다. 모든 프롬프트는 프로젝트 루트에 복사된 `THROUGHLINE/`를 기준으로 경로를 씁니다(루트 3파일 `README.md`·`AGENTS.md`·`CLAUDE.md` 예외).
 
 ---
 
 ## 프롬프트 (그대로 붙여넣어 사용)
 
-솔로 킷([README.ko.md](README.ko.md) 2·5·7·9.1절)과 같은 방식으로, 아래 프롬프트를 Agent(Claude Code · Codex · Cursor)에 붙여넣어 사용합니다. 각 프롬프트는 해당 킷 파일(`AGENTSPECKIT/KICKOFF.md` 등)을 읽고 그 지시를 따르게 하는 진입점이며, **실행 주체(maintainer / contributor)**가 정해져 있습니다.
+솔로 킷([README.ko.md](README.ko.md) 2·5·7·9.1절)과 같은 방식으로, 아래 프롬프트를 Agent(Claude Code · Codex · Cursor)에 붙여넣어 사용합니다. 각 프롬프트는 해당 킷 파일(`THROUGHLINE/KICKOFF.md` 등)을 읽고 그 지시를 따르게 하는 진입점이며, **실행 주체(maintainer / contributor)**가 정해져 있습니다.
 
 이 킷은 **markdown + git만** 씁니다 — "신원 확인"·"충돌 검출"·"목록 읽기"는 별도 런타임이 아니라 에이전트가 `git` 명령과 파일 읽기로 직접 수행합니다. **고정 INDEX 파일을 만들지 않으며**, 진행 상태의 진실은 각 항목 파일(`workitems/WI-*.md` 등)의 frontmatter입니다.
 
-> **공유 브랜치란?** 조율층 파일(`workitems/`·`conflicts/`·`team/`·`personas/`)을 claim 시점에 즉시 published하는 브랜치입니다(기본 브랜치, 또는 push 보호 시 별도 `coordination` 브랜치 — [CONVENTIONS.md §4.5](ko/ASK-TEAM/CONVENTIONS.md)). 이 브랜치에 조율 메타데이터가 올라가야 다른 기여자가 볼 수 있으므로, 초기화 커밋 전에는 누구도 claim을 시작할 수 없습니다. 코드는 이 브랜치에 직접 push하지 않고 **PR로만** 도달합니다.
+> **공유 브랜치란?** 조율층 파일(`workitems/`·`conflicts/`·`team/`·`personas/`)을 claim 시점에 즉시 published하는 브랜치입니다(기본 브랜치, 또는 push 보호 시 별도 `coordination` 브랜치 — [CONVENTIONS.md §4.5](ko/THROUGHLINE-TEAM/CONVENTIONS.md)). 이 브랜치에 조율 메타데이터가 올라가야 다른 기여자가 볼 수 있으므로, 초기화 커밋 전에는 누구도 claim을 시작할 수 없습니다. 코드는 이 브랜치에 직접 push하지 않고 **PR로만** 도달합니다.
 
 ### A. 초기화 프롬프트 — 신규 팀 프로젝트 (KICKOFF · maintainer)
 
-`AGENTSPECKIT/SOURCES/REQUIREMENTS.md`(초기 요구사항)를 작성하고, maintainer 본인을 `team/<handle>.md`(`role: maintainer`)로 등록한 뒤 아래 프롬프트를 입력합니다. 실제 구현이 아니라 **여러 기여자가 충돌 없이 claim·진행할 수 있는 조율 구조 + 초기 workitem**을 만드는 단계입니다.
+`THROUGHLINE/SOURCES/REQUIREMENTS.md`(초기 요구사항)를 작성하고, maintainer 본인을 `team/<handle>.md`(`role: maintainer`)로 등록한 뒤 아래 프롬프트를 입력합니다. 실제 구현이 아니라 **여러 기여자가 충돌 없이 claim·진행할 수 있는 조율 구조 + 초기 workitem**을 만드는 단계입니다.
 
 ```text
-AGENTSPECKIT/SOURCES/REQUIREMENTS.md 와 AGENTSPECKIT/KICKOFF.md 를 읽고,
+THROUGHLINE/SOURCES/REQUIREMENTS.md 와 THROUGHLINE/KICKOFF.md 를 읽고,
 KICKOFF.md의 지시에 따라 이 팀 프로젝트를 "여러 기여자가 충돌 없이 동시에 작업을 claim·진행할 수 있는 상태"로 초기화하세요.
-규약은 AGENTSPECKIT/CONVENTIONS.md, 스키마는 AGENTSPECKIT/SCHEMAS.md 가 우선합니다.
+규약은 THROUGHLINE/CONVENTIONS.md, 스키마는 THROUGHLINE/SCHEMAS.md 가 우선합니다.
 
 이 킷은 markdown + git만 사용합니다(추가 런타임 없음). "신원 확인"·"목록 읽기"는 git 명령과 파일 읽기로 직접 수행하세요.
-산출물은 루트 3파일(프로젝트 README.md · AGENTS.md · CLAUDE.md)을 제외하고 모두 AGENTSPECKIT/ 아래에 생성하세요.
+산출물은 루트 3파일(프로젝트 README.md · AGENTS.md · CLAUDE.md)을 제외하고 모두 THROUGHLINE/ 아래에 생성하세요.
 
 먼저 다음 가드를 확인하세요.
 - 재초기화 금지: SOURCES/REQUIREMENTS.meta.md 의 상태가 이미 applied 이면 KICKOFF를 다시 실행하지 말고 보고만 하세요.
@@ -98,7 +104,7 @@ KICKOFF.md의 지시에 따라 이 팀 프로젝트를 "여러 기여자가 충�
     이후 REQUIREMENTS.md 원본은 불변이며, 추가 요구는 새 SRC-* 변경요청으로 받습니다.
 19. CLAUDE.md(루트)를 작성하세요(오작동 방지 전용 + 팀 항목: "전역 계약은 maintainer만, 진행 상태는 workitems frontmatter").
 20. 빈 채로 시작하는 디렉토리(conflicts/, sessions/archive/, workitems/archive/, history/, notes/, discussion/)에 .gitkeep 을 넣으세요.
-21. KICKOFF 3.1절에 따라 초기화 산출물 전체(루트 3파일 + AGENTSPECKIT/)를 공유 브랜치에서 하나의 commit으로 묶고,
+21. KICKOFF 3.1절에 따라 초기화 산출물 전체(루트 3파일 + THROUGHLINE/)를 공유 브랜치에서 하나의 commit으로 묶고,
     원격이 있으면 push하세요. ★ 이 commit 전에는 어떤 기여자도 claim을 시작할 수 없습니다.
     (공유 브랜치가 push 보호 중이면 지정한 coordination 브랜치에서 초기화하고 AGENTS.md에 기록.)
 
@@ -134,16 +140,16 @@ KICKOFF.md의 지시에 따라 이 팀 프로젝트를 "여러 기여자가 충�
 신규가 아니라 **이미 코드가 있는 프로젝트**라면 `KICKOFF.md` 대신 `ADOPT.md`를 씁니다. 요구사항이 아니라 **기존 코드를 분석해 현재 상태를 역문서화**하고 팀 동시 개발 구조를 세웁니다. 산출물 구조는 KICKOFF와 동일하므로, 채택이 끝나면 그대로 DEVELOP으로 잇습니다.
 
 ```text
-AGENTSPECKIT/ADOPT.md 를 읽고, 그 지시에 따라 이미 개발 중인 이 프로젝트에 ASK-Team을 채택(적용)하세요.
-규약은 AGENTSPECKIT/CONVENTIONS.md, 스키마는 AGENTSPECKIT/SCHEMAS.md 가 우선합니다.
+THROUGHLINE/ADOPT.md 를 읽고, 그 지시에 따라 이미 개발 중인 이 프로젝트에 THROUGHLINE Team을 채택(적용)하세요.
+규약은 THROUGHLINE/CONVENTIONS.md, 스키마는 THROUGHLINE/SCHEMAS.md 가 우선합니다.
 
-산출물은 루트 3파일(프로젝트 README.md · AGENTS.md · CLAUDE.md)을 제외하고 모두 AGENTSPECKIT/ 아래에 생성하세요.
+산출물은 루트 3파일(프로젝트 README.md · AGENTS.md · CLAUDE.md)을 제외하고 모두 THROUGHLINE/ 아래에 생성하세요.
 기존 프로젝트의 docs/ 등 동명 폴더는 건드리지 마세요. 이 프롬프트는 maintainer가 실행합니다.
 
 반드시 다음을 지키세요.
 
 1. 이 단계에서는 코드를 수정하지 않습니다. 현재 상태를 문서화하고 팀 개발 구조를 세우는 단계입니다.
-2. 선행 확인: AGENTSPECKIT/ 에 기존 산출물이 있으면 이미 채택됨 → 재채택하지 말고 보고만 하세요.
+2. 선행 확인: THROUGHLINE/ 에 기존 산출물이 있으면 이미 채택됨 → 재채택하지 말고 보고만 하세요.
    루트 README/AGENTS/CLAUDE/.gitignore 를 인벤토리하고, 이미 있는 파일은 덮어쓰지 말고 병합하거나 확인을 받으세요.
    실행자를 team/<handle>.md (role: maintainer)로 등록하고 git config user.email 매칭을 확인하세요.
 3. 코드 스캔: 스택·빌드/실행/테스트 명령·구조·진입점·의존성·환경변수 '이름'을 파악하세요(값/Secret 수집 금지).
@@ -181,15 +187,15 @@ AGENTSPECKIT/ADOPT.md 를 읽고, 그 지시에 따라 이미 개발 중인 이 
 초기화(또는 채택)가 공유 브랜치에 커밋된 뒤, 각 기여자가 **하나의 workitem을 수행**할 때 씁니다. 실행 전 자기 `team/<handle>.md`가 등록돼 있어야 합니다(없으면 프롬프트가 먼저 등록).
 
 ```text
-AGENTS.md 와 AGENTSPECKIT/DEVELOP.md 를 읽고, DEVELOP.md 절차에 따라 workitem 하나를 claim해서 개발하세요.
-규약은 AGENTSPECKIT/CONVENTIONS.md 가 우선합니다. 이 킷은 markdown + git만 씁니다.
+AGENTS.md 와 THROUGHLINE/DEVELOP.md 를 읽고, DEVELOP.md 절차에 따라 workitem 하나를 claim해서 개발하세요.
+규약은 THROUGHLINE/CONVENTIONS.md 가 우선합니다. 이 킷은 markdown + git만 씁니다.
 
 반드시 다음 순서로 진행하세요.
 
 0. 신원 확인: git config user.email 을 team/*.md 의 emails 와 매칭해 내 handle·role 을 확인하세요.
    미등록이면 team/<handle>.md 를 먼저 등록(templates/team-TEMPLATE.md)한 뒤 진행하세요.
    그다음 git fetch 하고, 최신 공유 브랜치의 workitems/*.md frontmatter를 읽어 in-flight(claimed/in_progress) 작업과 그 touches를 파악하세요.
-1. 항상 로드: AGENTS.md(루트), AGENTSPECKIT/ARCHITECTURE.md(횡단 계약), AGENTSPECKIT/PLAN.md, in-flight workitems frontmatter.
+1. 항상 로드: AGENTS.md(루트), THROUGHLINE/ARCHITECTURE.md(횡단 계약), THROUGHLINE/PLAN.md, in-flight workitems frontmatter.
    내 작업에 필요한 features/*.md·ADR·qa·notes 는 선택적으로 읽으세요. 공통 규칙은 항상 ARCHITECTURE.md 를 기준으로 따르세요.
 2. workitem claim:
    - 기존 항목: status: proposed|ready 인 WI를 골라 owner를 내 handle로, status를 claimed로, branch를 feat/<WI-id>로 바꾸고
@@ -231,7 +237,7 @@ AGENTS.md 와 AGENTSPECKIT/DEVELOP.md 를 읽고, DEVELOP.md 절차에 따라 wo
 같은 workitem을 다음 세션에 이어서 할 때 씁니다. 세션 커서(`sessions/<handle>--<WI-id>.md`)의 "다음 첫 명령"이 기준입니다.
 
 ```text
-AGENTS.md 와 AGENTSPECKIT/DEVELOP.md 를 읽고, 진행 중이던 내 workitem을 이어서 개발하세요.
+AGENTS.md 와 THROUGHLINE/DEVELOP.md 를 읽고, 진행 중이던 내 workitem을 이어서 개발하세요.
 
 1. git config user.email 로 신원을 확인하고, git fetch 하세요.
 2. sessions/<handle>--<WI-id>.md 의 "다음 첫 명령"을 읽어 끊긴 지점을 확인하세요.
@@ -247,8 +253,8 @@ AGENTS.md 와 AGENTSPECKIT/DEVELOP.md 를 읽고, 진행 중이던 내 workitem�
 기여자들이 PR을 올린 뒤, maintainer가 feature 브랜치들을 공유 브랜치로 합류시킬 때 씁니다. `role: maintainer`만 실행합니다.
 
 ```text
-AGENTS.md 와 AGENTSPECKIT/INTEGRATE.md 를 읽고, INTEGRATE.md 절차에 따라 review 완료 workitem들을 통합하세요.
-규약은 AGENTSPECKIT/CONVENTIONS.md 가 우선합니다. 이 프롬프트는 role: maintainer 만 실행합니다.
+AGENTS.md 와 THROUGHLINE/INTEGRATE.md 를 읽고, INTEGRATE.md 절차에 따라 review 완료 workitem들을 통합하세요.
+규약은 THROUGHLINE/CONVENTIONS.md 가 우선합니다. 이 프롬프트는 role: maintainer 만 실행합니다.
 
 반드시 다음 순서로 진행하세요.
 
@@ -289,8 +295,8 @@ AGENTS.md 와 AGENTSPECKIT/INTEGRATE.md 를 읽고, INTEGRATE.md 절차에 따�
 Phase 완료 직후 / 릴리즈 전 / 오랜만의 재개 / 마지막 감사 후 ~10세션 누적 / 여러 기여자가 동시에 활동 중일 때 정기적으로 실행합니다.
 
 ```text
-AGENTSPECKIT/AUDIT.md 를 읽고, 그 지시에 따라 팀 문서·코드의 표류와 조율 구조의 무결성을 감사하세요.
-규약은 AGENTSPECKIT/CONVENTIONS.md 가 우선합니다. INTEGRATE는 합류 정합, AUDIT는 점진 표류 회수를 담당합니다.
+THROUGHLINE/AUDIT.md 를 읽고, 그 지시에 따라 팀 문서·코드의 표류와 조율 구조의 무결성을 감사하세요.
+규약은 THROUGHLINE/CONVENTIONS.md 가 우선합니다. INTEGRATE는 합류 정합, AUDIT는 점진 표류 회수를 담당합니다.
 
 반드시 다음을 지키세요.
 
@@ -325,7 +331,7 @@ AGENTSPECKIT/AUDIT.md 를 읽고, 그 지시에 따라 팀 문서·코드의 표
 
 ### G. 킷 업그레이드 프롬프트 — 새 버전 반영 (maintainer)
 
-템플릿 저장소의 ASK-Team 킷이 업데이트되어, 이미 KICKOFF/ADOPT를 마친 프로젝트에 새 버전을 반영할 때 씁니다. **KICKOFF나 ADOPT를 다시 실행하지 마세요** — 재초기화/재채택 가드가 막을 뿐 아니라, 우회하면 조율층 내용을 덮어씁니다. `role: maintainer`만 실행합니다(킷 소유 파일과 루트 규칙 파일 모두 maintainer 전용 영역이기 때문입니다).
+템플릿 저장소의 THROUGHLINE Team 킷이 업데이트되어, 이미 KICKOFF/ADOPT를 마친 프로젝트에 새 버전을 반영할 때 씁니다. **KICKOFF나 ADOPT를 다시 실행하지 마세요** — 재초기화/재채택 가드가 막을 뿐 아니라, 우회하면 조율층 내용을 덮어씁니다. `role: maintainer`만 실행합니다(킷 소유 파일과 루트 규칙 파일 모두 maintainer 전용 영역이기 때문입니다).
 
 처리 원칙:
 
@@ -337,19 +343,19 @@ AGENTSPECKIT/AUDIT.md 를 읽고, 그 지시에 따라 팀 문서·코드의 표
 | | `CLAUDE.md` | 새 KICKOFF.md 템플릿(오작동 방지 전용)으로 **교체** — 무손실 게이트 |
 | 신규 구조(구버전에 없던 것) | 예: `workitems/archive/` | **새로 생성**(빈 폴더면 `.gitkeep`) + **기존 데이터 중 해당하는 것을 이관** |
 
-**1단계(사람, maintainer):** 템플릿 저장소를 pull하고, 위 킷 소유 파일들을 **원래 사용한 언어 폴더**(`en/ASK-TEAM/` 또는 `ko/ASK-TEAM/`)에서 동일 버전으로 프로젝트의 `AGENTSPECKIT/`에 덮어쓰기 복사합니다. 조율층 파일이므로 공유 브랜치에서 직접 수행하세요(공유 브랜치가 push 보호 중이면 작업 브랜치+PR로 먼저 처리한 뒤, 기여자가 claim을 재개하기 전에 merge).
+**1단계(사람, maintainer):** 템플릿 저장소를 pull하고, 위 킷 소유 파일들을 **원래 사용한 언어 폴더**(`en/THROUGHLINE-TEAM/` 또는 `ko/THROUGHLINE-TEAM/`)에서 동일 버전으로 프로젝트의 `THROUGHLINE/`에 덮어쓰기 복사합니다. 조율층 파일이므로 공유 브랜치에서 직접 수행하세요(공유 브랜치가 push 보호 중이면 작업 브랜치+PR로 먼저 처리한 뒤, 기여자가 claim을 재개하기 전에 merge).
 
 **2단계(Agent):**
 
 ```text
-ASK-Team 킷이 업데이트되어 킷 소유 파일들이 새 버전으로 교체되었습니다.
+THROUGHLINE Team 킷이 업데이트되어 킷 소유 파일들이 새 버전으로 교체되었습니다.
 이 프로젝트의 산출물 구조를 새 버전 표준으로 업그레이드하세요.
 KICKOFF나 ADOPT를 다시 실행하지 마세요(재초기화/재채택 금지). 기존 조율/작업 산출물의 내용은 보존하세요.
 이 프롬프트는 role: maintainer만 실행합니다.
 
 0. 신원 확인: git config user.email 을 team/*.md 와 매칭. role이 maintainer가 아니면 중단하고 maintainer에게 위임하세요.
    구조 비교 전에 git fetch로 최신 공유 브랜치를 읽으세요.
-1. 새 KICKOFF.md 1절의 구조와 현재 AGENTSPECKIT/ 를 비교해 누락된 파일/폴더를 확인하세요.
+1. 새 KICKOFF.md 1절의 구조와 현재 THROUGHLINE/ 를 비교해 누락된 파일/폴더를 확인하세요.
 2. 누락된 빈 구조를 생성하세요(KICKOFF 1절 기준 .gitkeep) — 예: 이 프로젝트가 workitems/archive/ 도입 이전 버전이면 새로 만드세요.
 3. 1회성 아카이브 스윕(workitems/archive/ 가 새로 생긴 경우에만 의미 있음): 루트의 workitems/WI-*.md 중 status: done 인 항목마다
    대응하는 history/ 이벤트가 있는지 확인한 뒤, 같은 커밋에서 workitems/archive/ 로 이동하세요(CONVENTIONS §9).
@@ -391,19 +397,19 @@ KICKOFF나 ADOPT를 다시 실행하지 마세요(재초기화/재채택 금지)
 | Phase 완료 / 릴리즈 전 / 표류가 의심될 때 | F. 문서 감사 (AUDIT) | maintainer |
 | 킷을 새 버전으로 업그레이드할 때(이미 초기화된 프로젝트) | G. 킷 업그레이드 | maintainer |
 
-> 규칙 세부(파일 등급·식별·충돌·공유 브랜치·커밋)는 [CONVENTIONS.md](ko/ASK-TEAM/CONVENTIONS.md), frontmatter 형식은 [SCHEMAS.md](ko/ASK-TEAM/SCHEMAS.md)가 정본입니다.
+> 규칙 세부(파일 등급·식별·충돌·공유 브랜치·커밋)는 [CONVENTIONS.md](ko/THROUGHLINE-TEAM/CONVENTIONS.md), frontmatter 형식은 [SCHEMAS.md](ko/THROUGHLINE-TEAM/SCHEMAS.md)가 정본입니다.
 
 ---
 
-## 프롬프트·참조 ([`ko/ASK-TEAM/`](ko/ASK-TEAM/) 안)
+## 프롬프트·참조 ([`ko/THROUGHLINE-TEAM/`](ko/THROUGHLINE-TEAM/) 안)
 
 | 파일 | 역할 |
 |---|---|
-| [README.md](ko/ASK-TEAM/README.md) | 프레임워크 전체 개요·명세 |
-| [KICKOFF.md](ko/ASK-TEAM/KICKOFF.md) · [ADOPT.md](ko/ASK-TEAM/ADOPT.md) | 신규 / 기존 팀 프로젝트 초기화 |
-| [DEVELOP.md](ko/ASK-TEAM/DEVELOP.md) · [INTEGRATE.md](ko/ASK-TEAM/INTEGRATE.md) | 기여자 / 메인테이너 프롬프트 |
-| [AUDIT.md](ko/ASK-TEAM/AUDIT.md) | 팀 문서 감사 (드리프트 + 조정 정합성) |
-| [CONVENTIONS.md](ko/ASK-TEAM/CONVENTIONS.md) · [SCHEMAS.md](ko/ASK-TEAM/SCHEMAS.md) | 구조 규약 & frontmatter 스키마 |
-| [reference/](ko/ASK-TEAM/reference/README.md) | 팀 프롬프트가 인용하는 솔로 킷 참조 사본(동봉) |
+| [README.md](ko/THROUGHLINE-TEAM/README.md) | 프레임워크 전체 개요·명세 |
+| [KICKOFF.md](ko/THROUGHLINE-TEAM/KICKOFF.md) · [ADOPT.md](ko/THROUGHLINE-TEAM/ADOPT.md) | 신규 / 기존 팀 프로젝트 초기화 |
+| [DEVELOP.md](ko/THROUGHLINE-TEAM/DEVELOP.md) · [INTEGRATE.md](ko/THROUGHLINE-TEAM/INTEGRATE.md) | 기여자 / 메인테이너 프롬프트 |
+| [AUDIT.md](ko/THROUGHLINE-TEAM/AUDIT.md) | 팀 문서 감사 (드리프트 + 조정 정합성) |
+| [CONVENTIONS.md](ko/THROUGHLINE-TEAM/CONVENTIONS.md) · [SCHEMAS.md](ko/THROUGHLINE-TEAM/SCHEMAS.md) | 구조 규약 & frontmatter 스키마 |
+| [reference/](ko/THROUGHLINE-TEAM/reference/README.md) | 팀 프롬프트가 인용하는 솔로 킷 참조 사본(동봉) |
 
-> ASK-Team은 Solo의 철학을 그대로 유지합니다 — markdown + git, 도구 독립성(Claude Code · Codex · Cursor), 세션 간 기억, 추적성, 멀티 페르소나 리뷰 하네스. 충돌 탐지 모델·개발 흐름·정직한 한계(탐지 ≠ 강제, 거버넌스 ≠ 도구)는 **[전체 가이드](ko/ASK-TEAM/README.md)**를 참고하세요.
+> THROUGHLINE Team은 Solo의 철학을 그대로 유지합니다 — markdown + git, 도구 독립성(Claude Code · Codex · Cursor), 세션 간 기억, 추적성, 멀티 페르소나 리뷰 하네스. 충돌 탐지 모델·개발 흐름·정직한 한계(탐지 ≠ 강제, 거버넌스 ≠ 도구)는 **[전체 가이드](ko/THROUGHLINE-TEAM/README.md)**를 참고하세요.

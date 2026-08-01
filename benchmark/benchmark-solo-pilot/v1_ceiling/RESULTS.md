@@ -1,4 +1,4 @@
-# ASK-solo DriftBench — Stage-1 pilot RESULTS (seed1, `miniquery`)
+# throughline-solo DriftBench — Stage-1 pilot RESULTS (seed1, `miniquery`)
 
 Run date: 2026-06-28 · Model (dev-agent): orchestrated Claude sub-agents · Orchestrator: Claude Code
 Scope: **1 compact task · 4 groups · seed1 · 7 sessions (s0–s6) = 28 dev-agent sessions.**
@@ -6,7 +6,7 @@ This is a **discrimination / go-no-go pilot** (review §6.6), NOT a powered resu
 
 ## Headline
 
-**No discrimination — a ceiling.** All four groups (B-code, B-limited, P-notes, ASK-solo)
+**No discrimination — a ceiling.** All four groups (B-code, B-limited, P-notes, throughline-solo)
 held every active invariant with **zero violations and zero regressions across all 7 sessions**,
 including the decisive **S6 restoration** (`where_unknown_raises` correctly restored).
 
@@ -72,7 +72,7 @@ What would make it discriminate (candidate fixes for the next iteration):
 - **End-to-end pipeline works.** prepare → fresh dev-agent (sandboxed to `work/`) → score → aggregate
   ran cleanly for 28 sessions across 4 memory regimes; oracle isolation held (agents never saw `eval/`).
 - **Memory-carry mechanics work and are visibly differentiated**: B-limited's K=600 cap truncated
-  notes mid-word (lossy as intended); ASK-solo maintained an auditable decision chain
+  notes mid-word (lossy as intended); throughline-solo maintained an auditable decision chain
   (`DECISIONS.md` D6 → `[SUPERSEDED by D10]` → `D11 revert`); B-code carried nothing.
   The *mechanism* differences were real; they just didn't matter because the **code carried the decision**.
 - **The B-code pre-check earns its place.** It caught the ceiling in 28 sessions — before any
@@ -83,7 +83,7 @@ What would make it discriminate (candidate fixes for the next iteration):
 - 1 compact task, 1 seed → **not** a statistical result; a go/no-go probe only.
 - The chosen discriminator (a behavioural policy) is the *wrong kind* for a code-resident task,
   as this run demonstrated. The fix is task design, not more seeds.
-- P-notes/ASK token-budget parity is instrumented in `driver.py` (`[budget]` line) but was not
+- P-notes/THROUGHLINE token-budget parity is instrumented in `driver.py` (`[budget]` line) but was not
   persisted this run; capture it in the next iteration.
 
 ## Reproduce

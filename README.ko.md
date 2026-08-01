@@ -1,50 +1,82 @@
 <div align="center">
 
-# Agent-Spec-Kit
+# THROUGHLINE
+
+**AI 코딩 에이전트를 위한 명세 주도 개발(SDD)**
+
+코드를 쓰기 전에 페르소나들이 모든 명세를 토론합니다. 마크다운 + git 메모리가
+세션을 가로질러 맥락을 이어줍니다 — 7번째 세션도 1번째 세션의 결정을 기억합니다.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-black.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/hellomyoh/throughline)](../../releases)
+[![Stars](https://img.shields.io/github/stars/hellomyoh/throughline?style=flat)](../../stargazers)
+[![Claude Code · Codex · Cursor](https://img.shields.io/badge/agents-Claude%20Code%20%C2%B7%20Codex%20%C2%B7%20Cursor-blue)](#빠른-시작)
 
 🌐 [English](README.md) · **한국어**
 
-**Agent-Spec-Kit은 AI 코딩 에이전트를 위한 명세 주도 개발(SDD) 프레임워크입니다 — 전문가 페르소나 그룹이 코드 한 줄을 쓰기 *전에* 모든 비자명한 명세를 토론·합의합니다.**
-
-요구사항은 명세와 계획으로 컴파일되고, 결정·사실·토의가 **마크다운 + git** 메모리에 쌓여 다음 세션이 끊긴 지점을 정확히 이어받습니다 — 그래서 세션이 쌓여도 작업이 흔들리지 않고 일관되게 유지됩니다. 종속성 없음 — 같은 키트가 **Claude Code·Codex·Cursor**에서 그대로 동작합니다.
-
-[빠른 시작](#빠른-시작) •
-[왜 이 구조인가?](#왜-이-구조인가--llm의-한계와-이-프레임워크의-이점) •
-[파일 구성](#1-기본-파일-구성) •
-[시작하기](#2-최초-1회-프로젝트-초기화-프롬프트) •
-[개발 진행](#5-실제-개발-시작-프롬프트) •
-[사용 흐름](#10-사용-흐름-요약) •
-[벤치마크](#부록-벤치마크-근거-드리프트-억제-파일럿)
-
-Codex · Claude Code · Cursor Agent
+[빠른 시작](#빠른-시작) · [벤치마크](#벤치마크) · [왜](#왜) · [Team 에디션](README.team.ko.md)
 
 </div>
 
 ---
 
-## 팀 개발이라면 → ASK-Team
+## 문제
 
-이 문서(README)는 **Solo** 버전 — 1인·순차 개발용입니다. **여러 개발자와 AI 에이전트가 같은 코드베이스를 동시에** 개발한다면 Team 버전을 사용하세요: **[README.team.ko.md](README.team.ko.md)** ([English](README.team.md)).
+에이전트는 잊어버립니다. 3번째 세션이 1번째 세션의 결정을 덮어쓰고, 6번째 세션은
+"원래대로 되돌려"라는 지시에 **한 번도 원래였던 적 없는 값**을 복원합니다. 코드
+주석 어디에도 그렇지 않다는 단서는 없습니다. 명세와 코드는 조용히 어긋납니다.
 
----
+## 벤치마크
 
-이 문서는 `AGENTSPECKIT/` 폴더(프롬프트 4종 `KICKOFF.md`·`ADOPT.md`·`DEVELOPINIT.md`·`AUDIT.md` + 입력 채널 `SOURCES/`)를 Codex · Claude Code · Cursor Agent 등에서 사용하는 방법을 설명하는 **프레임워크 사용 설명서**입니다.
+[`benchmark/`](benchmark/)에 실행 가능한 파일럿 2종. 단일 시드 go/no-go 확인 — 크기가 아니라 방향을 봅니다.
+
+**초기 결정의 기억이 7세션을 견디는가?** (원래 값: `7`)
+
+| 기억 방식 | 복원값 | |
+|---|---|---|
+| **THROUGHLINE** (append-only SSOT) | **7** | ✅ |
+| 자유 노트 (~2600자 상한) | 7 | ✅ |
+| 최근 2세션 노트 (600자) | 25 | ❌ *자신 있게 틀림* |
+| 무기억 | 10 | ❌ |
+
+**SSOT는 바이브 코딩 드리프트를 억제하는가?** (개발 에이전트 42세션, 종합 /90)
+
+| 프롬프트 수준 | Baseline | THROUGHLINE | Δ |
+|---|---|---|---|
+| 초급 | 70.4 | 76.0 | +5.6 |
+| **중급** | 66.0 | **90.0** | **+24.0** |
+| 고급 | 84.3 | 90.0 | +5.7 |
+
+중급 수준에서 baseline은 앞선 안전 정책을 깨뜨리는 요청에 조용히 따랐습니다.
+THROUGHLINE은 그 충돌을 잡아내 정책을 지키고, 사용자에게 드러냈습니다.
+→ [전체 결과와 정직한 한계](benchmark/RESULTS_SUMMARY.md)
+· [방법론·파일럿 상세](#부록-벤치마크-상세-드리프트-억제-파일럿)
 
 ## 빠른 시작
 
+이 문서는 `THROUGHLINE/` 폴더(프롬프트 4종 `KICKOFF.md`·`ADOPT.md`·`DEVELOPINIT.md`·`AUDIT.md` + 입력 채널 `SOURCES/`)를 Codex · Claude Code · Cursor Agent 등에서 사용하는 방법을 설명하는 **프레임워크 사용 설명서**입니다.
+
 1. 이 저장소를 `git clone` 합니다.
-2. 여러분 **언어의 `AGENTSPECKIT/` 폴더** — `ko/AGENTSPECKIT/`(한국어) 또는 `en/AGENTSPECKIT/`(영어) — 를 프로젝트 루트로 복사합니다. (이 가이드 `README.md`는 복사하지 않습니다.)
-3. **신규 프로젝트**면 `AGENTSPECKIT/SOURCES/REQUIREMENTS.md`에 요구사항을 작성합니다. **이미 코드가 있는 프로젝트**면 이 단계를 건너뜁니다.
+2. 여러분 **언어의 `THROUGHLINE/` 폴더** — `ko/THROUGHLINE/`(한국어) 또는 `en/THROUGHLINE/`(영어) — 를 프로젝트 루트로 복사합니다. (이 가이드 `README.md`는 복사하지 않습니다.)
+3. **신규 프로젝트**면 `THROUGHLINE/SOURCES/REQUIREMENTS.md`에 요구사항을 작성합니다. **이미 코드가 있는 프로젝트**면 이 단계를 건너뜁니다.
 4. 프로젝트 폴더에서 Agent(Claude Code · Codex · Cursor 등)를 열고, **[2절의 초기화 프롬프트](#2-최초-1회-프로젝트-초기화-프롬프트)**(기존 프로젝트는 **[2.1절의 채택 프롬프트](#21-이미-개발-중인-프로젝트에-적용할-때-채택-프롬프트)**)를 붙여넣습니다.
 5. 초기화가 끝나면 **[5절의 개발 프롬프트](#5-실제-개발-시작-프롬프트)**로 실제 개발을 시작합니다.
 
-> **모든 산출물은 `AGENTSPECKIT/` 안에 생성되어** 기존 프로젝트의 폴더(docs/ 등)와 충돌하지 않습니다. 프로젝트 루트에는 `AGENTS.md`·`CLAUDE.md`(도구 자동 인식 관례 — 이동 시 자동 로드가 깨짐)와 프로젝트 `README.md`만 생성/병합됩니다 — 이들은 Agent가 만드는 **산출물**이며, 이 가이드 `README.md`와는 다른 문서입니다.
+> **모든 산출물은 `THROUGHLINE/` 안에 생성되어** 기존 프로젝트의 폴더(docs/ 등)와 충돌하지 않습니다. 프로젝트 루트에는 `AGENTS.md`·`CLAUDE.md`(도구 자동 인식 관례 — 이동 시 자동 로드가 깨짐)와 프로젝트 `README.md`만 생성/병합됩니다 — 이들은 Agent가 만드는 **산출물**이며, 이 가이드 `README.md`와는 다른 문서입니다.
 >
 > **`REQUIREMENTS.md`에는 반드시 프로젝트 개요·러프한 요구사항·핵심 기능·제약을 작성하세요.** Agent는 이를 기준으로 기능명세·횡단 계약·개발 계획을 생성하며, 목적·대상 사용자·MVP·데이터·외부 연동·인증/권한·QA 기준 등이 모호하면 임의로 추측하지 않고 질문합니다(3절).
 
 ---
 
-## 왜 이 구조인가 — LLM의 한계와 이 프레임워크의 이점
+## 팀 개발이라면 → THROUGHLINE Team
+
+이 문서(README)는 **Solo 에디션** — 1인·순차 개발용입니다. **여러 개발자와 AI 에이전트가 같은 코드베이스를 동시에** 개발한다면 Team 에디션을 사용하세요: **[README.team.ko.md](README.team.ko.md)** ([English](README.team.md)).
+
+---
+
+## 왜
+
+**LLM의 한계, 그리고 이 프레임워크가 그것을 어떻게 다루는가.**
 
 이 프레임워크는 Karpathy의 LLM wiki 제안을 개발 워크플로에 번안한 것으로,
 **LLM(Agent)의 본질적 한계 4가지를 마크다운 파일 시스템으로 우회**하는 설계입니다.
@@ -62,7 +94,7 @@ Codex · Claude Code · Cursor Agent
 ### 이점
 
 1. **지식이 복리로 쌓입니다.** 보통 LLM 작업은 세션이 늘수록 맥락이 흩어지지만, 이 구조에서는 산출물·노트·결정이 누적되어 뒤로 갈수록 작업이 싸집니다.
-2. **추적 가능성.** `AGENTSPECKIT/SOURCES/`의 불변 원본 → 산출물의 출처 링크 → `HISTORY.md`의 고정 접두사 이력으로, "왜 이렇게 됐나"를 언제든 거슬러 올라갈 수 있습니다.
+2. **추적 가능성.** `THROUGHLINE/SOURCES/`의 불변 원본 → 산출물의 출처 링크 → `HISTORY.md`의 고정 접두사 이력으로, "왜 이렇게 됐나"를 언제든 거슬러 올라갈 수 있습니다.
 3. **일관성.** 횡단 계약(`ARCHITECTURE.md`)을 매 세션 강제 로드하므로, 기능 10개를 10세션에 나눠 만들어도 네이밍·에러 포맷·인증 모델이 흔들리지 않습니다.
 4. **중단 내성.** 어느 세션이 어디서 끊겨도(초기화 중이든 개발 중이든) PROGRESS 잠정 기록 덕분에 정확한 지점에서 재개됩니다.
 5. **도구 독립성.** 전부 마크다운 + git이므로 Claude Code, Codex, Cursor 어느 Agent로 갈아타도 기억이 유지됩니다.
@@ -79,17 +111,17 @@ Codex · Claude Code · Cursor Agent
 
 ## 1. 기본 파일 구성
 
-이 저장소(Agent-Spec-Kit)는 아래 파일로 구성됩니다.
+이 저장소(THROUGHLINE)는 아래 파일로 구성됩니다.
 
 ```text
-/  (Agent-Spec-Kit 저장소 = 템플릿)
+/  (THROUGHLINE 저장소 = 템플릿)
 ├── README.md               # 이 가이드의 영문판. 프로젝트로 복사하지 않음
 ├── README.ko.md            # 이 가이드(프레임워크 사용법). 프로젝트로 복사하지 않음
 ├── en/
-│   └── AGENTSPECKIT/       # 영어 키트 — 구조 동일, 영어 내용
-│       └── … (ko/AGENTSPECKIT/ 와 동일 구성)
+│   └── THROUGHLINE/        # 영어 키트 — 구조 동일, 영어 내용
+│       └── … (ko/THROUGHLINE/ 와 동일 구성)
 └── ko/
-    └── AGENTSPECKIT/       # ★ 한국어 키트. 이 폴더를 프로젝트 루트로 복사.
+    └── THROUGHLINE/        # ★ 한국어 키트. 이 폴더를 프로젝트 루트로 복사.
         ├── KICKOFF.md          # 신규(greenfield) 초기화용 프롬프트
         ├── ADOPT.md            # 기존(brownfield) 프로젝트 채택용 프롬프트
         ├── DEVELOPINIT.md      # 개발 진행용 프롬프트
@@ -99,16 +131,16 @@ Codex · Claude Code · Cursor Agent
             └── REQUIREMENTS.md # 사용자가 작성하는 초기 요구사항 (구 AGENTINIT.md)
 ```
 
-각 언어 폴더는 자기완결적입니다: 내부 파일이 모두 정식 이름(`KICKOFF.md`, `ADOPT.md`, …)으로 되어 있어, 여러분 언어의 `AGENTSPECKIT/` 폴더를 프로젝트 루트로 복사하면 어떤 언어를 골랐든 모든 프롬프트와 경로 참조가 그대로 동작합니다. 복사하는 언어 폴더는 항상 **하나**뿐입니다.
+각 언어 폴더는 자기완결적입니다: 내부 파일이 모두 정식 이름(`KICKOFF.md`, `ADOPT.md`, …)으로 되어 있어, 여러분 언어의 `THROUGHLINE/` 폴더를 프로젝트 루트로 복사하면 어떤 언어를 골랐든 모든 프롬프트와 경로 참조가 그대로 동작합니다. 복사하는 언어 폴더는 항상 **하나**뿐입니다.
 
-프로젝트를 시작할 때는 이 저장소를 clone한 뒤, **여러분 언어의 `AGENTSPECKIT/` 폴더 — `ko/AGENTSPECKIT/` 또는 `en/AGENTSPECKIT/` — 를 프로젝트 루트로 복사**하세요. 이 가이드(`README.md`/`README.ko.md`)는 복사하지 않습니다.
+프로젝트를 시작할 때는 이 저장소를 clone한 뒤, **여러분 언어의 `THROUGHLINE/` 폴더 — `ko/THROUGHLINE/` 또는 `en/THROUGHLINE/` — 를 프로젝트 루트로 복사**하세요. 이 가이드(`README.md`/`README.ko.md`)는 복사하지 않습니다.
 
-- **신규 프로젝트(greenfield):** 복사 후 `AGENTSPECKIT/SOURCES/REQUIREMENTS.md`에 프로젝트 요구사항을 작성
+- **신규 프로젝트(greenfield):** 복사 후 `THROUGHLINE/SOURCES/REQUIREMENTS.md`에 프로젝트 요구사항을 작성
 - **이미 개발 중인 프로젝트(brownfield):** 동일하게 폴더 복사 (REQUIREMENTS.md 작성은 앞으로의 목표를 적고 싶을 때 선택)
 
-폴더명이 `AGENTSPECKIT`이라 기존 프로젝트의 어떤 폴더와도 충돌하지 않으며,
+폴더명이 `THROUGHLINE`이라 기존 프로젝트의 어떤 폴더와도 충돌하지 않으며,
 이후 Agent가 생성하는 모든 산출물(명세·계획·QA·ADR 등)도 이 폴더 안에 만들어집니다.
-외부 API 스펙·정책 문서 같은 참고자료가 있으면 `AGENTSPECKIT/SOURCES/`에 함께 넣으세요 — 초기화 때 같이 읽습니다.
+외부 API 스펙·정책 문서 같은 참고자료가 있으면 `THROUGHLINE/SOURCES/`에 함께 넣으세요 — 초기화 때 같이 읽습니다.
 
 가능한 범위에서 아래 내용을 작성하세요.
 
@@ -130,45 +162,45 @@ Codex · Claude Code · Cursor Agent
 | 파일 | 역할 |
 |---|---|
 | `README.md` | 프레임워크 사용 설명서(이 문서). 사람이 읽는 참조용이며 프로젝트로 복사하지 않음 |
-| `AGENTSPECKIT/SOURCES/REQUIREMENTS.md` | 사용자가 작성하는 초기 요구사항 입력 문서 (brownfield에서는 선택). 초기화 후 `반영 완료`로 동결 |
-| `AGENTSPECKIT/SOURCES/INDEX.md` | 제출 자료 인덱스. REQUIREMENTS.md가 유형 `초기 요구사항`으로 사전 등재되어 있음 |
-| `AGENTSPECKIT/KICKOFF.md` | 신규 프로젝트 초기화용 프롬프트 (greenfield) |
-| `AGENTSPECKIT/ADOPT.md` | 이미 개발 중인 프로젝트 채택용 프롬프트 (brownfield). 코드에서 역방향으로 문서 생성 |
-| `AGENTSPECKIT/DEVELOPINIT.md` | 초기화/채택 이후 실제 개발 진행용 프롬프트 |
-| `AGENTSPECKIT/AUDIT.md` | 주기적 문서 감사 프롬프트. Phase 완료/릴리즈 전/장기 누적 시 문서-코드 표류 점검 |
+| `THROUGHLINE/SOURCES/REQUIREMENTS.md` | 사용자가 작성하는 초기 요구사항 입력 문서 (brownfield에서는 선택). 초기화 후 `반영 완료`로 동결 |
+| `THROUGHLINE/SOURCES/INDEX.md` | 제출 자료 인덱스. REQUIREMENTS.md가 유형 `초기 요구사항`으로 사전 등재되어 있음 |
+| `THROUGHLINE/KICKOFF.md` | 신규 프로젝트 초기화용 프롬프트 (greenfield) |
+| `THROUGHLINE/ADOPT.md` | 이미 개발 중인 프로젝트 채택용 프롬프트 (brownfield). 코드에서 역방향으로 문서 생성 |
+| `THROUGHLINE/DEVELOPINIT.md` | 초기화/채택 이후 실제 개발 진행용 프롬프트 |
+| `THROUGHLINE/AUDIT.md` | 주기적 문서 감사 프롬프트. Phase 완료/릴리즈 전/장기 누적 시 문서-코드 표류 점검 |
 
 ---
 
 ## 2. 최초 1회: 프로젝트 초기화 프롬프트
 
-`AGENTSPECKIT/SOURCES/REQUIREMENTS.md` 작성을 완료한 뒤, Agent에 아래 프롬프트를 입력합니다.
+`THROUGHLINE/SOURCES/REQUIREMENTS.md` 작성을 완료한 뒤, Agent에 아래 프롬프트를 입력합니다.
 
 ```text
-AGENTSPECKIT/SOURCES/REQUIREMENTS.md와 AGENTSPECKIT/KICKOFF.md를 읽고, KICKOFF.md의 지시에 따라 프로젝트 초기 설정을 진행하세요.
+THROUGHLINE/SOURCES/REQUIREMENTS.md와 THROUGHLINE/KICKOFF.md를 읽고, KICKOFF.md의 지시에 따라 프로젝트 초기 설정을 진행하세요.
 
 REQUIREMENTS.md는 사용자가 작성한 초기 요구사항이고, KICKOFF.md는 초기화 작업 지시서입니다.
-산출물은 AGENTS.md, CLAUDE.md, 프로젝트 README.md(루트 3파일)를 제외하고 모두 AGENTSPECKIT/ 아래에 생성하세요.
+산출물은 AGENTS.md, CLAUDE.md, 프로젝트 README.md(루트 3파일)를 제외하고 모두 THROUGHLINE/ 아래에 생성하세요.
 
 반드시 다음을 수행하세요.
 
-1. AGENTSPECKIT/SOURCES/REQUIREMENTS.md를 분석하고 INDEX 상태를 '검토 중'으로 갱신하세요.
-   AGENTSPECKIT/SOURCES/에 다른 제출 자료(참고자료 등)가 있으면 함께 읽고 INDEX에 등록하세요.
+1. THROUGHLINE/SOURCES/REQUIREMENTS.md를 분석하고 INDEX 상태를 '검토 중'으로 갱신하세요.
+   THROUGHLINE/SOURCES/에 다른 제출 자료(참고자료 등)가 있으면 함께 읽고 INDEX에 등록하세요.
 2. 프로젝트 초기화에 필요한 핵심 요구사항이 충분한지 확인하세요.
 3. 프로젝트 목적, 대상 사용자, MVP 기능, 사용자 시나리오, 데이터, 외부 연동, 인증/권한, QA 기준이 모호하면 초기화를 진행하기 전에 사용자에게 질문하세요.
 4. 질문이 필요한 경우 한 번에 최대 5개 이내로 핵심 질문만 작성하세요.
-5. 여러 기능에 공통 적용되는 계약(데이터 모델/네이밍/API/인증)을 정리하여 AGENTSPECKIT/ARCHITECTURE.md를 생성하세요.
+5. 여러 기능에 공통 적용되는 계약(데이터 모델/네이밍/API/인증)을 정리하여 THROUGHLINE/ARCHITECTURE.md를 생성하세요.
 6. KICKOFF.md의 절차에 따라 프로젝트 구조와 문서를 생성하세요.
-7. AGENTSPECKIT/ 아래에 features/, docs/, qa/, personas/, adr/ 문서를 생성하세요. adr/INDEX.md를 포함하고,
+7. THROUGHLINE/ 아래에 features/, docs/, qa/, personas/, adr/ 문서를 생성하세요. adr/INDEX.md를 포함하고,
    features/README.md와 docs/README.md는 KICKOFF.md 6.2·7.2절의 인덱스(목차) 형식으로 작성하세요.
-8. AGENTSPECKIT/ 아래에 ARCHITECTURE.md, PLAN.md, PROGRESS.md, HISTORY.md, ASSUMPTIONS.md, NOTES.md를 생성하고,
-   AGENTS.md와 CLAUDE.md는 프로젝트 루트에 생성하세요 (자동 인식 관례 — 안의 경로는 AGENTSPECKIT/ 접두로 명시).
+8. THROUGHLINE/ 아래에 ARCHITECTURE.md, PLAN.md, PROGRESS.md, HISTORY.md, ASSUMPTIONS.md, NOTES.md를 생성하고,
+   AGENTS.md와 CLAUDE.md는 프로젝트 루트에 생성하세요 (자동 인식 관례 — 안의 경로는 THROUGHLINE/ 접두로 명시).
 8-1. 프로젝트 README.md(소개·설치·실행·구조·문서 링크)를 루트에 생성하세요. 민감 정보는 넣지 마세요.
 9. feature 문서는 Multi-Agent 검토 결과를 바탕으로 작성하되, Agent별 발언록이 아니라 최종 합의된 기능명세서로 작성하고, 참여 Agent와 핵심 쟁점·결론을 3~4줄로 요약하고 검토 로그를 링크하세요.
 10. QA는 feature별 테스트 시나리오와 qa/ 폴더의 회귀/수동/릴리즈 체크리스트로 분리하여 작성하세요. "테스트 통과"는 실제 실행 시에만 인정한다는 기준을 포함하세요.
-11. 초기화를 마치기 전에 AGENTSPECKIT/SOURCES/INDEX.md에서 REQUIREMENTS.md의 상태를 '반영 완료'로 바꾸고
+11. 초기화를 마치기 전에 THROUGHLINE/SOURCES/INDEX.md에서 REQUIREMENTS.md의 상태를 '반영 완료'로 바꾸고
     반영 산출물 링크를 기록하세요. 이후 REQUIREMENTS.md 원본은 불변이며,
     추가 요구사항은 새 변경요청 문서로 받습니다.
-11-1. KICKOFF.md 3.1절에 따라 초기화 산출물을 commit하세요 (루트 3파일 + AGENTSPECKIT/를 묶는 단일 commit;
+11-1. KICKOFF.md 3.1절에 따라 초기화 산출물을 commit하세요 (루트 3파일 + THROUGHLINE/를 묶는 단일 commit;
     여러 세션에 걸치면 중간 지점 commit 허용).
 12. 초기화가 끝나면 생성한 파일 목록, ARCHITECTURE 요약, 기능명세서 목록, QA 문서 목록, ADR 목록, 개발 Phase 요약, 다음 개발 시작 명령을 보고하세요.
 ```
@@ -185,31 +217,31 @@ REQUIREMENTS.md는 사용자가 작성한 초기 요구사항이고, KICKOFF.md�
 산출물 구조는 `KICKOFF.md`와 동일하므로 채택이 끝나면 `DEVELOPINIT.md`로 그대로 개발을 이어갑니다.
 
 ```text
-AGENTSPECKIT/ADOPT.md를 읽고, 그 지시에 따라 이미 개발 중인 이 프로젝트에 프레임워크를 채택(적용)하세요.
+THROUGHLINE/ADOPT.md를 읽고, 그 지시에 따라 이미 개발 중인 이 프로젝트에 프레임워크를 채택(적용)하세요.
 
-산출물은 AGENTS.md, CLAUDE.md, 프로젝트 README.md(루트 3파일)를 제외하고 모두 AGENTSPECKIT/ 아래에 생성하세요.
+산출물은 AGENTS.md, CLAUDE.md, 프로젝트 README.md(루트 3파일)를 제외하고 모두 THROUGHLINE/ 아래에 생성하세요.
 기존 프로젝트의 docs/ 등 동명 폴더는 건드리지 마세요.
 
 반드시 다음을 지키세요.
 
 1. 이 단계에서는 코드를 수정하지 않습니다. 현재 상태를 문서화하고 개발 계획을 세우는 단계입니다.
-2. 먼저 AGENTSPECKIT/에 기존 산출물이 있는지 확인하세요 (있으면 이미 채택된 프로젝트 — 재채택하지 말고 보고).
+2. 먼저 THROUGHLINE/에 기존 산출물이 있는지 확인하세요 (있으면 이미 채택된 프로젝트 — 재채택하지 말고 보고).
    다음으로 루트의 README/AGENTS/CLAUDE/.gitignore가 있는지 인벤토리하세요.
    이미 있는 파일은 덮어쓰지 말고 병합하거나, 덮어써야 하면 확인을 받으세요.
 3. 먼저 코드베이스를 스캔해 스택·빌드/실행/테스트 명령·구조·진입점·의존성·환경변수 이름을 파악하세요.
    (환경변수 값/Secret은 수집·기록하지 마세요.)
 4. 그다음 진입점부터 주요 기능의 실제 구현·핵심 경로를 직접 읽고 동작을 추적하세요.
    파일명·구조만 보고 동작을 추측하지 말고, 메타데이터 스캔에서 멈추지 마세요.
-   읽은 범위와 읽지 못한 범위를 명시하고, 미열람 영역은 AGENTSPECKIT/PROGRESS.md에 남기세요.
-5. 읽은 코드에서 실제 컨벤션(네이밍/API 계약/에러 포맷/인증/데이터 모델)을 역추출해 AGENTSPECKIT/ARCHITECTURE.md를 만드세요.
-   코드에서 확정할 수 없는 항목은 지어내지 말고 AGENTSPECKIT/ASSUMPTIONS.md(active, 검증 필요)에 남기세요.
-6. 구현된 기능을 as-built 명세로 AGENTSPECKIT/features/*.md에 작성하세요.
+   읽은 범위와 읽지 못한 범위를 명시하고, 미열람 영역은 THROUGHLINE/PROGRESS.md에 남기세요.
+5. 읽은 코드에서 실제 컨벤션(네이밍/API 계약/에러 포맷/인증/데이터 모델)을 역추출해 THROUGHLINE/ARCHITECTURE.md를 만드세요.
+   코드에서 확정할 수 없는 항목은 지어내지 말고 THROUGHLINE/ASSUMPTIONS.md(active, 검증 필요)에 남기세요.
+6. 구현된 기능을 as-built 명세로 THROUGHLINE/features/*.md에 작성하세요.
    각 동작 주장은 근거 코드 위치(파일/함수)를 댈 수 있어야 하고, 직접 읽지 않은 동작은 단정하지 말고 "추정(검증 필요)"으로 표시하세요.
    코드와 의도가 어긋나는 지점은 따로 표시하세요.
-7. 기존 테스트를 실제 실행해 baseline(통과/실패/부재)을 AGENTSPECKIT/HISTORY.md에 기록하세요.
-8. AGENTSPECKIT/PLAN.md는 완료/진행 중/남은 것으로 현재 상태를 반영하고, AGENTSPECKIT/PROGRESS.md에 다음 세션 첫 명령을 적으세요.
-9. AGENTSPECKIT/SOURCES/REQUIREMENTS.md가 있으면 앞으로의 목표·미구현 요구사항으로 사용하고, as-built와 충돌하면 질문하세요.
-   채택이 끝나면 AGENTSPECKIT/SOURCES/INDEX.md에 유형 '초기 요구사항'으로 등록하고 '반영 완료'로 동결하세요.
+7. 기존 테스트를 실제 실행해 baseline(통과/실패/부재)을 THROUGHLINE/HISTORY.md에 기록하세요.
+8. THROUGHLINE/PLAN.md는 완료/진행 중/남은 것으로 현재 상태를 반영하고, THROUGHLINE/PROGRESS.md에 다음 세션 첫 명령을 적으세요.
+9. THROUGHLINE/SOURCES/REQUIREMENTS.md가 있으면 앞으로의 목표·미구현 요구사항으로 사용하고, as-built와 충돌하면 질문하세요.
+   채택이 끝나면 THROUGHLINE/SOURCES/INDEX.md에 유형 '초기 요구사항'으로 등록하고 '반영 완료'로 동결하세요.
 9-1. ADOPT.md 작업 순서 18단계에 따라 채택 산출물을 작업 브랜치에 commit하세요 (문서 전용 commit — 코드 변경 없음).
 10. 채택이 끝나면 ADOPT.md 7절 형식으로 결과를 보고하세요(읽은 범위, 코드↔의도 괴리 목록, 테스트 baseline 포함).
 ```
@@ -218,30 +250,30 @@ AGENTSPECKIT/ADOPT.md를 읽고, 그 지시에 따라 이미 개발 중인 이 �
 
 ### 2.2 키트 업그레이드 (이미 적용된 프로젝트에 새 버전 반영)
 
-이미 AGENTSPECKIT을 적용한 프로젝트에 템플릿의 갱신 내용을 반영할 때 사용합니다.
+이미 THROUGHLINE을 적용한 프로젝트에 템플릿의 갱신 내용을 반영할 때 사용합니다.
 **KICKOFF/ADOPT를 재실행하지 마세요** — 재초기화·재채택 가드가 차단하며, 우회하면 산출물이 덮입니다.
 
 처리 원리:
 
 | 분류 | 대상 | 처리 |
 |---|---|---|
-| 키트 소유 (프로젝트 내용 없음) | `AGENTSPECKIT/`의 프롬프트 4종 | 새 버전으로 **덮어쓰기 복사** |
+| 키트 소유 (프로젝트 내용 없음) | `THROUGHLINE/`의 프롬프트 4종 | 새 버전으로 **덮어쓰기 복사** |
 | 생성 산출물 (프로젝트 내용 있음) | features/, PLAN, PROGRESS, HISTORY, ASSUMPTIONS, SOURCES 원본 | **내용 보존** — 건드리지 않음 |
 | 규칙 파일 (구버전 규칙으로 생성됨) | 루트 `AGENTS.md`, `CLAUDE.md` | **병합 갱신** — 누락 블록만 추가 |
 | 신규 구조 (구버전에 없음) | TODO.md, NOTES.md, personas/, discussion/ 등 | **신규 생성/보강** |
 
-**1단계 (사람):** 템플릿 저장소를 pull 받아, **처음 사용한 것과 같은 언어 폴더**(`en/AGENTSPECKIT/` 또는 `ko/AGENTSPECKIT/`)의 프롬프트 4종(KICKOFF/ADOPT/DEVELOPINIT/AUDIT)을
-프로젝트의 `AGENTSPECKIT/`에 덮어쓰기 복사합니다.
-(구버전이 루트 평면 구조라면 먼저 루트 3파일을 제외한 산출물을 `git mv`로 `AGENTSPECKIT/` 아래로 옮기는 커밋을 만듭니다.)
+**1단계 (사람):** 템플릿 저장소를 pull 받아, **처음 사용한 것과 같은 언어 폴더**(`en/THROUGHLINE/` 또는 `ko/THROUGHLINE/`)의 프롬프트 4종(KICKOFF/ADOPT/DEVELOPINIT/AUDIT)을
+프로젝트의 `THROUGHLINE/`에 덮어쓰기 복사합니다.
+(구버전이 루트 평면 구조라면 먼저 루트 3파일을 제외한 산출물을 `git mv`로 `THROUGHLINE/` 아래로 옮기는 커밋을 만듭니다.)
 
 **2단계 (Agent):** 아래 프롬프트를 실행합니다.
 
 ```text
-Agent-Spec-Kit 템플릿이 갱신되어 프롬프트 4종을 새 버전으로 교체했습니다.
+THROUGHLINE 템플릿이 갱신되어 프롬프트 4종을 새 버전으로 교체했습니다.
 이 프로젝트의 산출물 구조를 새 버전 기준으로 업그레이드하세요.
 KICKOFF나 ADOPT를 재실행하지 마세요 (재초기화·재채택 금지). 기존 산출물의 내용은 보존합니다.
 
-1. 새 AGENTSPECKIT/KICKOFF.md 1절의 구조와 현재 AGENTSPECKIT/를 대조해 누락된 파일·폴더를 식별하세요.
+1. 새 THROUGHLINE/KICKOFF.md 1절의 구조와 현재 THROUGHLINE/를 대조해 누락된 파일·폴더를 식별하세요.
 2. 누락분을 생성하세요.
    - NOTES.md / TODO.md: 빈 골격 (KICKOFF.md 15.1·15.3 형식)
    - SOURCES/INDEX.md: 없으면 생성하고, 있으면 유형/상태 컬럼을 15.2 형식으로 보강하세요.
@@ -291,7 +323,7 @@ KICKOFF나 ADOPT를 재실행하지 마세요 (재초기화·재채택 금지). 
 ```text
 프로젝트 초기화를 위해 확인이 필요합니다.
 
-AGENTSPECKIT/SOURCES/REQUIREMENTS.md를 분석한 결과, 초기 기능명세서와 개발 계획을 만들기 전에 아래 내용을 확인해야 합니다.
+THROUGHLINE/SOURCES/REQUIREMENTS.md를 분석한 결과, 초기 기능명세서와 개발 계획을 만들기 전에 아래 내용을 확인해야 합니다.
 
 1. 이 프로젝트의 MVP에서 반드시 포함해야 하는 기능 3가지는 무엇인가요?
 2. 주요 사용자는 일반 사용자, 관리자, 운영자 중 누구인가요?
@@ -311,7 +343,7 @@ AGENTSPECKIT/SOURCES/REQUIREMENTS.md를 분석한 결과, 초기 기능명세서
 
 개발 단계에서도 동일합니다. 프롬프트에서 "이건 알아서 해줘"라고 위임하면 그 항목의 자율 판단 범위가 넓어지되, 핵심 항목은 보수적으로 결정하고 `ASSUMPTIONS.md`와 완료 보고에 남깁니다.
 
-> 📝 **요구사항 작성 팁:** [`REQUIREMENTS.md` 템플릿](ko/AGENTSPECKIT/SOURCES/REQUIREMENTS.md)에는 자체 작성 가이드가 들어 있습니다 — 먼저 채울 항목, `[AI 위임]` 마커, 그리고 **참고자료 첨부 팁**(원하는 디자인·API 문서를 캡처/저장해 `SOURCES/`에 넣고 문서에서 참조 — 글로 길게 설명하는 대신). 작성 전에 한 번 훑어보세요.
+> 📝 **요구사항 작성 팁:** [`REQUIREMENTS.md` 템플릿](ko/THROUGHLINE/SOURCES/REQUIREMENTS.md)에는 자체 작성 가이드가 들어 있습니다 — 먼저 채울 항목, `[AI 위임]` 마커, 그리고 **참고자료 첨부 팁**(원하는 디자인·API 문서를 캡처/저장해 `SOURCES/`에 넣고 문서에서 참조 — 글로 길게 설명하는 대신). 작성 전에 한 번 훑어보세요.
 
 ---
 
@@ -324,7 +356,7 @@ AGENTSPECKIT/SOURCES/REQUIREMENTS.md를 분석한 결과, 초기 기능명세서
 ├── README.md                # 프로젝트 README — 루트 고정 (산출물)
 ├── AGENTS.md                # Agent 작업 지시서 — 루트 고정 (도구 자동 인식 관례)
 ├── CLAUDE.md                # Claude Code 자동 로드 — 루트 고정
-├── AGENTSPECKIT/            # ★ 프레임워크가 소유·관리하는 모든 것
+├── THROUGHLINE/             # ★ 프레임워크가 소유·관리하는 모든 것
 │   ├── KICKOFF.md / ADOPT.md / DEVELOPINIT.md / AUDIT.md
 │   ├── ARCHITECTURE.md
 │   ├── PLAN.md
@@ -359,7 +391,7 @@ AGENTSPECKIT/SOURCES/REQUIREMENTS.md를 분석한 결과, 초기 기능명세서
 └── (프로젝트 코드 — 기존 폴더는 건드리지 않음)
 ```
 
-각 문서의 역할은 다음과 같습니다. (표의 경로는 루트 3파일을 제외하고 모두 `AGENTSPECKIT/` 기준)
+각 문서의 역할은 다음과 같습니다. (표의 경로는 루트 3파일을 제외하고 모두 `THROUGHLINE/` 기준)
 
 | 파일 / 폴더 | 역할 |
 |---|---|
@@ -373,8 +405,8 @@ AGENTSPECKIT/SOURCES/REQUIREMENTS.md를 분석한 결과, 초기 기능명세서
 | `ASSUMPTIONS.md` | Agent가 자율 판단한 내용 (상태/충돌 관리 포함) |
 | `NOTES.md` | 개발 중 학습한 비자명한 **사실**의 주제별 축적 (추측은 ASSUMPTIONS로) |
 | `TODO.md` | **백로그** — 착수 미결정 항목의 수집함 (카테고리/우선순위/상태/승격처 링크). 선택 로드, 진행 상태의 진실은 PLAN·features 인덱스 |
-| `AGENTSPECKIT/SOURCES/INDEX.md` | 사용자 제출 자료 인덱스 (유형/제출일/상태/요약/반영 산출물) |
-| `AGENTSPECKIT/SOURCES/*` | 사용자 제출 원본 — 참고자료·변경요청 (반영 완료 후 불변, 변경은 새 문서 추가) |
+| `THROUGHLINE/SOURCES/INDEX.md` | 사용자 제출 자료 인덱스 (유형/제출일/상태/요약/반영 산출물) |
+| `THROUGHLINE/SOURCES/*` | 사용자 제출 원본 — 참고자료·변경요청 (반영 완료 후 불변, 변경은 새 문서 추가) |
 | `features/README.md` | 기능 인덱스 (상태/Phase/관련 ADR 테이블) |
 | `features/*.md` | 기능별 최종 기능명세서 (검토 요약 포함) |
 | `docs/README.md` | 사용자 문서 인덱스 |
@@ -393,35 +425,35 @@ AGENTSPECKIT/SOURCES/REQUIREMENTS.md를 분석한 결과, 초기 기능명세서
 초기화가 끝난 뒤 실제 개발을 시작할 때는 아래 프롬프트를 입력합니다.
 
 ```text
-AGENTS.md와 AGENTSPECKIT/DEVELOPINIT.md를 읽고, 현재 프로젝트 문서를 기준으로 실제 개발을 시작하세요.
+AGENTS.md와 THROUGHLINE/DEVELOPINIT.md를 읽고, 현재 프로젝트 문서를 기준으로 실제 개발을 시작하세요.
 
-프레임워크 문서는 루트의 AGENTS.md/CLAUDE.md/README.md를 제외하고 모두 AGENTSPECKIT/ 안에 있습니다.
+프레임워크 문서는 루트의 AGENTS.md/CLAUDE.md/README.md를 제외하고 모두 THROUGHLINE/ 안에 있습니다.
 
 반드시 다음 순서로 진행하세요.
 
 1. AGENTS.md(루트)를 읽으세요.
-2. AGENTSPECKIT/ARCHITECTURE.md를 읽으세요. (횡단 계약 — 항상 로드)
-3. AGENTSPECKIT/PLAN.md를 읽으세요.
-4. AGENTSPECKIT/PROGRESS.md를 읽고 "다음 세션 첫 명령"을 확인하세요.
-4-1. AGENTSPECKIT/SOURCES/INDEX.md를 확인하세요(항상 확인): 미반영/검토 중 변경요청이 있으면 보고하세요.
-5. 필요한 범위에서 AGENTSPECKIT/HISTORY.md로 중복 구현 여부를 확인하세요.
-6. AGENTSPECKIT/features/README.md와 AGENTSPECKIT/adr/INDEX.md를 확인하세요.
+2. THROUGHLINE/ARCHITECTURE.md를 읽으세요. (횡단 계약 — 항상 로드)
+3. THROUGHLINE/PLAN.md를 읽으세요.
+4. THROUGHLINE/PROGRESS.md를 읽고 "다음 세션 첫 명령"을 확인하세요.
+4-1. THROUGHLINE/SOURCES/INDEX.md를 확인하세요(항상 확인): 미반영/검토 중 변경요청이 있으면 보고하세요.
+5. 필요한 범위에서 THROUGHLINE/HISTORY.md로 중복 구현 여부를 확인하세요.
+6. THROUGHLINE/features/README.md와 THROUGHLINE/adr/INDEX.md를 확인하세요.
 7. 현재 Phase와 관련된 feature 문서와 관련 ADR만 선택적으로 읽으세요.
-8. AGENTSPECKIT/qa/README.md를 읽고, 현재 작업에 필요한 QA 문서만 선택적으로 확인하세요.
-9. AGENTSPECKIT/NOTES.md에 현재 작업 주제와 관련된 항목이 있으면 확인하세요.
+8. THROUGHLINE/qa/README.md를 읽고, 현재 작업에 필요한 QA 문서만 선택적으로 확인하세요.
+9. THROUGHLINE/NOTES.md에 현재 작업 주제와 관련된 항목이 있으면 확인하세요.
 10. DEVELOPINIT.md의 절차에 따라 현재 Phase를 구현하세요.
 
 주의사항:
 
-- AGENTSPECKIT/SOURCES/REQUIREMENTS.md(반영 완료)를 기준으로 프로젝트를 다시 초기화하지 마세요.
-  새 요구사항은 AGENTSPECKIT/SOURCES/에 변경요청 문서로 제출받아 DEVELOPINIT.md 4.2로 처리하세요.
-- AGENTSPECKIT/의 ARCHITECTURE.md, PLAN.md, PROGRESS.md와 SOURCES/INDEX.md 상태 확인은 항상 수행합니다. feature/QA 문서는 현재 Phase에 필요한 것만 읽으세요.
+- THROUGHLINE/SOURCES/REQUIREMENTS.md(반영 완료)를 기준으로 프로젝트를 다시 초기화하지 마세요.
+  새 요구사항은 THROUGHLINE/SOURCES/에 변경요청 문서로 제출받아 DEVELOPINIT.md 4.2로 처리하세요.
+- THROUGHLINE/의 ARCHITECTURE.md, PLAN.md, PROGRESS.md와 SOURCES/INDEX.md 상태 확인은 항상 수행합니다. feature/QA 문서는 현재 Phase에 필요한 것만 읽으세요.
 - 공통 결정(데이터 모델/네이밍/API/인증)은 ARCHITECTURE.md를 기준으로 따르세요.
 - 명세 없이 추측으로 구현하지 마세요.
 - 코드와 명세가 다르면 먼저 어느 쪽이 권위인지 진단한 뒤 처리하세요. 구현 실수를 명세로 둔갑시키지 마세요.
 - 테스트는 실제로 실행하고 결과를 HISTORY.md에 기록하세요. 실행 없이 통과를 주장하지 마세요.
 - 개발 중 학습한 비자명한 사실은 NOTES.md에 기록하세요. 추측은 ASSUMPTIONS.md에 기록하세요.
-- AGENTSPECKIT/SOURCES/INDEX.md에 미반영/검토 중 변경요청이 있으면 보고하고, 우선 처리할지 확인하세요.
+- THROUGHLINE/SOURCES/INDEX.md에 미반영/검토 중 변경요청이 있으면 보고하고, 우선 처리할지 확인하세요.
 - 문서 상호참조는 상대경로 링크로 적고, feature/docs/ADR 변경 시 해당 인덱스를 같은 commit에서 갱신하세요.
 - 작업 시작 시 PROGRESS.md의 진행 상태와 다음 세션 첫 명령을 잠정 기록하세요.
 - 의미 있는 작업 단위가 끝나면 코드+문서를 하나의 commit으로 묶어 commit 하세요. push는 프로젝트 push 정책을 따릅니다(기본: commit까지, 자동 push 안 함).
@@ -432,23 +464,23 @@ AGENTS.md와 AGENTSPECKIT/DEVELOPINIT.md를 읽고, 현재 프로젝트 문서�
 
 이 프롬프트는 **실제 개발 시작용**입니다.
 
-### 5.1 개발 중 기능 추가 / 기능 수정 요청 (AGENTSPECKIT/SOURCES/ 사용법)
+### 5.1 개발 중 기능 추가 / 기능 수정 요청 (THROUGHLINE/SOURCES/ 사용법)
 
 초기화 이후 새 기능 추가나 기존 기능·아키텍처 수정이 필요하면, 대화로만 설명하지 말고
-요청 내용을 문서(md 권장, pdf/txt/html 가능)로 작성해 프로젝트의 `AGENTSPECKIT/SOURCES/` 폴더에 넣으세요.
+요청 내용을 문서(md 권장, pdf/txt/html 가능)로 작성해 프로젝트의 `THROUGHLINE/SOURCES/` 폴더에 넣으세요.
 원본이 보존되므로 나중에 "왜 이렇게 바뀌었나"를 추적할 수 있습니다.
 
-**AGENTSPECKIT/SOURCES/ 폴더 규칙 요약** (상세: KICKOFF.md 15.2, 반영 절차: DEVELOPINIT.md 4.2):
+**THROUGHLINE/SOURCES/ 폴더 규칙 요약** (상세: KICKOFF.md 15.2, 반영 절차: DEVELOPINIT.md 4.2):
 
 - 문서 유형은 두 가지입니다. **참고자료**(사실의 기록: API 스펙, 정책 문서)와
   **변경요청**(의도의 기록: 기능 추가/수정, 아키텍처 변경).
 - 제출된 원본은 **불변**입니다. 반영된 문서를 고치지 말고, 내용이 바뀌면 **새 문서를 추가**하세요.
-  이전 문서는 `AGENTSPECKIT/SOURCES/INDEX.md`에서 `대체됨`으로 표시됩니다 (불변·추가 전용).
-- 모든 문서는 `AGENTSPECKIT/SOURCES/INDEX.md`에 등재되어 상태(`미반영`/`검토 중`/`반영 완료`/`반려`/`대체됨`)로 관리됩니다.
+  이전 문서는 `THROUGHLINE/SOURCES/INDEX.md`에서 `대체됨`으로 표시됩니다 (불변·추가 전용).
+- 모든 문서는 `THROUGHLINE/SOURCES/INDEX.md`에 등재되어 상태(`미반영`/`검토 중`/`반영 완료`/`반려`/`대체됨`)로 관리됩니다.
 - 변경요청은 **반영 완료 전까지 권위가 없습니다.** 요청은 한 번 검토·반영되면 다시 읽지 않으며,
   이후의 진실은 반영된 ARCHITECTURE/features/ADR이 이어받습니다.
 
-**변경요청 문서 양식** (AGENTSPECKIT/SOURCES/REQUIREMENTS.md의 해당 절을 부분 재사용):
+**변경요청 문서 양식** (THROUGHLINE/SOURCES/REQUIREMENTS.md의 해당 절을 부분 재사용):
 
 ```md
 # 변경요청: <제목>
@@ -467,18 +499,18 @@ AGENTS.md와 AGENTSPECKIT/DEVELOPINIT.md를 읽고, 현재 프로젝트 문서�
 **기능 추가 / 기능 수정 지시 프롬프트:**
 
 ```text
-AGENTSPECKIT/SOURCES/<파일명>을 변경요청으로 제출했습니다.
+THROUGHLINE/SOURCES/<파일명>을 변경요청으로 제출했습니다.
 
-AGENTS.md와 AGENTSPECKIT/DEVELOPINIT.md를 읽고, DEVELOPINIT.md 4.2 절차에 따라 이 제출 자료를 처리하세요.
+AGENTS.md와 THROUGHLINE/DEVELOPINIT.md를 읽고, DEVELOPINIT.md 4.2 절차에 따라 이 제출 자료를 처리하세요.
 
 반드시 다음을 지키세요.
 
-1. AGENTSPECKIT/SOURCES/INDEX.md에 등록하세요 (유형: 변경요청, 상태: 미반영 → 검토 중).
+1. THROUGHLINE/SOURCES/INDEX.md에 등록하세요 (유형: 변경요청, 상태: 미반영 → 검토 중).
 2. 문서를 읽고 요약과 영향 분석(ARCHITECTURE 충돌, 영향 feature, ADR 필요 여부)을 수행하세요.
 3. MVP 범위·데이터 모델·인증/권한·횡단 계약 변경이 필요하면 반영 전에 사용자에게 확인하세요.
 4. 기능 범위가 바뀌면 Multi-Agent 재검토를 수행하고, 횡단 계약 변경은 ADR을 작성하세요.
 5. 반영 시 features/ARCHITECTURE/PLAN(필요 시 docs/qa) 문서를 갱신하고,
-   각 산출물에 출처(AGENTSPECKIT/SOURCES/<파일명>)를 상대경로 링크로 남기세요.
+   각 산출물에 출처(THROUGHLINE/SOURCES/<파일명>)를 상대경로 링크로 남기세요.
 6. 모든 항목이 문서에 반영됐을 때만 INDEX 상태를 '반영 완료'로 바꾸세요.
    부분 반영이면 '검토 중'으로 두고 남은 항목을 PROGRESS.md에 기록하세요.
 7. 이 작업은 증분 반영입니다. 프로젝트를 재초기화하지 마세요.
@@ -490,9 +522,9 @@ AGENTS.md와 AGENTSPECKIT/DEVELOPINIT.md를 읽고, DEVELOPINIT.md 4.2 절차에
 **참고자료 제출 프롬프트** (변경 작업 없이 등록·요약만):
 
 ```text
-AGENTSPECKIT/SOURCES/<파일명>을 참고자료로 제출했습니다.
+THROUGHLINE/SOURCES/<파일명>을 참고자료로 제출했습니다.
 
-AGENTSPECKIT/DEVELOPINIT.md 4.2 절차에 따라 AGENTSPECKIT/SOURCES/INDEX.md에 등록하고(유형: 참고자료),
+THROUGHLINE/DEVELOPINIT.md 4.2 절차에 따라 THROUGHLINE/SOURCES/INDEX.md에 등록하고(유형: 참고자료),
 문서를 읽고 요약을 INDEX에 기록하세요.
 이 단계에서는 기능 변경 작업을 하지 마세요.
 관련 feature/ARCHITECTURE 문서에서 이 자료를 근거로 참조해야 할 곳이 있으면 링크만 추가하세요.
@@ -516,11 +548,11 @@ AGENTSPECKIT/DEVELOPINIT.md 4.2 절차에 따라 AGENTSPECKIT/SOURCES/INDEX.md�
 이 기능 TODO에 등록해줘: <한 줄 설명>
 ```
 
-- Agent가 카테고리(기능/개선/버그/기술부채)로 분류해 `AGENTSPECKIT/TODO.md`에
+- Agent가 카테고리(기능/개선/버그/기술부채)로 분류해 `THROUGHLINE/TODO.md`에
   한 줄(내용·우선순위·상태 `대기`·등록일)로 등록하고 commit합니다.
 - **등록은 착수가 아닙니다.** 구현하려면 "TODO의 <항목> 착수해줘"라고 지시하세요 —
   자명한 항목은 feature 문서로 직행하고, 횡단 영향이 있는 항목은 SOURCES/ 변경요청으로
-  승격해 처리합니다 (AGENTSPECKIT/DEVELOPINIT.md 4.3). 승격 시 TODO에 승격처가 링크됩니다.
+  승격해 처리합니다 (THROUGHLINE/DEVELOPINIT.md 4.3). 승격 시 TODO에 승격처가 링크됩니다.
 - TODO는 **백로그(수집함)이지 상태판이 아닙니다.** 진행 상태의 진실은 PLAN.md와
   features/README.md이며, 명세는 TODO가 아니라 features/에 작성됩니다.
 - 하지 않기로 한 항목은 삭제하지 않고 `보류`/`폐기`(사유)로 남깁니다. 방치된 항목은 AUDIT이 점검합니다.
@@ -542,10 +574,10 @@ Agent가 검토 체계로 라우팅해야 *하지만*, 프롬프트는 강제가
 ```text
 OOO 기능 추가를 검토하고 설계하세요. 구현은 시작하지 마세요.
 
-1. AGENTS.md와 AGENTSPECKIT/DEVELOPINIT.md 6절(Multi-Agent 검토)을 따르세요.
-2. AGENTSPECKIT/personas/INDEX.md에서 이 기능과 관련된 페르소나 인스턴스를 골라 주입하고,
+1. AGENTS.md와 THROUGHLINE/DEVELOPINIT.md 6절(Multi-Agent 검토)을 따르세요.
+2. THROUGHLINE/personas/INDEX.md에서 이 기능과 관련된 페르소나 인스턴스를 골라 주입하고,
    필요한 관점이 없으면 KICKOFF.md 5.2 기준으로 새 인스턴스를 만드세요.
-3. 토의 과정을 AGENTSPECKIT/discussion/review-<기능슬러그>-YYYYMMDD.md에 기록하세요.
+3. 토의 과정을 THROUGHLINE/discussion/review-<기능슬러그>-YYYYMMDD.md에 기록하세요.
    페르소나별 위험·근거를 남기고, Research Agent는 출처를 **전체 URL(그대로)** 또는 SOURCES/ 경로로 반드시 명시하세요.
 4. 합의안으로 feature 문서 초안(KICKOFF.md 6.1 템플릿)을 작성하세요.
    MVP 범위·데이터 모델·인증·횡단 계약에 영향이 있으면 반영 전에 확인을 요청하세요.
@@ -558,13 +590,13 @@ OOO 기능 추가를 검토하고 설계하세요. 구현은 시작하지 마세
 OOO 기능 추가를 검토하고 설계하세요. 구현은 시작하지 마세요.
 페르소나 토의는 역할극이 아니라 실제 서브에이전트로 병렬 실행하세요.
 
-1. AGENTSPECKIT/personas/INDEX.md에서 관련 페르소나 3~5개를 선택하세요.
+1. THROUGHLINE/personas/INDEX.md에서 관련 페르소나 3~5개를 선택하세요.
 2. 각 페르소나 인스턴스 파일을 역할 정의로 삼아 서브에이전트를 하나씩 띄우고,
    서로의 출력을 보지 않은 상태에서 각자 독립적으로 검토시키세요
    (각자: 발견한 위험 / 근거·출처 / 제안. Research 역할은 실제 조사를 수행하고 출처를 명시).
 3. 결과를 취합해 쟁점과 충돌을 정리하고 합의안을 도출하세요.
    합리적으로 합의되지 않는 쟁점은 선택지와 권장안을 붙여 사용자에게 확인하세요.
-4. 토의 전 과정을 AGENTSPECKIT/discussion/review-<기능슬러그>-YYYYMMDD.md에 기록하고
+4. 토의 전 과정을 THROUGHLINE/discussion/review-<기능슬러그>-YYYYMMDD.md에 기록하고
    (참여 페르소나 항목에 인스턴스 파일 링크, 실행 방식 `parallel-subagents`,
    서브에이전트별 증거 — 식별자·입력 범위·출력 요약), feature 문서 초안을 작성해 보고하세요.
 ```
@@ -574,7 +606,7 @@ OOO 기능 추가를 검토하고 설계하세요. 구현은 시작하지 마세
 > 단, 형식이 같다고 역할극을 실제 병렬로 보고해도 되는 것은 아닙니다 — **로그에 실제 실행 방식을 4.1의 enum**(`role-play` / `parallel-subagents` / `parallel-external`)**으로 명시**하고, `parallel-*`이면 서브에이전트별 증거를 기록하세요(KICKOFF 4.1).
 > 서브에이전트 도구가 없는 환경이면 방식 2를 흉내 내지 말고 방식 1(역할극)로 내려가고, 수행하지 않은 독립 병렬 검토를 한 것처럼 보고하지 마세요.
 
-**방식 3 — 정식 변경요청과 결합**: 5.1절대로 변경요청 문서를 `AGENTSPECKIT/SOURCES/`에 제출한 뒤,
+**방식 3 — 정식 변경요청과 결합**: 5.1절대로 변경요청 문서를 `THROUGHLINE/SOURCES/`에 제출한 뒤,
 방식 1 또는 2의 프롬프트 첫 줄에 `이 검토는 SOURCES/<파일명> 변경요청의 반영 과정입니다.`를 추가하세요.
 영향 분석→확인→검토→반영의 전 과정이 출처 추적과 함께 남습니다.
 
@@ -593,10 +625,10 @@ OOO 기능 추가를 검토하고 설계하세요. 구현은 시작하지 마세
 ## 7. 다음 날 또는 세션이 끊긴 뒤 이어서 작업하는 프롬프트
 
 ```text
-AGENTS.md와 AGENTSPECKIT/DEVELOPINIT.md를 읽고, AGENTSPECKIT/PROGRESS.md의 "다음 세션 첫 명령"을 기준으로 이전 작업을 이어서 진행하세요.
+AGENTS.md와 THROUGHLINE/DEVELOPINIT.md를 읽고, THROUGHLINE/PROGRESS.md의 "다음 세션 첫 명령"을 기준으로 이전 작업을 이어서 진행하세요.
 
-AGENTSPECKIT/의 ARCHITECTURE.md와 PLAN.md를 함께 읽어 횡단 계약을 다시 맞추세요.
-이미 완료된 작업은 다시 수행하지 마세요. AGENTSPECKIT/HISTORY.md(및 아카이브)를 확인하여 중복 구현을 방지하세요.
+THROUGHLINE/의 ARCHITECTURE.md와 PLAN.md를 함께 읽어 횡단 계약을 다시 맞추세요.
+이미 완료된 작업은 다시 수행하지 마세요. THROUGHLINE/HISTORY.md(및 아카이브)를 확인하여 중복 구현을 방지하세요.
 현재 Phase와 관련된 feature 문서와 관련 ADR만 읽고 개발을 계속하세요.
 현재 작업에 필요한 QA 문서만 확인하세요.
 
@@ -616,7 +648,7 @@ QA는 두 단계로 나뉩니다 — **기능별 테스트 시나리오**(`featu
 
 ### 8.1 프로젝트 README.md 갱신 (push 단위)
 
-프로젝트 `README.md`는 "이 프로젝트가 무엇이고 어떻게 설치·실행하는지"를 담는 산출물입니다(Agent-Spec-Kit 저장소의 가이드 `README.md`와는 별개의 다른 저장소 문서).
+프로젝트 `README.md`는 "이 프로젝트가 무엇이고 어떻게 설치·실행하는지"를 담는 산출물입니다(THROUGHLINE 저장소의 가이드 `README.md`와는 별개의 다른 저장소 문서).
 
 - **생성**: 초기화 시 KICKOFF가 `ARCHITECTURE.md` / `features/` / `PLAN.md`를 바탕으로 초안을 만듭니다.
 - **갱신 시점**: 매 commit이 아니라 **push 단위에서 갱신 필요 여부를 점검**합니다. 다음이 바뀌었으면 같은 원자적 커밋에 README 변경을 포함합니다.
@@ -642,7 +674,7 @@ PROGRESS(잠정 기록) → 세션이 끊겨도 다음 세션이 정확히 이�
 권위 진단 규칙      → 코드-명세 불일치를 임의로 지우지 않음. 표류 방지.
 HISTORY 회전       → 이력을 잃지 않으면서 컨텍스트 부담을 관리.
 NOTES.md          → 학습한 사실의 복리 축적. 같은 사실을 재발견하지 않음.
-AGENTSPECKIT/SOURCES/INDEX.md  → 제출 자료의 수명 추적(미반영→반영/반려/대체). 원본 불변·추가 전용,
+THROUGHLINE/SOURCES/INDEX.md  → 제출 자료의 수명 추적(미반영→반영/반려/대체). 원본 불변·추가 전용,
                     변경요청은 한 번 반영되면 산출물이 진실을 이어받음.
 AUDIT(주기 감사)   → 기록 시점 점검이 놓친 점진적 표류를 주기적으로 회수.
 ```
@@ -655,8 +687,8 @@ AUDIT(주기 감사)   → 기록 시점 점검이 놓친 점진적 표류를 �
 **Phase 완료 직후 / 릴리즈 전 / 오랜만의 재개 / 약 10세션 누적** 시점에 아래 프롬프트를 실행하세요.
 
 ```text
-AGENTSPECKIT/AUDIT.md를 읽고, 그 지시에 따라 프로젝트 문서와 코드의 표류를 감사하세요.
-프레임워크 문서는 루트 3파일(README/AGENTS/CLAUDE)을 제외하고 모두 AGENTSPECKIT/ 안에 있습니다.
+THROUGHLINE/AUDIT.md를 읽고, 그 지시에 따라 프로젝트 문서와 코드의 표류를 감사하세요.
+프레임워크 문서는 루트 3파일(README/AGENTS/CLAUDE)을 제외하고 모두 THROUGHLINE/ 안에 있습니다.
 
 반드시 다음을 지키세요.
 
@@ -712,11 +744,11 @@ AUDIT.md 3.10          출처가 전체 URL로 보존·실재하는가 · 페르
 
 ```mermaid
 flowchart TD
-    Start(["Agent-Spec-Kit 저장소 clone"]) --> Type{"프로젝트 유형"}
+    Start(["THROUGHLINE 저장소 clone"]) --> Type{"프로젝트 유형"}
 
     %% ── 신규 프로젝트 경로 ──
-    Type -->|"신규 (greenfield)"| G1["언어별 AGENTSPECKIT/ 폴더(en/ 또는 ko/)를 프로젝트 루트로 복사"]
-    G1 --> G2["AGENTSPECKIT/SOURCES/REQUIREMENTS.md 작성 — 횡단 기준선 포함<br/>참고자료가 있으면 AGENTSPECKIT/SOURCES/에 함께"]
+    Type -->|"신규 (greenfield)"| G1["언어별 THROUGHLINE/ 폴더(en/ 또는 ko/)를 프로젝트 루트로 복사"]
+    G1 --> G2["THROUGHLINE/SOURCES/REQUIREMENTS.md 작성 — 횡단 기준선 포함<br/>참고자료가 있으면 THROUGHLINE/SOURCES/에 함께"]
     G2 --> G3["KICKOFF.md 초기화 프롬프트 실행 (2절)"]
     G3 --> G4{"요구사항이<br/>모호한가?"}
     G4 -->|"예"| G5["Agent가 사용자에게 질문 (3절)"]
@@ -725,7 +757,7 @@ flowchart TD
     G6 --> G7["REQUIREMENTS.md '반영 완료'로 동결<br/>(이후 요구 변경은 새 변경요청 문서로)"]
 
     %% ── 기존 프로젝트 경로 ──
-    Type -->|"기존 (brownfield)"| B1["언어별 AGENTSPECKIT/ 폴더(en/ 또는 ko/)를 프로젝트 루트로 복사<br/>(REQUIREMENTS.md 작성은 선택)"]
+    Type -->|"기존 (brownfield)"| B1["언어별 THROUGHLINE/ 폴더(en/ 또는 ko/)를 프로젝트 루트로 복사<br/>(REQUIREMENTS.md 작성은 선택)"]
     B1 --> B2["ADOPT.md 채택 프롬프트 실행 (2.1절)"]
     B2 --> B3["기존 코드 분석<br/>ARCHITECTURE 역추출 · as-built 기능명세 ·<br/>테스트 baseline · 코드↔의도 괴리 목록"]
     B3 --> B4["기존 산출물은 덮어쓰지 않고 병합<br/>PLAN · PROGRESS · HISTORY · ASSUMPTIONS 생성"]
@@ -739,7 +771,7 @@ flowchart TD
 
     G7 --> D1
     B4 --> D1
-    CR["기능 추가·수정 요청<br/>AGENTSPECKIT/SOURCES/에 문서로 제출 (5.1절)"] -.->|"변경요청 프롬프트"| D1
+    CR["기능 추가·수정 요청<br/>THROUGHLINE/SOURCES/에 문서로 제출 (5.1절)"] -.->|"변경요청 프롬프트"| D1
     D2 --> AQ{"Phase 완료 / 릴리즈 전 /<br/>약 10세션 누적?"}
     AQ -->|"예"| AU["AUDIT.md 문서 감사 (9.1절)"]
     AU --> D1
@@ -755,52 +787,54 @@ flowchart TD
 | 이미 개발 중인 프로젝트에 적용할 때 | 채택 프롬프트 (2.1절, ADOPT.md) |
 | 기능명세서와 문서 생성 후 개발을 시작할 때 | 실제 개발 시작 프롬프트 (5절) |
 | 이전 작업을 이어서 할 때 | 이어서 작업하는 프롬프트 (7절) |
-| 개발 중 새 기능 추가·기존 기능 수정을 문서로 요청할 때 | 변경요청 처리 프롬프트 (5.1절, AGENTSPECKIT/SOURCES/) |
-| 외부 스펙·정책 문서 등 참고자료를 등록할 때 | 참고자료 제출 프롬프트 (5.1절, AGENTSPECKIT/SOURCES/) |
-| 아이디어를 가볍게 적어둘 때 / 백로그 관리·착수 | TODO 등록·승격 (5.2절, AGENTSPECKIT/TODO.md) |
+| 개발 중 새 기능 추가·기존 기능 수정을 문서로 요청할 때 | 변경요청 처리 프롬프트 (5.1절, THROUGHLINE/SOURCES/) |
+| 외부 스펙·정책 문서 등 참고자료를 등록할 때 | 참고자료 제출 프롬프트 (5.1절, THROUGHLINE/SOURCES/) |
+| 아이디어를 가볍게 적어둘 때 / 백로그 관리·착수 | TODO 등록·승격 (5.2절, THROUGHLINE/TODO.md) |
 | 새 기능의 설계 검토를 시작할 때 (검토 강도 선택) | 기능 추가 검토·설계 프롬프트 (5.3절 — 표준/서브에이전트/변경요청 결합) |
 | 키트를 새 버전으로 업그레이드할 때 (이미 적용된 프로젝트) | 업그레이드 프롬프트 (2.2절) |
 | Phase 완료 / 릴리즈 전 / 문서-코드 표류가 의심될 때 | 문서 감사 프롬프트 (9.1절, AUDIT.md) |
 
 ---
 
-## 부록: 벤치마크 근거 (드리프트 억제 파일럿)
+## 부록: 벤치마크 상세 (드리프트 억제 파일럿)
+
+핵심 수치는 문서 상단 [벤치마크](#벤치마크)에 있습니다. 이 부록은 방법론과 파일럿별 상세, 그리고 — 의도적으로 남겨둔 — 이 파일럿이 **보여주지 못하는 것**을 담습니다.
 
 이 프레임워크의 핵심 주장 — 외부의 구조화된 메모리(SSOT)가 일반 LLM 세션에서 발생하는 **조용한 의도 드리프트(silent intent-drift)**를 억제한다 — 는 검증 가능합니다. 이 저장소에는 그것을 측정하는 실행 가능한 파일럿이 둘 있습니다. 둘 다 **단일 시드(single-seed) go/no-go 판별 검사이며 통계적으로 충분한 검정력을 갖춘 결과가 아닙니다**(검정력 있는 주장에는 여러 과제에 걸친 시드 3개 이상이 필요). 즉 *방향*을 보여줄 뿐 크기를 보장하지 않습니다. 각 파일럿은 완전히 재현 가능합니다(샌드박스된 dev-agent, 에이전트가 절대 보지 못하는 숨겨진 오라클, 자동 하네스 셀프테스트 게이트).
 
-### 파일럿 1 — `benchmark/benchmark-solo-pilot/`: 초기 결정의 기억은 살아남는가?
+### 파일럿 1 — [`benchmark/benchmark-solo-pilot/`](benchmark/benchmark-solo-pilot/): 초기 결정의 기억은 살아남는가?
 
 7세션짜리 `miniquery` 과제. 원래 기본 페이지 크기(**7**)가 두 번 덮어쓰여(→25→25→40), 세션 6에서 "원래 값으로 복원"을 요청합니다 — 코드 주석에 변경 이력을 남기지 못하게 하는 코딩 규범 아래에서, 원래 값은 **메모리 산출물 안에만** 남습니다. 같은 과제를 네 가지 메모리 체제로 수행:
 
 | 그룹 | 메모리 체제 | S6 복원 값 | 정답(7)? |
 |---|---|---:|:--:|
-| **ASK-solo** | 구조화 SSOT(append-only DECISIONS) | **7** | ✅ |
+| **throughline-solo** | 구조화 SSOT(append-only DECISIONS) | **7** | ✅ |
 | P-notes | 자유 노트, 약 2600자 상한 | 7 | ✅ |
 | B-limited | 최근 2세션 노트, 600자 상한 | 25 | ❌ |
 | B-code | 메모리 없음(코드+티켓만) | 10 | ❌ |
 
-**발견.** (1) 원래 결정의 기억은 *필수*다 — 메모리가 없거나 손실된 두 그룹은 실패, 메모리를 가진 두 그룹은 성공. (2) **손실성 메모리는 단지 약한 것이 아니라 적극적으로 오도(誤導)한다**: B-limited는 모른다고 인정하지 않고 *그럴듯한 틀린 값을 자신 있게 복원*했다(25 — 자기 윈도우 바로 바깥의 값). 이는 B-code의 정직한 "이건 추측"보다 잡아내기 어려운 조용한 드리프트다. (3) 이 작은 규모에서는 구조화 SSOT와 잘 절제된 자유 노트가 **갈리지 않았다** — 둘 다 계보를 유지했다. 따라서 이 파일럿은 **메모리 보존** 효과를 입증하며, 아직 좋은 임시 노트 대비 ASK의 *구조적* 우위까지는 아니다.
+**발견.** (1) 원래 결정의 기억은 *필수*다 — 메모리가 없거나 손실된 두 그룹은 실패, 메모리를 가진 두 그룹은 성공. (2) **손실성 메모리는 단지 약한 것이 아니라 적극적으로 오도(誤導)한다**: B-limited는 모른다고 인정하지 않고 *그럴듯한 틀린 값을 자신 있게 복원*했다(25 — 자기 윈도우 바로 바깥의 값). 이는 B-code의 정직한 "이건 추측"보다 잡아내기 어려운 조용한 드리프트다. (3) 이 작은 규모에서는 구조화 SSOT와 잘 절제된 자유 노트가 **갈리지 않았다** — 둘 다 계보를 유지했다. 따라서 이 파일럿은 **메모리 보존** 효과를 입증하며, 아직 좋은 임시 노트 대비 THROUGHLINE의 *구조적* 우위까지는 아니다.
 
-### 파일럿 2 — `benchmark/benchmark-vibe-ask-solo/`: SSOT는 바이브 코딩 드리프트를 억제하는가?
+### 파일럿 2 — [`benchmark/benchmark-vibe-solo/`](benchmark/benchmark-vibe-solo/): SSOT는 바이브 코딩 드리프트를 억제하는가?
 
-바이브 코딩 시나리오: 사용자는 불완전한 지시를 주고 자기 과거 의도를 잊는다. `catalog` 과제를 **프롬프트 명시성 3단계**(beginner / intermediate / advanced) × **2모드** — `baseline-general`(요청만 구현) 대 `ask-solo`(SSOT 유지 + 충돌 점검) — 로 각 7세션씩 수행(총 42 dev-agent 세션). 판별자는 세션 6: 사용자가 "검색창이 비면 전체를 보여줘"라고 요청하는데, 이는 앞선 안전 정책(빈 쿼리 → `[]`)과 충돌한다. 레벨별 정답: beginner/intermediate는 정책을 **유지**해야 하고(사용자가 잊은 것 — 조용한 순응 = 드리프트), advanced는 **채택**해야 한다(명시적이고 인지된 오버라이드).
+바이브 코딩 시나리오: 사용자는 불완전한 지시를 주고 자기 과거 의도를 잊는다. `catalog` 과제를 **프롬프트 명시성 3단계**(beginner / intermediate / advanced) × **2모드** — `baseline-general`(요청만 구현) 대 `throughline-solo`(SSOT 유지 + 충돌 점검) — 로 각 7세션씩 수행(총 42 dev-agent 세션). 판별자는 세션 6: 사용자가 "검색창이 비면 전체를 보여줘"라고 요청하는데, 이는 앞선 안전 정책(빈 쿼리 → `[]`)과 충돌한다. 레벨별 정답: beginner/intermediate는 정책을 **유지**해야 하고(사용자가 잊은 것 — 조용한 순응 = 드리프트), advanced는 **채택**해야 한다(명시적이고 인지된 오버라이드).
 
 종합 점수(90점 만점; 비용 축은 보류):
 
-| 레벨 | baseline-general | ask-solo | Δ |
+| 레벨 | baseline-general | throughline-solo | Δ |
 |---|---:|---:|---:|
 | beginner | 70.4 | **76.0** | +5.6 |
 | intermediate | 66.0 | **90.0** | **+24.0** |
 | advanced | 84.3 | **90.0** | +5.7 |
 
-**발견.** ask-solo는 모든 레벨에서 baseline 이상이다. (1) **intermediate가 깨끗한 승리**: baseline은 조용히 순응해 안전 정책을 깨뜨렸다(불변식 위반 + 회귀); ask-solo는 충돌을 감지해 **정책을 유지하고 사용자에게 플래그**했다 → 회귀 0. (2) **advanced는 코드 동률**(양쪽 다 명시적 오버라이드를 올바로 채택) — 여기서 ASK의 가치는 가설대로 문서/프로세스 품질로 수렴한다. (3) **문서 품질이 가장 일관된 ASK 효과**다 — ask-solo는 모든 레벨에서 문서 15/15(가시적 supersede 체인)인 반면 baseline은 7–11. (4) **정직한 단서**: *beginner* 레벨에서 ask-solo는 충돌을 감지했으나 의도된 변경으로 오분류해 드리프트를 채택했다 — 최대 모호성에서는 ASK의 효용이 분류 단계에 달려 있고, 그 단계가 불안정했다. (별도의 단일 시드 코딩 사고도 beginner 코드 점수를 깎았다 — 시드 3개 이상이면 평균화될 시드별 노이즈.)
+**발견.** throughline-solo는 모든 레벨에서 baseline 이상이다. (1) **intermediate가 깨끗한 승리**: baseline은 조용히 순응해 안전 정책을 깨뜨렸다(불변식 위반 + 회귀); throughline-solo는 충돌을 감지해 **정책을 유지하고 사용자에게 플래그**했다 → 회귀 0. (2) **advanced는 코드 동률**(양쪽 다 명시적 오버라이드를 올바로 채택) — 여기서 THROUGHLINE의 가치는 가설대로 문서/프로세스 품질로 수렴한다. (3) **문서 품질이 가장 일관된 THROUGHLINE 효과**다 — throughline-solo는 모든 레벨에서 문서 15/15(가시적 supersede 체인)인 반면 baseline은 7–11. (4) **정직한 단서**: *beginner* 레벨에서 throughline-solo는 충돌을 감지했으나 의도된 변경으로 오분류해 드리프트를 채택했다 — 최대 모호성에서는 THROUGHLINE의 효용이 분류 단계에 달려 있고, 그 단계가 불안정했다. (별도의 단일 시드 코딩 사고도 beginner 코드 점수를 깎았다 — 시드 3개 이상이면 평균화될 시드별 노이즈.)
+
+> 전체 설계·원시 트래젝토리·go/no-go 판정: [`benchmark/benchmark-solo-pilot/RESULTS_v2.md`](benchmark/benchmark-solo-pilot/RESULTS_v2.md), [`benchmark/benchmark-vibe-solo/RESULTS_seed1.md`](benchmark/benchmark-vibe-solo/RESULTS_seed1.md). 가장 보수적인 벤치마크 종합 판정 — THROUGHLINE의 이점이 입증되지 않은 중규모 실험까지 포함 — 은 [`benchmark/RESULTS_SUMMARY.md`](benchmark/RESULTS_SUMMARY.md)에 정리되어 있습니다.
 
 ### 이 파일럿이 보여주는 것과 보여주지 못하는 것
 
 - **보여주는 것**: 과제 하네스가 판별력이 있다(천장/바닥 없음); 외부 메모리가 메모리 없는/baseline 에이전트가 범하는 틀린 값·정책 드리프트 실패를 실제로 억제한다; 구조화 문서가 일관된 권위/완전성 우위를 낳는다.
-- **보여주지 못하는 것**: ASK가 모든 과제에서 이긴다는 증명, 작은 규모에서 자유 노트 대비 SSOT의 구조적 우위 분리, Team/멀티에이전트 효과, 검정력 있는 통계 결과. 다음 단계(각 `RESULTS*.md`에 기록): 시드 3개 이상으로 확장, 비용 축 측정, 자유 노트는 결정을 잃지만 append-only SSOT는 유지하는 더 긴 호라이즌 설계.
-
-> 전체 설계·원시 트래젝토리·go/no-go 판정: `benchmark/benchmark-solo-pilot/RESULTS_v2.md`, `benchmark/benchmark-vibe-ask-solo/RESULTS_seed1.md`. 가장 보수적인 벤치마크 종합 판정 — ASK의 이점이 입증되지 않은 중규모 실험까지 포함 — 은 `benchmark/RESULTS_SUMMARY.md`에 정리되어 있습니다.
+- **보여주지 못하는 것**: THROUGHLINE이 모든 과제에서 이긴다는 증명, 작은 규모에서 자유 노트 대비 SSOT의 구조적 우위 분리, Team/멀티에이전트 효과, 검정력 있는 통계 결과. 다음 단계(각 `RESULTS*.md`에 기록): 시드 3개 이상으로 확장, 비용 축 측정, 자유 노트는 결정을 잃지만 append-only SSOT는 유지하는 더 긴 호라이즌 설계.
 
 ---
 
@@ -810,7 +844,7 @@ flowchart TD
 
 | 구분 | 토큰(≈) |
 |---|---|
-| 개발 세션 **고정 로드** (DEVELOPINIT.md + AGENTS/ARCHITECTURE/PLAN/PROGRESS/CLAUDE + AGENTSPECKIT/SOURCES/INDEX + 세션 프롬프트) | 약 13K |
+| 개발 세션 **고정 로드** (DEVELOPINIT.md + AGENTS/ARCHITECTURE/PLAN/PROGRESS/CLAUDE + THROUGHLINE/SOURCES/INDEX + 세션 프롬프트) | 약 13K |
 | 통상 개발 세션 합계 (선택 로드: feature 1~2개·ADR·qa 일부·HISTORY 최근분·NOTES 포함) | 약 18~21K |
 | 초기화 세션 (1회성, KICKOFF.md + REQUIREMENTS.md) | 약 13K |
 | 감사 세션 (AUDIT.md 추가 로드) | 고정분 + 약 1.7K |

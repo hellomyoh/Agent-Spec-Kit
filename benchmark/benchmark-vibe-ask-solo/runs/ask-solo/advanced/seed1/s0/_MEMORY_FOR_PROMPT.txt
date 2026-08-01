@@ -1,1 +1,0 @@
-MODE=ask-solo. Your SSOT docs are in docs/ssot/ (PRODUCT.md, FEATURES.md, DECISIONS.md, PROGRESS.md). READ them before coding; UPDATE them after. Follow agents/dev_ask-solo.md: if the user's latest request conflicts with a recorded decision, do NOT blindly implement — choose hold / ask / supersede-the-decision / implement, and record the conflict.

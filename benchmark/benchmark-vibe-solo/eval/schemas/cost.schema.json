@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "cost row (one per mode/level/seed/session). edit_churn is automated; the rest are filled by the orchestrator from its run logs (plan §5.5).",
+  "type": "object",
+  "required": ["mode", "level", "seed", "session"],
+  "properties": {
+    "mode": {"enum": ["baseline-general", "throughline-solo"]},
+    "level": {"enum": ["beginner", "intermediate", "advanced"]},
+    "seed": {"type": "string"},
+    "session": {"type": "integer", "minimum": 0},
+    "edit_churn": {"type": ["object", "null"],
+      "properties": {"changed_lines": {"type": "integer"}, "total_lines": {"type": "integer"}}},
+    "total_tokens": {"type": ["integer", "null"]},
+    "conversation_turns": {"type": ["integer", "null"]},
+    "tool_calls": {"type": ["integer", "null"]},
+    "wall_time_s": {"type": ["number", "null"]},
+    "rework_count": {"type": ["integer", "null"], "description": "failed-then-fixed cycles this session"}
+  }
+}

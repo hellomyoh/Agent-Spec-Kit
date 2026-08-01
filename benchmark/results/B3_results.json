@@ -46,7 +46,7 @@
    "tool_uses": 3
   },
   {
-   "arm": "LASK",
+   "arm": "L-SSOT",
    "seed": 1,
    "r1_restore": 1.0,
    "fully_restored": true,
@@ -57,7 +57,7 @@
    "tool_uses": 5
   },
   {
-   "arm": "LASK",
+   "arm": "L-SSOT",
    "seed": 2,
    "r1_restore": 1.0,
    "fully_restored": true,
@@ -77,7 +77,7 @@
    "mean_restore": 1.0,
    "fully_restored": "2/2"
   },
-  "LASK": {
+  "L-SSOT": {
    "mean_restore": 1.0,
    "fully_restored": "2/2"
   }

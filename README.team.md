@@ -1,12 +1,18 @@
 <div align="center">
 
-# ASK-Team — Agent-Spec-Kit for team development
+# THROUGHLINE — Team edition
+
+**Spec-Driven Development when several developers and AI agents share one codebase**
+
+Every workitem declares what it touches, published to a shared branch at claim
+time — so Git, semantic, and intent conflicts surface early instead of at merge.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-black.svg)](LICENSE)
+[![Claude Code · Codex · Cursor](https://img.shields.io/badge/agents-Claude%20Code%20%C2%B7%20Codex%20%C2%B7%20Cursor-blue)](#quick-start)
 
 🌐 **English** · [한국어](README.team.ko.md)
 
-**The Team edition of [Agent-Spec-Kit](README.md).** When multiple developers and AI agents build the *same* codebase **concurrently**, ASK-Team uses **markdown + git alone** to surface the Git, semantic, and intent conflicts that a single shared `PROGRESS.md` / `HISTORY.md` would otherwise hide.
-
-Solo guide: [README.md](README.md) · Full team guide & prompts: [en/ASK-TEAM/](en/ASK-TEAM/) · [한국어 키트](ko/ASK-TEAM/)
+[Quick start](#quick-start) · [Solo edition](README.md) · [Full team guide & prompts](en/THROUGHLINE-TEAM/) · [한국어 키트](ko/THROUGHLINE-TEAM/)
 
 </div>
 
@@ -14,7 +20,7 @@ Solo guide: [README.md](README.md) · Full team guide & prompts: [en/ASK-TEAM/](
 
 ## Solo or Team?
 
-| | **Solo (ASK)** — [README.md](README.md) | **Team (ASK-Team)** — this guide |
+| | **Solo (THROUGHLINE)** — [README.md](README.md) | **Team (THROUGHLINE Team)** — this guide |
 |---|---|---|
 | For | 1 developer / sequential, autonomous | multiple developers & AI agents, **concurrent** |
 | Progress | single `PROGRESS.md` cursor | `workitems/` + `sessions/<handle>--<WI>` |
@@ -23,7 +29,7 @@ Solo guide: [README.md](README.md) · Full team guide & prompts: [en/ASK-TEAM/](
 | Conflicts | n/a | `touches` + `conflicts/` (agent cross-checks) |
 | Identity | not needed | `team/` + git identity (`git config user.email`) |
 | Runtime | none | none (markdown + git only) |
-| Kit folder | `en/AGENTSPECKIT/` · `ko/AGENTSPECKIT/` | `en/ASK-TEAM/` · `ko/ASK-TEAM/` |
+| Kit folder | `en/THROUGHLINE/` · `ko/THROUGHLINE/` | `en/THROUGHLINE-TEAM/` · `ko/THROUGHLINE-TEAM/` |
 
 For a single developer, Solo is lighter — use Team only when N people actually develop concurrently.
 
@@ -37,25 +43,25 @@ For a single developer, Solo is lighter — use Team only when N people actually
 
 ## Quick start
 
-1. Clone this repo and copy the contents of [`en/ASK-TEAM/`](en/ASK-TEAM/) (or [`ko/ASK-TEAM/`](ko/ASK-TEAM/)) into your project root's `AGENTSPECKIT/`.
-2. For a **new project**, write the initial requirements in `AGENTSPECKIT/SOURCES/REQUIREMENTS.md` (reuse the solo kit's [REQUIREMENTS template](en/AGENTSPECKIT/SOURCES/REQUIREMENTS.md)); for an existing codebase (ADOPT) it is optional.
+1. Clone this repo and copy the contents of [`en/THROUGHLINE-TEAM/`](en/THROUGHLINE-TEAM/) (or [`ko/THROUGHLINE-TEAM/`](ko/THROUGHLINE-TEAM/)) into your project root's `THROUGHLINE/`.
+2. For a **new project**, write the initial requirements in `THROUGHLINE/SOURCES/REQUIREMENTS.md` (reuse the solo kit's [REQUIREMENTS template](en/THROUGHLINE/SOURCES/REQUIREMENTS.md)); for an existing codebase (ADOPT) it is optional.
 3. The **maintainer** registers `team/<handle>.md` with `role: maintainer` (copy `templates/team-TEMPLATE.md`); each **contributor** registers their own.
-4. Contributors run the [`DEVELOP.md`](en/ASK-TEAM/DEVELOP.md) prompt; the maintainer runs [`INTEGRATE.md`](en/ASK-TEAM/INTEGRATE.md). Use [`KICKOFF.md`](en/ASK-TEAM/KICKOFF.md) (new) / [`ADOPT.md`](en/ASK-TEAM/ADOPT.md) (existing code) to initialize, and [`AUDIT.md`](en/ASK-TEAM/AUDIT.md) for periodic checks.
+4. Contributors run the [`DEVELOP.md`](en/THROUGHLINE-TEAM/DEVELOP.md) prompt; the maintainer runs [`INTEGRATE.md`](en/THROUGHLINE-TEAM/INTEGRATE.md). Use [`KICKOFF.md`](en/THROUGHLINE-TEAM/KICKOFF.md) (new) / [`ADOPT.md`](en/THROUGHLINE-TEAM/ADOPT.md) (existing code) to initialize, and [`AUDIT.md`](en/THROUGHLINE-TEAM/AUDIT.md) for periodic checks.
 
 ## Development prompt — claim → detect → implement → PR (DEVELOP · contributor)
 
-Once initialization (or adoption) has been committed to the shared branch, each contributor uses this prompt to **perform one workitem**. Before running, your own `team/<handle>.md` must be registered (if not, the prompt registers it first). Only the contributor runs it; the maintainer merges via [`INTEGRATE.md`](en/ASK-TEAM/INTEGRATE.md).
+Once initialization (or adoption) has been committed to the shared branch, each contributor uses this prompt to **perform one workitem**. Before running, your own `team/<handle>.md` must be registered (if not, the prompt registers it first). Only the contributor runs it; the maintainer merges via [`INTEGRATE.md`](en/THROUGHLINE-TEAM/INTEGRATE.md).
 
 ```text
-Read AGENTS.md and AGENTSPECKIT/DEVELOP.md, and following the DEVELOP.md procedure, claim one workitem and develop it.
-Conventions in AGENTSPECKIT/CONVENTIONS.md take precedence. This kit uses markdown + git only.
+Read AGENTS.md and THROUGHLINE/DEVELOP.md, and following the DEVELOP.md procedure, claim one workitem and develop it.
+Conventions in THROUGHLINE/CONVENTIONS.md take precedence. This kit uses markdown + git only.
 
 Proceed strictly in the following order.
 
 0. Identity check: match git config user.email against the emails in team/*.md to confirm my handle·role.
    If unregistered, register team/<handle>.md first (templates/team-TEMPLATE.md), then proceed.
    Then git fetch, and read the latest shared branch's workitems/*.md frontmatter to see in-flight (claimed/in_progress) work and its touches.
-1. Always load: AGENTS.md (root), AGENTSPECKIT/ARCHITECTURE.md (cross-cutting contracts), AGENTSPECKIT/PLAN.md, in-flight workitems frontmatter.
+1. Always load: AGENTS.md (root), THROUGHLINE/ARCHITECTURE.md (cross-cutting contracts), THROUGHLINE/PLAN.md, in-flight workitems frontmatter.
    Read the features/*.md·ADR·qa·notes needed for my work optionally. For common rules always follow ARCHITECTURE.md as the baseline.
 2. Claim a workitem:
    - Existing item: pick a WI with status: proposed|ready, set owner to my handle, status to claimed, branch to feat/<WI-id>, and
@@ -106,19 +112,19 @@ Use this to reflect template-repository updates into a project that already ran 
 | | `CLAUDE.md` | **Replace** with the new KICKOFF.md template (malfunction-prevention only) — lossless gate |
 | New structure (absent in the old version) | e.g. `workitems/archive/` | **Newly create** (`.gitkeep` if empty) and **migrate qualifying existing data** into it |
 
-**Step 1 (human, maintainer):** pull the template repository and overwrite-copy the kit-owned files above **from the same language folder you originally used** (`en/ASK-TEAM/` or `ko/ASK-TEAM/`) into the project's `AGENTSPECKIT/`. Since these are coordination-layer files, do this directly on the shared branch (or a work branch + PR first if the shared branch is push-protected — merge before any contributor resumes claiming).
+**Step 1 (human, maintainer):** pull the template repository and overwrite-copy the kit-owned files above **from the same language folder you originally used** (`en/THROUGHLINE-TEAM/` or `ko/THROUGHLINE-TEAM/`) into the project's `THROUGHLINE/`. Since these are coordination-layer files, do this directly on the shared branch (or a work branch + PR first if the shared branch is push-protected — merge before any contributor resumes claiming).
 
 **Step 2 (Agent):**
 
 ```text
-The ASK-Team kit has been updated and its kit-owned files have been replaced with the new version.
+The THROUGHLINE Team kit has been updated and its kit-owned files have been replaced with the new version.
 Upgrade this project's artifact structure to the new-version standard.
 Do not re-run KICKOFF or ADOPT (re-initialization/re-adoption forbidden). Preserve the content of existing coordination/work artifacts.
 Only role: maintainer runs this prompt.
 
 0. Identity check: match git config user.email against team/*.md. If role is not maintainer, stop and delegate to a maintainer.
    git fetch and read the latest shared branch before comparing structure.
-1. Compare the structure in the new KICKOFF.md §1 against the current AGENTSPECKIT/ and list missing files/folders.
+1. Compare the structure in the new KICKOFF.md §1 against the current THROUGHLINE/ and list missing files/folders.
 2. Create missing empty structure (.gitkeep per KICKOFF §1) — e.g. workitems/archive/ if this project predates it.
 3. One-time archive sweep (meaningful only if workitems/archive/ is new): for every workitems/WI-*.md at the root with
    status: done, confirm a matching history/ event exists, then move it to workitems/archive/ in this same commit
@@ -142,15 +148,15 @@ Only role: maintainer runs this prompt.
 
 **Step 3 (verification):** run the `AUDIT.md` prompt right after the upgrade — it catches migration omissions (a stray `done`-but-unarchived workitem, a fixed INDEX file someone committed, broken links) against the new standard.
 
-## Prompts & reference (in [`en/ASK-TEAM/`](en/ASK-TEAM/))
+## Prompts & reference (in [`en/THROUGHLINE-TEAM/`](en/THROUGHLINE-TEAM/))
 
 | File | Role |
 |---|---|
-| [README.md](en/ASK-TEAM/README.md) | full framework overview & spec |
-| [KICKOFF.md](en/ASK-TEAM/KICKOFF.md) · [ADOPT.md](en/ASK-TEAM/ADOPT.md) | initialize a new / existing team project |
-| [DEVELOP.md](en/ASK-TEAM/DEVELOP.md) · [INTEGRATE.md](en/ASK-TEAM/INTEGRATE.md) | contributor / maintainer prompts |
-| [AUDIT.md](en/ASK-TEAM/AUDIT.md) | team document audit (drift + coordination integrity) |
-| [CONVENTIONS.md](en/ASK-TEAM/CONVENTIONS.md) · [SCHEMAS.md](en/ASK-TEAM/SCHEMAS.md) | structural conventions & frontmatter schemas |
-| [reference/](en/ASK-TEAM/reference/README.md) | bundled solo-kit reference copies cited by the team prompts |
+| [README.md](en/THROUGHLINE-TEAM/README.md) | full framework overview & spec |
+| [KICKOFF.md](en/THROUGHLINE-TEAM/KICKOFF.md) · [ADOPT.md](en/THROUGHLINE-TEAM/ADOPT.md) | initialize a new / existing team project |
+| [DEVELOP.md](en/THROUGHLINE-TEAM/DEVELOP.md) · [INTEGRATE.md](en/THROUGHLINE-TEAM/INTEGRATE.md) | contributor / maintainer prompts |
+| [AUDIT.md](en/THROUGHLINE-TEAM/AUDIT.md) | team document audit (drift + coordination integrity) |
+| [CONVENTIONS.md](en/THROUGHLINE-TEAM/CONVENTIONS.md) · [SCHEMAS.md](en/THROUGHLINE-TEAM/SCHEMAS.md) | structural conventions & frontmatter schemas |
+| [reference/](en/THROUGHLINE-TEAM/reference/README.md) | bundled solo-kit reference copies cited by the team prompts |
 
-> ASK-Team keeps the Solo philosophy — markdown + git, tool independence (Claude Code · Codex · Cursor), cross-session memory, traceability, the multi-persona review harness. See the **[full guide](en/ASK-TEAM/README.md)** for the conflict-detection model, the development flow, and the honest limitations (detection ≠ enforcement; governance ≠ tooling).
+> THROUGHLINE Team keeps the Solo philosophy — markdown + git, tool independence (Claude Code · Codex · Cursor), cross-session memory, traceability, the multi-persona review harness. See the **[full guide](en/THROUGHLINE-TEAM/README.md)** for the conflict-detection model, the development flow, and the honest limitations (detection ≠ enforcement; governance ≠ tooling).

@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "doc_scores row (one per mode/level/seed) — written by the judge step (eval/rubric_doc.md)",
+  "type": "object",
+  "required": ["mode", "level", "seed", "dims"],
+  "properties": {
+    "mode": {"enum": ["baseline-general", "throughline-solo"]},
+    "level": {"enum": ["beginner", "intermediate", "advanced"]},
+    "seed": {"type": "string"},
+    "dims": {
+      "type": "object",
+      "required": ["ssot_completeness", "authority_clarity", "update_correctness", "no_fake_certainty", "reuse_value"],
+      "additionalProperties": {"type": "integer", "minimum": 0, "maximum": 3}
+    },
+    "total": {"type": "integer", "minimum": 0, "maximum": 15},
+    "justification": {"type": "object", "additionalProperties": {"type": "string"}},
+    "judge": {"type": "string", "description": "who/what produced this (e.g. 'llm-judge:opus' or 'human')"}
+  }
+}
